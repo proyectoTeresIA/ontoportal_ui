@@ -1,7 +1,7 @@
 x-app: &default-app
   image: bioportal/ontoportal_web_ui
   env_file:
-    - ".env"
+    - '.env'
   tty: true
   volumes:
     - bundle:/usr/local/bundle
@@ -15,72 +15,69 @@ x-app: &default-app
     cache:
       condition: service_started
   environment: &env
-    BUNDLE_WITHOUT: ""
+    BUNDLE_WITHOUT: ''
     BUNDLE_PATH: /usr/local/bundle
-    DB_HOST: db
-    MEMCACHE_SERVERS: "cache:11211"
+    DB_HOST: 127.0.0.1
+    MEMCACHE_SERVERS: 'localhost:11211'
   tmpfs:
     - /tmp
     - /app/tmp/pids
 
 services:
   db:
-    image: "mysql:8.0"
+    image: 'mysql:8.0'
     networks:
       - internal
     volumes:
       - mysql-data:/var/lib/mysql
-    # ports:
-      # - "3306:3306"
+    ports:
+      - '3306:3306'
     environment:
       MYSQL_ROOT_PASSWORD: root
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       timeout: 5s
       retries: 3
 
   cache:
     image: memcached:latest
     restart: unless-stopped
-    command: ["-m", "1024"]
+    command: ['-m', '1024']
     networks:
       - internal
-    # ports:
-      # - "11211:11211"
+    ports:
+      - '11211:11211'
 
   node:
     <<: *default-app
-    command: "yarn build --watch"
+    command: 'yarn build --watch'
 
   dev:
     <<: *default-app
-    networks:
-      - internal
-      - external
+    command: bash -c "bundle install && ./bin/setup && ./bin/rails s -b 0.0.0.0"
+    network_mode: 'host'
     depends_on:
       <<: *depends_on
       node:
-       condition: service_started
-    ports:
-      - "3000:3000"
+        condition: service_started
 
   production:
     <<: *default-app
-    command: "bundle exec puma -C config/puma.rb"
+    command: 'bundle exec puma -C config/puma.rb'
     networks:
       - internal
       - external
     environment:
       <<: *env
-      RAILS_ENV: "production"
-      BUNDLE_WITHOUT: "development test"
-      BUNDLE_PATH: "/usr/local/bundle"
+      RAILS_ENV: 'production'
+      BUNDLE_WITHOUT: 'development test'
+      BUNDLE_PATH: '/usr/local/bundle'
       #SECRET_KEY_BASE: TODO
       #RAILS_MASTER_KEY: TODO
       BIOPORTAL_WEB_UI_DATABASE_PASSWORD: root
-      MEMCACHE_SERVERS: "cache:11211"
+      MEMCACHE_SERVERS: 'cache:11211'
     ports:
-      - "3000:3000"
+      - '3001:3000'
     # depends_on:
     #   db:
     #     condition: service_healthy
@@ -94,6 +91,7 @@ services:
 
   test:
     <<: *default-app
+    command: './bin/rails console'
     environment:
       <<: *env
     depends_on:

@@ -36,7 +36,7 @@ ENV RAILS_LOG_TO_STDOUT="1" \
 COPY Gemfile* .
 RUN bundle install
 
-COPY package.json *yarn* .
+COPY package.json *yarn* ./
 RUN yarn install
 
 COPY . .
@@ -52,4 +52,4 @@ RUN if [ "${RAILS_ENV}" != "development" ]; then \
 
 EXPOSE 3000
 
-CMD ["rails", "s"]
+CMD ["./bin/rails", "server"]

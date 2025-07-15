@@ -2,8 +2,8 @@ require 'uri'
 
 class PrecacheController < ApplicationController
 
-  $UI_PORT = "80"
-  # $UI_PORT = "3000"
+  # $UI_PORT = "80"
+  $UI_PORT = "3000"
 
 
   def self.precache_all(delete_cache = false)

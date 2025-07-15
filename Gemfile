@@ -2,6 +2,9 @@
 
 source 'https://rubygems.org'
 
+# Environment variables from .env file
+gem 'dotenv-rails', groups: [:development, :test]
+
 # Main Rails gem
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '7.2.2.1'

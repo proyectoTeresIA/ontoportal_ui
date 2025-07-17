@@ -10,6 +10,7 @@ RUN bash -c "set -o pipefail && apt-get update && \
      libxml2 \
      libxslt-dev \
      libmariadb-dev \
+     libyaml-dev \
      git \
      curl \
   && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key -o /etc/apt/keyrings/nodesource.asc \

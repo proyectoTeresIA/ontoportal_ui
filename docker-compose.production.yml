@@ -1,0 +1,165 @@
+version: '3.8'
+
+x-app: &default-app
+  build:
+    context: .
+  env_file:
+    - '.env.production'
+  restart: unless-stopped
+  volumes:
+    - bundle:/usr/local/bundle
+    - node:/node_modules
+    - rails_cache:/app/tmp/cache
+    - assets:/app/public/assets
+  depends_on: &depends_on
+    db:
+      condition: service_healthy
+    cache:
+      condition: service_started
+  environment: &env
+    RAILS_ENV: 'production'
+    BUNDLE_WITHOUT: 'development test'
+    BUNDLE_PATH: '/usr/local/bundle'
+    DB_HOST: 'db'
+    MEMCACHE_SERVERS: 'cache:11211'
+  networks:
+    - internal
+  tmpfs:
+    - /tmp
+    - /app/tmp/pids
+
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    cap_add:
+      - SYS_NICE
+    networks:
+      - internal
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bioportal_ui_production}
+      MYSQL_USER: ${MYSQL_USER:-bp_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${MYSQL_ROOT_PASSWORD:-changeme}']
+      timeout: 10s
+      retries: 5
+      interval: 30s
+      start_period: 30s
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --innodb-buffer-pool-size=1G
+      --max-connections=200
+
+  cache:
+    image: memcached:1.6-alpine
+    restart: unless-stopped
+    command: ['-m', '2048', '-c', '1024']
+    networks:
+      - internal
+    healthcheck:
+      test: ['CMD', 'nc', '-z', 'localhost', '11211']
+      timeout: 5s
+      retries: 3
+      interval: 30s
+
+  # Asset compilation service - runs once to build assets
+  assets:
+    <<: *default-app
+    command: >
+      bash -c "
+        echo 'Assets already precompiled in Docker image' &&
+        ls -la /app/public/assets/ &&
+        echo 'Assets compilation completed'
+      "
+    profiles:
+      - build
+    volumes:
+      - assets:/app/public/assets
+    depends_on:
+      - db
+      - cache
+
+  # Main Rails application
+  app:
+    <<: *default-app
+    command: >
+      bash -c "
+        bundle install --deployment --without development test &&
+        bundle exec rails db:prepare &&
+        PUMA_BIND_PORT=3000 bundle exec puma -C config/puma.rb
+      "
+    ports:
+      - '3000:3000'
+    volumes:
+      - bundle:/usr/local/bundle
+      - rails_cache:/app/tmp/cache
+      - assets:/app/public/assets
+      - app_logs:/app/log
+    environment:
+      <<: *env
+      # These should be set in .env.production file
+      # SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      # RAILS_MASTER_KEY: ${RAILS_MASTER_KEY}
+      BIOPORTAL_WEB_UI_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      PUMA_BIND_PORT: 3000
+    depends_on:
+      <<: *depends_on
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:3000/health || exit 1']
+      timeout: 10s
+      retries: 3
+      interval: 30s
+      start_period: 60s
+
+  # Background job processor (if using Sidekiq or similar)
+  worker:
+    <<: *default-app
+    command: >
+      bash -c "
+        bundle install --deployment --without development test &&
+        bundle exec sidekiq -C config/sidekiq.yml
+      "
+    volumes:
+      - bundle:/usr/local/bundle
+      - rails_cache:/app/tmp/cache
+      - app_logs:/app/log
+    environment:
+      <<: *env
+      BIOPORTAL_WEB_UI_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      PUMA_BIND_PORT: 3000
+    depends_on:
+      <<: *depends_on
+    profiles:
+      - worker
+    healthcheck:
+      test: ['CMD-SHELL', 'ps aux | grep -v grep | grep sidekiq || exit 1']
+      timeout: 10s
+      retries: 3
+      interval: 30s
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    external: true
+
+volumes:
+  mysql-data:
+    driver: local
+  bundle:
+    driver: local
+  rails_cache:
+    driver: local
+  assets:
+    driver: local
+  node:
+    driver: local
+  app_logs:
+    driver: local

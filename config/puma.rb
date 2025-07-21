@@ -5,18 +5,32 @@
 # and maximum; this matches the default thread size of Active Record.
 
 # Puma threads
-max_threads_count = ENV.fetch("RAILS_MAX_THREADS") { 5 }
-min_threads_count = ENV.fetch("RAILS_MIN_THREADS") { max_threads_count }
+max_threads_count = ENV.fetch('RAILS_MAX_THREADS') { 5 }
+min_threads_count = ENV.fetch('RAILS_MIN_THREADS') { max_threads_count }
 threads min_threads_count, max_threads_count
 
 # Specifies the `environment` that Puma will run in.
-rails_env = ENV.fetch("RAILS_ENV") { "development" }
+rails_env = ENV.fetch('RAILS_ENV') { 'development' }
 environment rails_env
 
 if %w[production staging appliance].include?(rails_env)
 
-  # Define Puma socket (for Nginx)
-  bind "unix:///run/puma-ui/puma.sock"
+  # Check if we're running in Docker (with PUMA_BIND_PORT set)
+  if ENV['PUMA_BIND_PORT']
+    # Docker deployment - use port binding
+    bind "tcp://0.0.0.0:#{ENV.fetch('PUMA_BIND_PORT') { 3000 }}"
+
+    # Use app/tmp for PID and state files in Docker
+    pidfile '/app/tmp/pids/puma.pid'
+    state_path '/app/tmp/pids/puma.state'
+  else
+    # Traditional server deployment - use Unix socket
+    bind 'unix:///run/puma-ui/puma.sock'
+
+    # PID & state file locations
+    pidfile '/run/puma-ui/puma.pid'
+    state_path '/run/puma-ui/puma.state'
+  end
 
   # Specifies the number of `workers` to boot in clustered mode.
   # Workers are forked webserver processes. If using threads and workers together
@@ -24,7 +38,7 @@ if %w[production staging appliance].include?(rails_env)
   # Workers do not work on JRuby or Windows (both of which do not support
   # processes).
 
-  workers ENV.fetch("WEB_CONCURRENCY") { 2 }
+  workers ENV.fetch('WEB_CONCURRENCY') { 2 }
 
   # Use the `preload_app!` method when specifying a `workers` number.
   # This directive tells Puma to first boot the application and load code
@@ -36,7 +50,7 @@ if %w[production staging appliance].include?(rails_env)
 
   # Close DB and cache connections before workers fork
   before_fork do
-    puts "Puma: Disconnecting before fork..."
+    puts 'Puma: Disconnecting before fork...'
     ActiveRecord::Base.connection_pool.disconnect! if defined?(ActiveRecord)
 
     if defined?(Rails.cache) && Rails.cache.respond_to?(:disconnect)
@@ -49,7 +63,7 @@ if %w[production staging appliance].include?(rails_env)
   # are forked to prevent connection leakage.
 
   on_worker_boot do
-    puts "Puma: Reconnecting after fork..."
+    puts 'Puma: Reconnecting after fork...'
     ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
 
     if defined?(Rails.cache) && Rails.cache.respond_to?(:reset)
@@ -57,15 +71,14 @@ if %w[production staging appliance].include?(rails_env)
     end
   end
 
-  # PID & state file locations
-  pidfile "/run/puma-ui/puma.pid"
-  state_path "/run/puma-ui/puma.state"
-
   # Logging setup
-  stdout_redirect "/var/log/ontoportal/ui/puma.stdout.log", "/var/log/ontoportal/ui/puma.stderr.log", true
+  stdout_redirect '/var/log/ontoportal/ui/puma.stdout.log', '/var/log/ontoportal/ui/puma.stderr.log', true
 else
   # Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-  port ENV.fetch("PORT") { 3000 }
+  port ENV.fetch('PORT') { 3000 }
+
+  # Bind to all interfaces (useful for Docker development)
+  bind "tcp://0.0.0.0:#{ENV.fetch('PORT') { 3000 }}"
 end
 
 # Allow puma to be restarted by `rails restart` command.

@@ -9,13 +9,13 @@
 # For full documentation of agent configuration options, please refer to
 # https://docs.newrelic.com/docs/agents/ruby-agent/installation-configuration/ruby-agent-configuration
 
-common: &default_settings
-  # Required license key associated with your New Relic account.
-  license_key: <%= Rails.application.credentials[:newrelic][:license_key] %>
+common:
+  &default_settings # Required license key associated with your New Relic account.
+  license_key: <%= ENV['NEW_RELIC_LICENSE_KEY'] || (Rails.application.credentials.dig(:newrelic, :license_key) rescue nil) %>
 
   # Your application name. Renaming here affects where data displays in New
   # Relic.  For more details, see https://docs.newrelic.com/docs/apm/new-relic-apm/maintenance/renaming-applications
-  app_name: <%= Rails.application.credentials[:newrelic][:app_name] %>
+  app_name: <%= ENV['NEW_RELIC_APP_NAME'] || (Rails.application.credentials.dig(:newrelic, :app_name) rescue 'OntoPortal') %>
 
   distributed_tracing:
     enabled: true
@@ -55,5 +55,5 @@ production:
 
 staging:
   <<: *default_settings
-  app_name: <%= Rails.application.credentials[:newrelic][:app_name] %>
-  license_key: <%= Rails.application.credentials[:newrelic][:license_key] %>
+  app_name: <%= ENV['NEW_RELIC_APP_NAME'] || (Rails.application.credentials.dig(:newrelic, :app_name) rescue 'OntoPortal Staging') %>
+  license_key: <%= ENV['NEW_RELIC_LICENSE_KEY'] || (Rails.application.credentials.dig(:newrelic, :license_key) rescue nil) %>

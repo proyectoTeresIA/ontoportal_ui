@@ -1,29 +1,68 @@
 # frozen_string_literal: true
 
+require 'ostruct'
+
 class HomeController < ApplicationController
   layout :determine_layout
 
   def index
-    @ontologies_views = LinkedData::Client::Models::Ontology.all(include_views: true)
+    begin
+      @ontologies_views = LinkedData::Client::Models::Ontology.all(include_views: true)
+      # If the API returns a hash instead of an array, treat it as an empty array
+      @ontologies_views = [] if @ontologies_views.is_a?(Hash)
+    rescue StandardError => e
+      Rails.logger.error "Error fetching ontologies: #{e.message}"
+      @ontologies_views = []
+    end
+
     @ontologies = @ontologies_views.select { |o| !o.viewOf }
     @ontologies_hash = Hash[@ontologies_views.map { |o| [o.acronym, o] }]
 
-    @groups = LinkedData::Client::Models::Group.all
+    begin
+      @groups = LinkedData::Client::Models::Group.all
+      @groups = [] if @groups.is_a?(Hash)
+    rescue StandardError => e
+      Rails.logger.error "Error fetching groups: #{e.message}"
+      @groups = []
+    end
     organize_groups
 
     # Calculate BioPortal summary statistics
     @ont_count = @ontologies.length
-    @cls_count = LinkedData::Client::Models::Metrics.all.map { |m| m.classes.to_i }.sum
-    @prop_count = 36286
+
+    begin
+      metrics = LinkedData::Client::Models::Metrics.all
+      metrics = [] if metrics.is_a?(Hash)
+      @cls_count = metrics.map { |m| m.classes.to_i }.sum
+    rescue StandardError => e
+      Rails.logger.error "Error fetching metrics: #{e.message}"
+      @cls_count = 0
+    end
+
+    @prop_count = 36_286
     @map_count = total_mapping_count
-    @analytics = LinkedData::Client::Analytics.last_month
+
+    begin
+      @analytics = LinkedData::Client::Analytics.last_month
+      @analytics = OpenStruct.new(onts: []) if @analytics.is_a?(Hash)
+    rescue StandardError => e
+      Rails.logger.error "Error fetching analytics: #{e.message}"
+      @analytics = OpenStruct.new(onts: [])
+    end
 
     @ontology_names = @ontologies.map { |ont| ["#{ont.name} (#{ont.acronym})", ont.acronym] }
 
     @anal_ont_names = {}
     @anal_ont_numbers = []
+
+    return unless @analytics.respond_to?(:onts) && @analytics.onts.is_a?(Array)
+
     @analytics.onts[0..4].each do |visits|
+      next unless visits.is_a?(Hash) && visits[:ont] && visits[:views]
+
       ont = @ontologies_hash[visits[:ont].to_s]
+      next unless ont
+
       @anal_ont_names[ont.acronym] = ont.name
       @anal_ont_numbers << visits[:views]
     end
@@ -61,19 +100,13 @@ class HomeController < ApplicationController
 
     @errors = []
 
-    if params[:name].nil? || params[:name].empty?
-      @errors << 'Please include your name'
-    end
+    @errors << 'Please include your name' if params[:name].nil? || params[:name].empty?
     if params[:email].nil? || params[:email].length < 1 || !params[:email].match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i)
       @errors << 'Please include your email'
     end
-    if params[:comment].nil? || params[:comment].empty?
-      @errors << 'Please include your comment'
-    end
-    if using_captcha? && !session[:user]
-      unless verify_recaptcha
-        @errors << 'Please fill in the proper text from the supplied image'
-      end
+    @errors << 'Please include your comment' if params[:comment].nil? || params[:comment].empty?
+    if using_captcha? && !session[:user] && !verify_recaptcha
+      @errors << 'Please fill in the proper text from the supplied image'
     end
 
     unless @errors.empty?

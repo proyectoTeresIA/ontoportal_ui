@@ -69,22 +69,9 @@ services:
       retries: 3
       interval: 30s
 
-  # Asset compilation service - runs once to build assets
-  assets:
+  node:
     <<: *default-app
-    command: >
-      bash -c "
-        echo 'Assets already precompiled in Docker image' &&
-        ls -la /app/public/assets/ &&
-        echo 'Assets compilation completed'
-      "
-    profiles:
-      - build
-    volumes:
-      - assets:/app/public/assets
-    depends_on:
-      - db
-      - cache
+    command: 'yarn build --watch'
 
   # Main Rails application
   app:
@@ -118,31 +105,10 @@ services:
       interval: 30s
       start_period: 60s
 
-  # Background job processor (if using Sidekiq or similar)
-  worker:
-    <<: *default-app
-    command: >
-      bash -c "
-        bundle install --deployment --without development test &&
-        bundle exec sidekiq -C config/sidekiq.yml
-      "
-    volumes:
-      - bundle:/usr/local/bundle
-      - rails_cache:/app/tmp/cache
-      - app_logs:/app/log
-    environment:
-      <<: *env
-      BIOPORTAL_WEB_UI_DATABASE_PASSWORD: ${MYSQL_PASSWORD:-changeme}
-      PUMA_BIND_PORT: 3000
-    depends_on:
-      <<: *depends_on
-    profiles:
-      - worker
-    healthcheck:
-      test: ['CMD-SHELL', 'ps aux | grep -v grep | grep sidekiq || exit 1']
-      timeout: 10s
-      retries: 3
-      interval: 30s
+  chrome-server:
+    image: selenium/standalone-chrome:112.0-chromedriver-112.0-grid-4.9.0-20230421
+    shm_size: 2g
+    network_mode: 'host'
 
 networks:
   internal:

@@ -18,8 +18,10 @@ x-app: &default-app
   environment: &env
     BUNDLE_WITHOUT: ''
     BUNDLE_PATH: /usr/local/bundle
-    DB_HOST: 127.0.0.1
-    MEMCACHE_SERVERS: 'localhost:11211'
+    DB_HOST: db
+    MEMCACHE_SERVERS: 'cache:11211'
+    MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+    MYSQL_DATABASE: ${MYSQL_DATABASE:-bioportal_ui_production}
   tmpfs:
     - /tmp
     - /app/tmp/pids
@@ -34,7 +36,10 @@ services:
     ports:
       - '3306:3306'
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bioportal_ui_production}
+      MYSQL_USER: ${MYSQL_USER:-bp_user}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       timeout: 5s
@@ -56,39 +61,16 @@ services:
   dev:
     <<: *default-app
     command: bash -c "bundle install && ./bin/setup && ./bin/rails s -b 0.0.0.0"
-    network_mode: 'host'
+    ports:
+      - '3000:3000'
+    networks:
+      - internal
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
     depends_on:
       <<: *depends_on
       node:
         condition: service_started
-
-  production:
-    <<: *default-app
-    command: 'bundle exec puma -C config/puma.rb'
-    networks:
-      - internal
-      - external
-    environment:
-      <<: *env
-      RAILS_ENV: 'production'
-      BUNDLE_WITHOUT: 'development test'
-      BUNDLE_PATH: '/usr/local/bundle'
-      #SECRET_KEY_BASE: TODO
-      #RAILS_MASTER_KEY: TODO
-      BIOPORTAL_WEB_UI_DATABASE_PASSWORD: root
-      MEMCACHE_SERVERS: 'cache:11211'
-    ports:
-      - '3001:3000'
-    # depends_on:
-    #   db:
-    #     condition: service_healthy
-    #   cache:
-    #     condition: service_started
-    volumes:
-      - node:/node_modules
-      - rails_cache:/app/tmp/cache
-      - assets:/app/public/assets
-      - app_ui:/app
 
   test:
     <<: *default-app

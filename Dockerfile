@@ -48,7 +48,7 @@ RUN if [ "${RAILS_ENV}" != "development" ]; then \
   NEW_RELIC_LICENSE_KEY=dummy \
   NEW_RELIC_APP_NAME="Build Process" \
   ./bin/rails assets:precompile && \
-  bundle install --deployment --without development test; fi
+  bundle install --deployment --without ${BUNDLE_WITHOUT}; fi
 
 RUN mkdir -p /var/log/ontoportal/ui /run/puma-ui
 

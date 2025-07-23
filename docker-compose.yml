@@ -60,11 +60,11 @@ services:
 
   node:
     <<: *default-app
-    command: 'yarn build --watch'
+    command: bash -c "yarn install && yarn build --watch"
 
   dev:
     <<: *default-app
-    command: bash -c "bundle install && ./bin/setup && ./bin/rails s -b 0.0.0.0"
+    command: bash -c "yarn install && bundle install && ./bin/setup && ./bin/rails s -b 0.0.0.0"
     ports:
       - '3000:3000'
     networks:

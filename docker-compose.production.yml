@@ -4,7 +4,7 @@ x-app: &default-app
   build:
     context: .
     args:
-      RUBY_VERSION: "3.1"
+      RUBY_VERSION: '3.1'
       RAILS_ENV: ${RAILS_ENV:-production}
       NODE_ENV: ${NODE_ENV:-production}
       BUNDLE_WITHOUT: ${BUNDLE_WITHOUT:-development test}
@@ -35,12 +35,12 @@ x-app: &default-app
 
 services:
   db:
-    image: "mysql:8.0"
+    image: 'mysql:8.0'
     restart: unless-stopped
     networks:
       - internal
     ports:
-      - "3306:3306"
+      - '3306:3306'
     environment:
       MYSQL_USER: ${MYSQL_USER:-bp_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
@@ -50,7 +50,17 @@ services:
       - mysql-data:/var/lib/mysql
       - ./config/initializers/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
     healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', '${MYSQL_USER:-bp_user}', '-p${MYSQL_PASSWORD:-changeme}']
+      test:
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          '${MYSQL_USER:-bp_user}',
+          '-p${MYSQL_PASSWORD:-changeme}',
+        ]
       timeout: 10s
       retries: 5
       interval: 30s
@@ -73,13 +83,14 @@ services:
 
   node:
     <<: *default-app
-    command: 'yarn build --watch'
+    command: bash -c "yarn install && yarn build --watch"
 
   # Main Rails application
   app:
     <<: *default-app
     command: >
       bash -c "
+        yarn install &&
         bundle install --deployment --without development test &&
         bundle exec rails db:prepare &&
         PUMA_BIND_PORT=3000 bundle exec puma -C config/puma.rb

@@ -13,7 +13,7 @@ default: &default
   adapter: mysql2
   encoding: utf8mb4
   username: <%= ENV["MYSQL_USER"] || "bp_user" %>
-  password: <%= ENV["MYSQL_ROOT_PASSWORD"] || "changeme" %>
+  password: <%= ENV["MYSQL_PASSWORD"] || "changeme" %>
   host: <%= ENV["DB_HOST"] || "localhost" %>
 
 development:

@@ -12,14 +12,14 @@
 default: &default
   adapter: mysql2
   encoding: utf8mb4
-  username: root
-  password: root
-  host: <%= ENV["DB_HOST"] %>
+  username: <%= ENV["MYSQL_USER"] || "bp_user" %>
+  password: <%= ENV["MYSQL_ROOT_PASSWORD"] || "changeme" %>
+  host: <%= ENV["DB_HOST"] || "localhost" %>
 
 development:
   <<: *default
-  database: bioportal_ui_dev
-
+  database: bioportal_ui_development
+  encoding: utf8
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
@@ -50,11 +50,7 @@ test:
 production:
   <<: *default
   database: bioportal_ui_production
-  username: bp_user
-  password: <%= ENV["BIOPORTAL_WEB_UI_DATABASE_PASSWORD"] %>
 
 appliance:
   <<: *default
   database: bioportal_ui_appliance
-  username: bp_user
-  password: <%= ENV["BIOPORTAL_WEB_UI_DATABASE_PASSWORD"] %>

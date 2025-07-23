@@ -31,16 +31,19 @@ x-app: &default-app
 
 services:
   db:
-    image: 'mysql:8.0'
+    image: "mysql:8.0"
     networks:
       - internal
-    volumes:
-      - mysql-data:/var/lib/mysql
     ports:
-      - '3306:3306'
+      - "3306:3306"
     environment:
       MYSQL_USER: ${MYSQL_USER:-bp_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      MYSQL_DATABASE: bioportal_ui_development
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./config/initializers/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       timeout: 5s

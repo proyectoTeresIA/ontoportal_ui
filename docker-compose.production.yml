@@ -35,18 +35,20 @@ x-app: &default-app
 
 services:
   db:
-    image: mysql:8.0
+    image: "mysql:8.0"
     restart: unless-stopped
-    cap_add:
-      - SYS_NICE
     networks:
       - internal
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./db-init:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
     environment:
       MYSQL_USER: ${MYSQL_USER:-bp_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      MYSQL_DATABASE: bioportal_ui_development
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./config/initializers/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', '${MYSQL_USER:-bp_user}', '-p${MYSQL_PASSWORD:-changeme}']
       timeout: 10s
@@ -54,9 +56,6 @@ services:
       interval: 30s
       start_period: 30s
     command: >
-      --default-authentication-plugin=mysql_native_password
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_unicode_ci
       --innodb-buffer-pool-size=1G
       --max-connections=200
 

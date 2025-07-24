@@ -12,18 +12,11 @@ module LinkedData
             return link if link.media_type && link.media_type.downcase.eql?(media_type.downcase)
           end
           
-          # If not found, try converting between different URL patterns
+          # If not found and media_type contains data.bioontology.org, try with local API host
           if media_type.include?('data.bioontology.org')
-            # Convert bioontology.org to local API host
-            local_media_type = media_type.gsub('data.bioontology.org', 'api-agraph:9393')
+            local_media_type = media_type.gsub('data.bioontology.org', LinkedData::Client.settings.rest_url.gsub('http://', '').gsub('https://', ''))
             object.links.each do |type, link|
               return link if link.media_type && link.media_type.downcase.eql?(local_media_type.downcase)
-            end
-          elsif media_type.include?('api-agraph:9393')
-            # Convert local API to bioontology.org (for compatibility)
-            bioontology_media_type = media_type.gsub('api-agraph:9393', 'data.bioontology.org')
-            object.links.each do |type, link|
-              return link if link.media_type && link.media_type.downcase.eql?(bioontology_media_type.downcase)
             end
           end
           

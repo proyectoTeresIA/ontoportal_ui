@@ -48,7 +48,7 @@ services:
       MYSQL_DATABASE: bioportal_ui_development
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./config/initializers/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
+      - ./db/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
     healthcheck:
       test:
         [

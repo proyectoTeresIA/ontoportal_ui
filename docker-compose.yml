@@ -2,7 +2,7 @@ x-app: &default-app
   build:
     context: .
     args:
-      RUBY_VERSION: "3.1"
+      RUBY_VERSION: '3.1'
       RAILS_ENV: ${RAILS_ENV:-development}
       NODE_ENV: ${NODE_ENV:-development}
       BUNDLE_WITHOUT: ${BUNDLE_WITHOUT:-production test}
@@ -31,11 +31,11 @@ x-app: &default-app
 
 services:
   db:
-    image: "mysql:8.0"
+    image: 'mysql:8.0'
     networks:
       - internal
     ports:
-      - "3306:3306"
+      - '3306:3306'
     environment:
       MYSQL_USER: ${MYSQL_USER:-bp_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
@@ -43,7 +43,7 @@ services:
       MYSQL_DATABASE: bioportal_ui_development
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./config/initializers/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
+      - ./db/init-mysql.sh:/docker-entrypoint-initdb.d/init-mysql.sh
     healthcheck:
       test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       timeout: 5s

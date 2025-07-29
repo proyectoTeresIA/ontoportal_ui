@@ -1,5 +1,5 @@
 # Monkey patch to fix media type mismatch between client and API
-# The client expects 'http://data.bioontology.org/metadata/...' but the API returns 'http://api-agraph:9393/metadata/...'
+# The client expects 'http://data.bioontology.org/...' but the API returns local URLs
 
 module LinkedData
   module Client
@@ -22,6 +22,53 @@ module LinkedData
           
           # If still not found, return nil (original behavior)
           nil
+        end
+      end
+    end
+    
+    # Patch HTTP requests to redirect bioontology.org URLs to local API
+    module HTTP
+      class << self
+        alias_method :original_get, :get if method_defined?(:get)
+        alias_method :original_post, :post if method_defined?(:post)
+        alias_method :original_put, :put if method_defined?(:put)
+        alias_method :original_patch, :patch if method_defined?(:patch)
+        alias_method :original_delete, :delete if method_defined?(:delete)
+        
+        def get(path, params = {}, options = {})
+          path = convert_bioontology_url(path)
+          original_get(path, params, options)
+        end
+        
+        def post(path, obj, options = {})
+          path = convert_bioontology_url(path)
+          original_post(path, obj, options)
+        end
+        
+        def put(path, obj)
+          path = convert_bioontology_url(path)
+          original_put(path, obj)
+        end
+        
+        def patch(path, obj)
+          path = convert_bioontology_url(path)
+          original_patch(path, obj)
+        end
+        
+        def delete(path)
+          path = convert_bioontology_url(path)
+          original_delete(path)
+        end
+        
+        private
+        
+        def convert_bioontology_url(path)
+          if path && path.include?('data.bioontology.org')
+            rest_url = LinkedData::Client.settings.rest_url
+            path = path.gsub('http://data.bioontology.org', rest_url)
+            path = path.gsub('https://data.bioontology.org', rest_url)
+          end
+          path
         end
       end
     end

@@ -69,8 +69,10 @@ module SubmissionUpdater
 
   def convert_values_to_types(new_submission_hash)
     unless new_submission_hash[:contact].nil?
-      new_submission_hash[:contact] = new_submission_hash[:contact].values unless new_submission_hash[:contact].is_a?(Array)
-      new_submission_hash[:contact].delete_if { |c| c[:name].empty? || c[:email].empty? }
+      # Additional processing if needed - most processing now done in submission_params
+      if new_submission_hash[:contact].is_a?(Array)
+        new_submission_hash[:contact].delete_if { |c| c[:name].blank? || c[:email].blank? }
+      end
     end
 
     # Convert metadata that needs to be integer to int
@@ -94,6 +96,13 @@ module SubmissionUpdater
 
 
   def submission_params(params)
+    # Extract submission parameters from the nested structure
+    submission_params = if params.is_a?(ActionController::Parameters) && params[:submission]
+                          params[:submission]
+                        else
+                          params
+                        end
+    
     attributes = [
       :ontology,
       :description,
@@ -122,8 +131,17 @@ module SubmissionUpdater
       m_attr =  Array(m["enforce"]).include?("list") ? [{ m_attr => {} }, { m_attr => []}] : m_attr
       attributes << m_attr
     end
-    p = params.permit(attributes.uniq)
+    p = submission_params.permit(attributes.uniq)
     p['pullLocation'] = '' if p['isRemote']&.eql?('3')
+
+    if p[:contact].is_a?(Hash) && p[:contact].key?('NEW_RECORD')
+      contact_data = p[:contact]['NEW_RECORD']
+      if contact_data.is_a?(Hash) && contact_data['name'].present? && contact_data['email'].present?
+        p[:contact] = [contact_data.with_indifferent_access]
+      else
+        p[:contact] = []
+      end
+    end
 
     p = p.to_h.transform_values do |v|
       if v.is_a? Hash

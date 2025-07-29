@@ -11,10 +11,14 @@ class AnnotatorController < ApplicationController
     @semantic_types_for_select = []
     @semantic_types ||= get_semantic_types
     @sem_type_ont = LinkedData::Client::Models::Ontology.find_by_acronym('STY').first
-    @semantic_types.each_pair do |code, label|
-      @semantic_types_for_select << ["#{label} (#{code})", code]
+    
+    unless @semantic_types.nil? || @semantic_types.empty?
+      @semantic_types.each_pair do |code, label|
+        @semantic_types_for_select << ["#{label} (#{code})", code]
+      end
+      @semantic_types_for_select.sort! {|a,b| a[0] <=> b[0]}
     end
-    @semantic_types_for_select.sort! {|a,b| a[0] <=> b[0]}
+    
     @recognizers = parse_json(REST_URI + "/annotator/recognizers")
     @annotator_ontologies = LinkedData::Client::Models::Ontology.all
   end
@@ -83,12 +87,24 @@ class AnnotatorController < ApplicationController
     semantic_types = {}
     sty_ont = LinkedData::Client::Models::Ontology.find_by_acronym('STY').first
     return semantic_types if sty_ont.nil?
-    # The first 500 items should be more than sufficient to get all semantic types.
-    sty_classes = sty_ont.explore.classes({'pagesize'=>500, include: 'prefLabel'})
-    sty_classes.collection.each do |cls|
-      code = cls.id.split("/").last
-      semantic_types[ code ] = cls.prefLabel
+    
+    begin
+      # The first 500 items should be more than sufficient to get all semantic types.
+      explorer = sty_ont.explore
+      return semantic_types if explorer.nil?
+      
+      sty_classes = explorer.classes({'pagesize'=>500, include: 'prefLabel'})
+      return semantic_types if sty_classes.nil? || sty_classes.collection.nil?
+      
+      sty_classes.collection.each do |cls|
+        code = cls.id.split("/").last
+        semantic_types[ code ] = cls.prefLabel
+      end
+    rescue => e
+      Log.add :error, "Error retrieving semantic types: #{e.message}"
+      return semantic_types
     end
+    
     semantic_types
   end
 

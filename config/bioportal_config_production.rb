@@ -97,9 +97,6 @@ $UI_THEME = ENV['UI_THEME'] || 'bioportal'
 # Production-specific configuration
 $HOSTNAME = ENV['HOSTNAME'] || 'localhost'
 
-# The URL for the BioPortal Rails UI (this application)
-$UI_URL = ENV['UI_URL'] || "http://#{$HOSTNAME}:3000"
-
 # REST core service address - using ENV['API_URL'] from environment
 $SPARQL_URL = ENV['SPARQL_URL'] || "http://#{$HOSTNAME}:8081/test/"
 

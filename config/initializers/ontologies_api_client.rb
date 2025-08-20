@@ -8,4 +8,5 @@ LinkedData::Client.config do |config|
   config.debug_client = $DEBUG_RUBY_CLIENT || false
   config.debug_client_keys = $DEBUG_RUBY_CLIENT_KEYS || []
   config.apikey = $API_KEY
+  config.ui_url = $UI_URL
 end

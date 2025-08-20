@@ -104,9 +104,6 @@ end
 
 $HOSTNAME = ENV['HOSTNAME'] || '172.17.0.1' # PUT YOUR SERVER HOSTNAME (IP) HERE
 
-# The URL for the BioPortal Rails UI (this application)
-$UI_URL = "http://#{$HOSTNAME}:3000"
-
 # REST core service address
 # $REST_URL = "http://#{$HOSTNAME}:9393"  # Commented out - using ENV['API_URL'] instead
 $SPARQL_URL = "http://#{$HOSTNAME}:8081/test/"

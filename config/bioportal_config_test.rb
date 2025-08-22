@@ -23,6 +23,9 @@ $API_KEY = ENV['API_KEY']
 # BioPortal API service address
 $REST_URL = ENV['API_URL']
 
+# REST URL prefix for LinkedData client
+$REST_URL_PREFIX = ENV['REST_URL_PREFIX']
+
 $NOT_DOWNLOADABLE = {}
 
 # Release version text (appears in footer of all pages, except 404 and 500 errors)
@@ -92,35 +95,18 @@ $FRONT_NOTICE = ''
 $SITE_NOTICE = {}
 
 $UI_THEME = ENV['UI_THEME'] || 'bioportal'
-$HOSTNAME = ENV['API_URL']
-
-if $HOSTNAME
-  $HOSTNAME = ENV['API_URL'].split('data.').last
-  # add custom stage server configuration if needed (e.g bioportal_config_development_stageportal.lirmm.fr)
-  if File.exist?("config/bioportal_config_development_#{$HOSTNAME}")
-    require_relative "bioportal_config_development_#{$HOSTNAME}"
-  end
-end
-
-$HOSTNAME = ENV['HOSTNAME'] || '172.17.0.1' # PUT YOUR SERVER HOSTNAME (IP) HERE
-
-# The URL for the BioPortal Rails UI (this application)
-$UI_URL = "http://#{$HOSTNAME}:3000"
 
 # REST core service address
-# $REST_URL = "http://#{$HOSTNAME}:9393"  # Commented out - using ENV['API_URL'] instead
-$SPARQL_URL = "http://#{$HOSTNAME}:8081/test/"
+$SPARQL_URL = "#{$UI_URL}/test/"
 
-$BIOMIXER_URL = "http://#{$HOSTNAME}:8081/BioMixer"
-
-$ANNOTATOR_URL = $PROXY_URL = "http://#{$HOSTNAME}:8081/annotator"
+$ANNOTATOR_URL = $PROXY_URL = "#{$UI_URL}/annotator"
 
 # If your BioPortal installation includes Fairness score set this to true
 $FAIRNESS_DISABLED = false
-$FAIRNESS_URL = "http://#{$HOSTNAME}:8081/fairness"
+$FAIRNESS_URL = "#{$UI_URL}/fairness"
 
 # NCBO annotator URL and apikey
-$NCBO_ANNOTATOR_URL = "http://#{$HOSTNAME}:8081/ncbo_annotatorplus"
+$NCBO_ANNOTATOR_URL = "#{$UI_URL}/ncbo_annotatorplus"
 $NCBO_ANNOTATORPLUS_ENABLED = true
 $NCBO_API_KEY = ENV['NCBO_API_KEY'] || '4a5011ea-75fa-4be6-8e89-f45c8c84844e'
 

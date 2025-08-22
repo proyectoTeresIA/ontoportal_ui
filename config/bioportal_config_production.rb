@@ -9,7 +9,7 @@ $SITE = ENV['SITE'] || 'BioPortal'
 $ORG_SITE = $ORG.nil? || $ORG.empty? ? $SITE : "#{$ORG} #{$SITE}"
 
 # The URL for the BioPortal Rails UI (this application)
-$UI_URL = ENV['UI_URL'] || 'http://localhost:3000'
+$UI_URL = ENV['UI_URL'] || 'https://bioportal.bioontology.org'
 
 # If you are running a PURL server to provide URLs for ontologies in your BioPortal instance, enable this option
 $PURL_ENABLED = ENV['PURL_ENABLED'] || false
@@ -22,6 +22,9 @@ $API_KEY = ENV['API_KEY']
 
 # BioPortal API service address
 $REST_URL = ENV['API_URL']
+
+# REST URL prefix for LinkedData client
+$REST_URL_PREFIX = ENV['REST_URL_PREFIX']
 
 $NOT_DOWNLOADABLE = {}
 
@@ -48,7 +51,6 @@ ActionMailer::Base.smtp_settings = {
   port: 25, # smtp server port
   domain: '' # fqdn of rails server, ex: rails.example.org
 }
-
 # Announcements mailman mailing list REQUEST address, EX: list-request@lists.example.org
 # NOTE: You must use the REQUEST address for the mailing list. ONLY WORKS WITH MAILMAN LISTS.
 $ANNOUNCE_LIST = ENV['SUPPORT_EMAIL'] || 'bioportal-test-announce@example.org'
@@ -74,7 +76,7 @@ ENV['USE_RECAPTCHA'] = 'false'
 require 'log'
 
 # URL where BioMixer GWT app is located
-$BIOMIXER_URL = ENV['BIOMIXER_URL'] || 'http://localhost:8081/BioMixer'
+$BIOMIXER_URL = ENV['BIOMIXER_URL'] || 'https://biomixer.bioontology.org'
 $BIOMIXER_APIKEY = ENV['BIOMIXER_APIKEY']
 
 ##
@@ -94,26 +96,18 @@ $SITE_NOTICE = {}
 
 $UI_THEME = ENV['UI_THEME'] || 'bioportal'
 
-# Production-specific configuration
-$HOSTNAME = ENV['HOSTNAME'] || 'localhost'
+# REST core service address
+$SPARQL_URL = "#{$UI_URL}/test/"
 
-# REST core service address - using ENV['API_URL'] from environment
-$SPARQL_URL = ENV['SPARQL_URL'] || "http://#{$HOSTNAME}:8081/test/"
-
-# BioMixer URL
-$BIOMIXER_URL = ENV['BIOMIXER_URL'] || "http://#{$HOSTNAME}:8081/BioMixer"
-
-# Annotator and Proxy URLs
-$ANNOTATOR_URL = ENV['ANNOTATOR_URL'] || "http://#{$HOSTNAME}:8081/annotator"
-$PROXY_URL = ENV['PROXY_URL'] || $ANNOTATOR_URL
+$ANNOTATOR_URL = $PROXY_URL = "#{$UI_URL}/annotator"
 
 # If your BioPortal installation includes Fairness score set this to true
-$FAIRNESS_DISABLED = ENV['FAIRNESS_DISABLED'] || false
-$FAIRNESS_URL = ENV['FAIRNESS_URL'] || "http://#{$HOSTNAME}:8081/fairness"
+$FAIRNESS_DISABLED = false
+$FAIRNESS_URL = "#{$UI_URL}/fairness"
 
 # NCBO annotator URL and apikey
-$NCBO_ANNOTATOR_URL = ENV['NCBO_ANNOTATOR_URL'] || "http://#{$HOSTNAME}:8081/ncbo_annotatorplus"
-$NCBO_ANNOTATORPLUS_ENABLED = ENV['NCBO_ANNOTATORPLUS_ENABLED'] || true
+$NCBO_ANNOTATOR_URL = "#{$UI_URL}/ncbo_annotatorplus"
+$NCBO_ANNOTATORPLUS_ENABLED = true
 $NCBO_API_KEY = ENV['NCBO_API_KEY'] || '4a5011ea-75fa-4be6-8e89-f45c8c84844e'
 
 $NOT_DOWNLOADABLE = []

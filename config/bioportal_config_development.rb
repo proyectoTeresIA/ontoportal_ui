@@ -111,8 +111,6 @@ $HOSTNAME = ENV['HOSTNAME'] || '172.17.0.1' # PUT YOUR SERVER HOSTNAME (IP) HERE
 # $REST_URL = "http://#{$HOSTNAME}:9393"  # Commented out - using ENV['API_URL'] instead
 $SPARQL_URL = "http://#{$HOSTNAME}:8081/test/"
 
-$BIOMIXER_URL = "http://#{$HOSTNAME}:8081/BioMixer"
-
 $ANNOTATOR_URL = $PROXY_URL = "http://#{$HOSTNAME}:8081/annotator"
 
 # If your BioPortal installation includes Fairness score set this to true

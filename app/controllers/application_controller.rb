@@ -123,6 +123,10 @@ class ApplicationController < ActionController::Base
     # For config settings, see
     # config/bioportal_config.rb
     # config/initializers/ontologies_api_client.rb
+    
+    # Use external URL for browser requests (if defined, otherwise fallback to internal URL)
+    external_rest_url = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
+    
     config = {
         org: $ORG,
         org_url: $ORG_URL,
@@ -131,7 +135,7 @@ class ApplicationController < ActionController::Base
         ui_url: $UI_URL,
         apikey: LinkedData::Client.settings.apikey,
         userapikey: get_apikey,
-        rest_url: LinkedData::Client.settings.rest_url,
+        rest_url: external_rest_url,
         proxy_url: $PROXY_URL,
         biomixer_url: $BIOMIXER_URL
     }
@@ -421,7 +425,12 @@ class ApplicationController < ActionController::Base
     metrics_hash = {}
     # TODO: Metrics do not return for views on the backend, need to enable include_views param there
     @metrics = LinkedData::Client::Models::Metrics.all(include_views: true)
-    @metrics.each {|m| metrics_hash[m.links['ontology']] = m }
+    @metrics.each do |m| 
+      ontology_link = m.links && m.links['ontology']
+      if ontology_link
+        metrics_hash[ontology_link] = m 
+      end
+    end
     return metrics_hash
   end
 
@@ -438,7 +447,14 @@ class ApplicationController < ActionController::Base
     simple_ontologies = {}
     begin
       ontology_models = LinkedData::Client::Models::Ontology.all({:include_views => true})
-      ontology_models.each {|o| simple_ontologies[o.id] = simplify_ontology_model(o) }
+      ontology_models.each do |o| 
+        # Use current API URL format as the canonical key
+        if o.acronym
+          api_url = "#{LinkedData::Client.settings.rest_url}/ontologies/#{o.acronym}"
+          simplified = simplify_ontology_model(o, api_url)
+          simple_ontologies[api_url] = simplified
+        end
+      end
     rescue Exception => e
       Log.add :error, e.message
       return nil
@@ -524,36 +540,58 @@ class ApplicationController < ActionController::Base
     return cls
   end
 
-  def simplify_ontology_model(ont_model)
-    id = nil
+  def simplify_ontology_model(ont_model, custom_api_url = nil)
+    original_id = nil
     if ont_model.instance_of? Hash
-      id = ont_model['@id']
+      original_id = ont_model['@id']
     elsif ont_model.instance_of? LinkedData::Client::Models::Ontology
-      id = ont_model.id
+      original_id = ont_model.id
     end
-    ont = Rails.cache.read(id)
+    
+    # Use custom API URL if provided, otherwise use original ID for caching
+    cache_key = custom_api_url || original_id
+    ont = Rails.cache.read(cache_key)
     return ont unless ont.nil?
+    
     # No cache or it has expired
-    Log.add :debug, "No cache or expired cache for ontology: #{id}"
+    Log.add :debug, "No cache or expired cache for ontology: #{cache_key}"
     ont = {}
-    ont[:id] = id
-    ont[:uri] = id
+    
     if ont_model.instance_of? Hash
-      ont[:acronym] = ont_model['acronym']
-      ont[:name] = ont_model['name']
+      acronym = ont_model['acronym']
+      name = ont_model['name']
+    else
+      acronym = ont_model.acronym
+      name = ont_model.name
+    end
+    
+    # Generate URLs based on current environment configuration
+    if custom_api_url
+      ont[:id] = custom_api_url
+      ont[:uri] = custom_api_url
+    else
+      # Fallback to original behavior for backward compatibility
+      ont[:id] = original_id
+      ont[:uri] = original_id
+    end
+    
+    ont[:acronym] = acronym
+    ont[:name] = name
+    
+    # Generate UI URL using the UI_URL from environment
+    if acronym && LinkedData::Client.settings.ui_url
+      ont[:ui] = "#{LinkedData::Client.settings.ui_url}/ontologies/#{acronym}"
+    elsif ont_model.instance_of? Hash
       ont[:ui] = ont_model['links']['ui']
     else
-      # try to work with a struct object or a LinkedData::Client::Models::Ontology
-      # if not a struct, then: ont_model.instance_of? LinkedData::Client::Models::Ontology
-      ont[:acronym] = ont_model.acronym
-      ont[:name] = ont_model.name
       ont[:ui] = ont_model.links['ui']
     end
+    
     # Only cache a complete representation of a simplified ontology
     if ont[:id].nil? || ont[:uri].nil? || ont[:acronym].nil? || ont[:name].nil? || ont[:ui].nil?
-      raise "Incomplete simple ontology: #{id}, #{ont}"
+      raise "Incomplete simple ontology: #{cache_key}, #{ont}"
     else
-      Rails.cache.write(ont[:id], ont, expires_in: EXPIRY_ONTOLOGY_SIMPLIFIED)
+      Rails.cache.write(cache_key, ont, expires_in: EXPIRY_ONTOLOGY_SIMPLIFIED)
     end
     return ont
   end

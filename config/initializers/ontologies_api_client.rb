@@ -2,7 +2,7 @@
 require 'ontologies_api_client'
 LinkedData::Client.config do |config|
   config.cache        = $CLIENT_REQUEST_CACHING
-  config.rest_url     = $REST_URL
+  config.rest_url     = $REST_URL_PREFIX || $REST_URL
   config.purl_prefix  = Rails.configuration.settings.purl[:prefix]
   config.purl_host    = Rails.configuration.settings.purl[:host]
   config.debug_client = $DEBUG_RUBY_CLIENT || false

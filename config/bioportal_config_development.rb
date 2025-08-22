@@ -23,6 +23,9 @@ $API_KEY = ENV['API_KEY']
 # BioPortal API service address
 $REST_URL = ENV['API_URL']
 
+# REST URL prefix for LinkedData client
+$REST_URL_PREFIX = ENV['REST_URL_PREFIX']
+
 $NOT_DOWNLOADABLE = {}
 
 # Release version text (appears in footer of all pages, except 404 and 500 errors)

@@ -12,6 +12,9 @@ class SubmissionMetadataComponent < ViewComponent::Base
   end
 
   def display_attributes(metadata)
+    # Handle case when @submission is nil
+    return 'N/A' if @submission.nil?
+    
     if Array(@submission.send(metadata)).empty?
       out = 'N/A'
     else

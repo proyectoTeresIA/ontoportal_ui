@@ -28,6 +28,7 @@ class SelectInputComponent < ViewComponent::Base
     open_to_add_values = options[:open_to_add_values] || false
     required = options[:required] || false
     placeholder = options[:placeholder] || ''
+    
     data = @data.merge({
                          'select-input-multiple-value': multiple,
                          'select-input-open-add-value': open_to_add_values,

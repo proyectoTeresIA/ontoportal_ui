@@ -113,12 +113,33 @@ module SubmissionInputsHelper
     content_tag(:div, out, class: 'my-1')
   end
 
-  def ontology_administered_by_input(ontology = @ontology, users_list = @user_select_list)
-    unless users_list
-      users_list = LinkedData::Client::Models::User.all(include: "username").map { |u| [u.username, u.id] }
-      users_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
-    end
-    select_input(label: label_required(t('submission_inputs.administrators')), name: "ontology[administeredBy]", values: users_list, selected: ontology.administeredBy || session[:user].id, multiple: true)
+  def ontology_administered_by_input(ontology = @ontology, users_list = nil)
+    # Always fetch fresh users for administrators to ensure proper ID extraction
+    raw_users = LinkedData::Client::Models::User.all(include: "username")
+    
+    users_list = raw_users.map { |u| 
+      user_id = nil
+      
+      if u.is_a?(OpenStruct)
+        table = u.instance_variable_get(:@table)
+        if table
+          user_id = table['@id'] || table[:id] || table['id'] || table[:@id]
+        end
+        
+        if u.instance_variable_defined?('@id') && user_id.nil?
+          user_id = u.instance_variable_get('@id')
+        end
+      else
+        user_id = u.id
+      end
+      
+      [u.username, user_id] 
+    }
+    users_list.sort! { |a, b| a[0].to_s.downcase <=> b[0].to_s.downcase }
+    
+    selected_value = ontology.administeredBy || session[:user]&.id
+    
+    select_input(label: label_required(t('submission_inputs.administrators')), name: "ontology[administeredBy]", values: users_list, selected: selected_value, multiple: true)
   end
 
   def ontology_categories_input(ontology = @ontology, categories = @categories)
@@ -204,8 +225,27 @@ module SubmissionInputsHelper
 
   def ontology_visibility_input(ontology = @ontology)
     unless @user_select_list
-      @user_select_list = LinkedData::Client::Models::User.all(include: "username").map { |u| [u.username, u.id] }
-      @user_select_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
+      raw_users = LinkedData::Client::Models::User.all(include: "username")
+      
+      @user_select_list = raw_users.map do |u|
+        user_id = nil
+        
+        if u.is_a?(OpenStruct)
+          table = u.instance_variable_get(:@table)
+          if table
+            user_id = table['@id'] || table[:id] || table['id'] || table[:@id]
+          end
+          
+          if u.instance_variable_defined?('@id') && user_id.nil?
+            user_id = u.instance_variable_get('@id')
+          end
+        else
+          user_id = u.id
+        end
+        
+        [u.username, user_id]
+      end
+      @user_select_list.sort! { |a, b| a[0].downcase <=> b[0].downcase }
     end
 
     render(Layout::RevealComponent.new(possible_values: %w[private public], selected: ontology.viewingRestriction)) do |c|

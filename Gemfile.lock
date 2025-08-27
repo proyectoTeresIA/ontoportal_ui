@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/proyectoTeresIA/ontologies_api_ruby_client.git
-  revision: 8b5fd2cc3ab06ba9a963e47293cb454c8bbfd557
+  revision: 92d69375f65af3469bde86cb1ac856e5a5e8dc46
   specs:
     ontologies_api_client (2.5.3)
       activesupport (= 7.2.2.1)

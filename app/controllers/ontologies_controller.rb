@@ -147,7 +147,7 @@ class OntologiesController < ApplicationController
 
   def create
     @is_update_ontology = false
-    @ontology = ontology_from_params.save(cache_refresh_all: false)
+    @ontology = ontology_from_params.save
 
     if response_error?(@ontology)
       show_new_errors(@ontology)
@@ -197,7 +197,7 @@ class OntologiesController < ApplicationController
     @categories = LinkedData::Client::Models::Category.all
     @groups = LinkedData::Client::Models::Group.all
     @user_select_list = LinkedData::Client::Models::User.all(include: 'username').map { |u| [u.username, u.id] }
-    @user_select_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
+    @user_select_list.sort! { |a, b| a[0].to_s.downcase <=> b[0].to_s.downcase }
   end
 
   def notes
@@ -236,6 +236,12 @@ class OntologiesController < ApplicationController
     @ontology = LinkedData::Client::Models::Ontology.find_by_acronym(params[:ontology], include: 'all').first
     not_found if @ontology.nil? || (@ontology.errors && [401, 403, 404].include?(@ontology.status))
 
+    # Debug: Check if ontology has links
+    Rails.logger.info "Ontology links: #{@ontology.links.inspect}" if @ontology.links
+    explore_obj = @ontology.explore
+    Rails.logger.info "Ontology explore result: #{explore_obj.inspect}"
+    Rails.logger.info "Ontology explore class: #{explore_obj.class}" if explore_obj
+
     # Handle the case where an ontology is converted to summary only. 
     # See: https://github.com/ncbo/bioportal_web_ui/issues/133.
     if @ontology.summaryOnly && params[:p].present?
@@ -246,19 +252,35 @@ class OntologiesController < ApplicationController
     end
 
     # Retrieve submissions in descending submissionId order (should be reverse chronological order)
-    @submissions = @ontology.explore.submissions.sort {|a,b| b.submissionId.to_i <=> a.submissionId.to_i } || []
+    begin
+      submissions_response = @ontology.explore.submissions
+      @submissions = submissions_response.respond_to?(:sort) ? submissions_response.sort {|a,b| b.submissionId.to_i <=> a.submissionId.to_i } : []
+    rescue => e
+      Rails.logger.error "Error fetching submissions for #{@ontology.acronym}: #{e.message}"
+      @submissions = []
+    end
     Log.add :error, "No submissions for ontology: #{@ontology.id}" if @submissions.empty?
 
     # Get the latest submission (not necessarily the latest 'ready' submission)
-    @submission_latest = @ontology.explore.latest_submission rescue @ontology.explore.latest_submission(include: "")
+    @submission_latest = begin
+      @ontology.explore&.latest_submission
+    rescue => e
+      Rails.logger.error "Error fetching latest submission for #{@ontology.acronym}: #{e.message}"
+      nil
+    end
 
     # show summary only for ontologies without any submissions in ready state
     unless helpers.submission_ready?(@submission_latest)
-      submissions = @ontology.explore.submissions(include: 'submissionId,submissionStatus')
-      if submissions.any?{|x| helpers.submission_ready?(x)}
-        @old_submission_ready = true
-      elsif !params[:p].blank?
-        params[:p] = "summary"
+      begin
+        submissions = @ontology.explore&.submissions(include: 'submissionId,submissionStatus') || []
+        if submissions.any?{|x| helpers.submission_ready?(x)}
+          @old_submission_ready = true
+        elsif !params[:p].blank?
+          params[:p] = "summary"
+        end
+      rescue => e
+        Rails.logger.error "Error checking submission status for #{@ontology.acronym}: #{e.message}"
+        params[:p] = "summary" unless params[:p].blank?
       end
     end
 
@@ -334,7 +356,7 @@ class OntologiesController < ApplicationController
     # Note: find_by_acronym includes ontology views
     @ontology = LinkedData::Client::Models::Ontology.find_by_acronym(params[:id]).first
     @ontology.update_from_params(ontology_params)
-    error_response = @ontology.update(cache_refresh_all: false)
+    error_response = @ontology.update
     if response_error?(error_response)
       @categories = LinkedData::Client::Models::Category.all
       @user_select_list = LinkedData::Client::Models::User.all.map {|u| [u.username, u.id]}

@@ -674,7 +674,7 @@ class ApplicationController < ActionController::Base
         stats.transform_values!(&:to_i)
         total_count = stats.values.sum
       end
-    rescue
+    rescue => e
       Log.add :error, e.message
     end
     

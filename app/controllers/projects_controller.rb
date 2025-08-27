@@ -34,14 +34,14 @@ class ProjectsController < ApplicationController
     else
       @project = LinkedData::Client::Models::Project.new
       @user_select_list = LinkedData::Client::Models::User.all.map { |u| [u.username, u.id] }
-      @user_select_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
+      @user_select_list.sort! { |a, b| a[0].downcase <=> b[0].downcase }
     end
   end
 
   def edit
     @project = LinkedData::Client::Models::Project.get(params[:id])
     @user_select_list = LinkedData::Client::Models::User.all.map { |u| [u.username, u.id] }
-    @user_select_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
+    @user_select_list.sort! { |a, b| a[0].downcase <=> b[0].downcase }
     @usedOntologies = @project.ontologyUsed || []
     @ontologies = LinkedData::Client::Models::Ontology.all
   end
@@ -67,7 +67,7 @@ class ProjectsController < ApplicationController
 
     @project = LinkedData::Client::Models::Project.new(values: project_params)
     @user_select_list = LinkedData::Client::Models::User.all.map { |u| [u.username, u.id] }
-    @user_select_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
+    @user_select_list.sort! { |a, b| a[0].downcase <=> b[0].downcase }
     render action: 'new'
   end
 
@@ -78,7 +78,7 @@ class ProjectsController < ApplicationController
     if response_error?(error_response)
       @errors = response_errors(error_response)
       @user_select_list = LinkedData::Client::Models::User.all.map { |u| [u.username, u.id] }
-      @user_select_list.sort! { |a, b| a[1].downcase <=> b[1].downcase }
+      @user_select_list.sort! { |a, b| a[0].downcase <=> b[0].downcase }
       @usedOntologies = @project.ontologyUsed || []
       @ontologies = LinkedData::Client::Models::Ontology.all
       render :edit

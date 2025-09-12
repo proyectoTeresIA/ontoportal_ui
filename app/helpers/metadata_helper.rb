@@ -5,7 +5,8 @@ module MetadataHelper
 
   def submission_metadata
     @metadata ||= Rails.cache.fetch('submission_metadata') do
-      JSON.parse(LinkedData::Client::HTTP.get("/submission_metadata", {}, {raw: true}))
+      base = LinkedData::Client.settings.rest_url.to_s.sub(/\/?$/,'')
+      JSON.parse(LinkedData::Client::HTTP.get("#{base}/submission_metadata", {}, {raw: true}))
     end
   end
 

@@ -8,7 +8,6 @@ Rails.application.configure do
     require Rails.root.join('config', "bioportal_config_#{Rails.env}.rb")
   end
 
-  config.assets.debug = true
   # Code is not reloaded between requests.
   config.enable_reloading = false
 

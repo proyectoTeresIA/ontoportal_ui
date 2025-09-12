@@ -8,6 +8,7 @@ Rails.application.configure do
     require Rails.root.join('config', "bioportal_config_#{Rails.env}.rb")
   end
 
+  config.assets.debug = true
   # Code is not reloaded between requests.
   config.enable_reloading = false
 
@@ -18,7 +19,7 @@ Rails.application.configure do
   config.eager_load = true
 
   # Full error reports are disabled and caching is turned on.
-  config.consider_all_requests_local = false
+  config.consider_all_requests_local = true
   config.action_controller.perform_caching = true
 
   # Ensures that a master key has been made available in ENV["RAILS_MASTER_KEY"], config/master.key, or an environment

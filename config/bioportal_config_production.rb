@@ -97,16 +97,16 @@ $SITE_NOTICE = {}
 $UI_THEME = ENV['UI_THEME'] || 'bioportal'
 
 # REST core service address
-$SPARQL_URL = "#{$UI_URL}/test/"
+$SPARQL_URL = "http://#{$HOSTNAME}:8081/test/"
 
-$ANNOTATOR_URL = $PROXY_URL = "#{$UI_URL}/annotator"
+$ANNOTATOR_URL = $PROXY_URL = "http://#{$HOSTNAME}:8081/annotator"
 
 # If your BioPortal installation includes Fairness score set this to true
 $FAIRNESS_DISABLED = false
-$FAIRNESS_URL = "#{$UI_URL}/fairness"
+$FAIRNESS_URL = "http://#{$HOSTNAME}:8081/fairness"
 
 # NCBO annotator URL and apikey
-$NCBO_ANNOTATOR_URL = "#{$UI_URL}/ncbo_annotatorplus"
+$NCBO_ANNOTATOR_URL = "http://#{$HOSTNAME}:8081/ncbo_annotatorplus"
 $NCBO_ANNOTATORPLUS_ENABLED = true
 $NCBO_API_KEY = ENV['NCBO_API_KEY'] || '4a5011ea-75fa-4be6-8e89-f45c8c84844e'
 

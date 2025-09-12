@@ -3,6 +3,7 @@
 require 'ostruct'
 
 class HomeController < ApplicationController
+  include ApiPathHelper
   layout :determine_layout
 
   def index
@@ -133,7 +134,7 @@ class HomeController < ApplicationController
   def validate_ontology_file_show; end
 
   def validate_ontology_file
-    response = LinkedData::Client::HTTP.post('/validate_ontology_file', ontology_file: params[:ontology_file])
+    response = LinkedData::Client::HTTP.post(api_path('validate_ontology_file'), ontology_file: params[:ontology_file])
     @process_id = response.process_id
   end
 

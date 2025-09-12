@@ -1,12 +1,12 @@
 module MetadataHelper
+  include ApiPathHelper
   def input_type?(attr, type)
     attr["enforce"].include?(type)
   end
 
   def submission_metadata
     @metadata ||= Rails.cache.fetch('submission_metadata') do
-      base = LinkedData::Client.settings.rest_url.to_s.sub(/\/?$/,'')
-      JSON.parse(LinkedData::Client::HTTP.get("#{base}/submission_metadata", {}, {raw: true}))
+      JSON.parse(LinkedData::Client::HTTP.get(api_path('submission_metadata'), {}, {raw: true}))
     end
   end
 

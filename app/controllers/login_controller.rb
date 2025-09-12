@@ -2,6 +2,7 @@
 
 class LoginController < ApplicationController
   layout :determine_layout
+  include ApiPathHelper
 
   def index
     # Sets the redirect properties
@@ -78,7 +79,7 @@ class LoginController < ApplicationController
   def send_pass
     username = params[:user][:account_name]
     email = params[:user][:email]
-    resp = LinkedData::Client::HTTP.post('/users/create_reset_password_token', { username: username, email: email })
+    resp = LinkedData::Client::HTTP.post(api_path('users/create_reset_password_token'), { username: username, email: email })
 
     if resp.nil?
       redirect_to login_index_path, notice: 'Please check your email for a message with reset instructions'
@@ -92,7 +93,7 @@ class LoginController < ApplicationController
     username = params[:un]
     email = params[:em]
     token = params[:tk]
-    @user = LinkedData::Client::HTTP.post('/users/reset_password', { username: username, email: email, token: token })
+    @user = LinkedData::Client::HTTP.post(api_path('users/reset_password'), { username: username, email: email, token: token })
     if @user.is_a?(LinkedData::Client::Models::User)
       login(@user)
       render 'passwords/edit'

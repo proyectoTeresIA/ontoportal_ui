@@ -4,6 +4,7 @@ class ConceptDetailsComponent < ViewComponent::Base
   include ApplicationHelper
   include OntologiesHelper
   include MultiLanguagesHelper
+  include ApiPathHelper
 
   renders_one :header, TableComponent
   renders_many :sections, TableRowComponent
@@ -137,7 +138,7 @@ class ConceptDetailsComponent < ViewComponent::Base
       k ||= key
       label = key
       if k.to_s.start_with?("http")
-        label = LinkedData::Client::HTTP.get("/ontologies/#{ontology_acronym}/properties/#{CGI.escape(k)}/label").label
+        label = LinkedData::Client::HTTP.get(api_path("ontologies/#{ontology_acronym}/properties/#{CGI.escape(k)}/label")).label
         if label.nil? || label.empty?
           k = k.gsub(/.*#/, '') # greedy regex replace everything up to last '#'
           k = k.gsub(/.*\//, '') # greedy regex replace everything up to last '/'

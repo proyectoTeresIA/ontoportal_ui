@@ -90,6 +90,18 @@ module MetadataHelper
   def display_attribute(metadata, value)
     return 'N/A' if value.nil? || Array(value).empty?
 
+    if metadata.to_s == 'uriLookupEndpoint'
+      external_base = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
+      internal_base = LinkedData::Client.settings.rest_url
+      if external_base && internal_base && external_base != internal_base
+        value = Array(value).map do |v|
+          v_str = v.to_s
+            (v_str.start_with?(internal_base) ? v_str.sub(internal_base, external_base.chomp('/')) : v_str)
+        end
+        value = value.first if attr_uri?(metadata) && !list?(metadata)
+      end
+    end
+
     if metadata.eql?("naturalLanguage")
       render LanguageFieldComponent.new(value: value, auto_label: true)
     elsif metadata.to_s.eql?("hasLicense")

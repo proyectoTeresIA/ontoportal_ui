@@ -126,5 +126,6 @@
           %br/
           %span#annotator_parameters
           %br/
+          - external_api = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
           Additional parameters are documented at
-          \#{link_to 'Annotator Web Service', "#{$REST_URL}/documentation#nav_annotator", :target => "_blank"}
+          \#{link_to 'Annotator Web Service', "#{external_api}/documentation#nav_annotator", :target => "_blank"}

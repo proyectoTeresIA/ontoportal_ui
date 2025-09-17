@@ -3,6 +3,23 @@ require 'iso-639'
 
 module OntologiesHelper
 
+  def external_rest_url
+    env_url = ENV['EXTERNAL_API_URL']
+    return env_url.chomp('/') if env_url && !env_url.empty?
+    rest_url
+  end
+
+  # Replaces internal host (rest_url) with external if applicable
+  def externalize_api_url(url)
+    base_internal = rest_url.chomp('/')
+    base_external = external_rest_url.chomp('/')
+    return url if base_external == base_internal
+    if url.start_with?(base_internal)
+      return base_external + url[base_internal.length..-1]
+    end
+    url
+  end
+
   def category_name_chip_component(domain)
     text = domain.split('/').last.titleize
 
@@ -99,7 +116,7 @@ module OntologiesHelper
   def download_button
     return if (@ontology.summaryOnly || @ont_restricted || @submissions.empty?)
 
-    down_link = @submissions.first.id + "/download?apikey=#{get_apikey}"
+    down_link = externalize_api_url(@submissions.first.id) + "/download?apikey=#{get_apikey}"
     render RoundedButtonComponent.new(link: down_link, icon: 'summary/download.svg',
                                       size: 'medium', title: 'Download latest submission')
   end
@@ -168,7 +185,7 @@ module OntologiesHelper
   LANGUAGE_FILTERABLE_SECTIONS = %w[classes].freeze
 
   def ontology_object_json_link(ontology_acronym, object_type, id)
-    "#{rest_url}/ontologies/#{ontology_acronym}/#{object_type}/#{escape(id)}?display=all&apikey=#{get_apikey}"
+    "#{external_rest_url}/ontologies/#{ontology_acronym}/#{object_type}/#{escape(id)}?display=all&apikey=#{get_apikey}"
   end
 
   def render_permalink_link
@@ -234,17 +251,17 @@ module OntologiesHelper
     if submission.ontology.summaryOnly
       link = 'N/A - metadata only'
     else
-      uri = submission.id + "/download?apikey=#{get_apikey}"
+      uri = externalize_api_url(submission.id) + "/download?apikey=#{get_apikey}"
       link = "<a href='#{uri}' 'rel='nofollow'>#{submission.pretty_format}</a>"
       latest = ontology.explore.latest_submission({ include_status: 'ready' })
       if latest && latest.submissionId == submission.submissionId
-        link += " | <a href='#{ontology.id}/download?apikey=#{get_apikey}&download_format=csv' rel='nofollow'>CSV</a>"
+        link += " | <a href='#{externalize_api_url(ontology.id)}/download?apikey=#{get_apikey}&download_format=csv' rel='nofollow'>CSV</a>"
         if !latest.hasOntologyLanguage.eql?('UMLS')
-          link += " | <a href='#{ontology.id}/download?apikey=#{get_apikey}&download_format=rdf' rel='nofollow'>RDF/XML</a>"
+          link += " | <a href='#{externalize_api_url(ontology.id)}/download?apikey=#{get_apikey}&download_format=rdf' rel='nofollow'>RDF/XML</a>"
         end
       end
       unless submission.diffFilePath.nil?
-        uri = submission.id + "/download_diff?apikey=#{get_apikey}"
+        uri = externalize_api_url(submission.id) + "/download_diff?apikey=#{get_apikey}"
         link = link + " | <a href='#{uri} 'rel='nofollow'>Diff</a>"
       end
     end

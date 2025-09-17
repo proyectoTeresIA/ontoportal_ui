@@ -204,7 +204,7 @@
                                                                     apikey: "#{$API_KEY}",
                                                                     ontology: "#{@ontology.acronym}",
                                                                     ncboUIURL: "#{$UI_URL}",
-                                                                    ncboAPIURL: "#{$REST_URL}"
+                                                                    ncboAPIURL: "#{ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url}"
                                                                   });
                 })
 

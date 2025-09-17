@@ -184,5 +184,6 @@
         Reproduce these results using the
         %span#annotator_parameters
       %div.mb-4
+        - external_api = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
         Additional parameters explained at
-        = link_to('Annotator API documentation', "#{$REST_URL}/documentation#nav_annotator", target: "_blank")
+        = link_to('Annotator API documentation', "#{external_api}/documentation#nav_annotator", target: "_blank")

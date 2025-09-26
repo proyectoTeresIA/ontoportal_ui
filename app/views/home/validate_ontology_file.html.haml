@@ -36,7 +36,7 @@
             var multiple = Object.keys(data).length > 1;
             var $error_p = jQuery("<p>");
             if ($errors.html().length > 0) { return; }
-            $error_p.append("We detected a problem with the file.");
+            $error_p.append("#{j t('home.validate_ontology_file.problem_detected')}");
             if (multiple) {
               $error_p.append(" Select your format below to see the error.");
             }
@@ -58,8 +58,8 @@
       error: function(data, errorStr, error) {
         clearTimeout(timer);
         if (jQuery("#errors").html().length > 0) { return; }
-        jQuery("#processing").hide();
-        jQuery("#errors").append("Problem validating file, please try again");
+            jQuery("#processing").hide();
+            jQuery("#errors").append("#{j t('home.validate_ontology_file.problem_validating')}");
         jQuery("#errors_container").show();
       }
     });

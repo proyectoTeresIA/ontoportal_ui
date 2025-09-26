@@ -1,4 +1,4 @@
-- @title = "Edit Ontology Information"
+- @title = t('ontologies.edit_metadata')
 
 %div{:style => "margin:10px;"}
   = form_for :ontology, url: ontology_path(@ontology.acronym), html: {method: :put, id: "ontologyForm", novalidate: true} do |f|

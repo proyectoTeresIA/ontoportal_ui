@@ -7,11 +7,11 @@
   %table#ontology_versions.table.table-sm.table-striped
     %thead.border-top
       %tr
-        %th Version
-        %th Released
-        %th Uploaded
+        %th= t('ontologies.submissions.headers.version')
+        %th= t('ontologies.submissions.headers.released')
+        %th= t('ontologies.submissions.headers.uploaded')
         - unless @ont_restricted
-          %th Downloads
+          %th= t('ontologies.submissions.headers.downloads')
     - begin
       - submission_ready = @ontology.explore.latest_submission({:include_status => 'ready'})
       - submission_readyId = submission_ready.submissionId unless submission_ready.nil?
@@ -32,7 +32,7 @@
     - if @submissions.length >= 5
       %tr
         %td{colspan: more_colspan, class: "show_more_subs"}
-          %a#version_toggle{:href => ""} more...
+          %a#version_toggle{:href => ""}= t('ontologies.submissions.more')
 
 :javascript
   jQuery(document).ready(() => {
@@ -40,12 +40,14 @@
         event.preventDefault();
         jQuery("#ontology_versions tr.hidden_select").toggleClass("hidden_ont")
         const oldText = event.target.innerHTML
+        const moreLabel = "#{t('ontologies.submissions.more')}"
+        const lessLabel = "#{t('ontologies.submissions.less')}"
         switch (oldText) {
-          case 'more...':
-            event.target.innerHTML = 'less...'
+          case moreLabel:
+            event.target.innerHTML = lessLabel
             break
-          case 'less...':
-            event.target.innerHTML = 'more...'
+          case lessLabel:
+            event.target.innerHTML = moreLabel
             break
         }
     })

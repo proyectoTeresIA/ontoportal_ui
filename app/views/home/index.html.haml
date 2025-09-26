@@ -11,32 +11,32 @@
     %p#notice_message{:style => "padding: 10px; margin: 10px; border:1px solid #EFEFEF; background-color: #F9F9F9;"}
     = $FRONT_NOTICE
     \&nbsp;&nbsp;
-    %a{:href => "#", :onclick => "close_message(); return false;", :style => "font-size: small; color: darkGray;"} [close]
+    %a{:href => "#", :onclick => "close_message(); return false;", :style => "font-size: small; color: darkGray;"}= t('shared.close_bracket')
 
 %div.container.pb-4.pb-md-5
   %div.row
     %div.col
       %div.px-2.py-2.pt-md-5.border-bottom.text-center
         %h2
-          = t('.welcome', site: "#{$SITE}")
+          = t('.welcome', site: "#{$SITE}", organization: "#{$ORG}")
           %small.text-muted
             = t('.tagline')
   %div{class: 'row row-cols-1 row-cols-md-2 g-3 pt-4'}
     %div.col
       -# Search for a class across ontologies
       %div.card.h-100
-        %h5.card-header Search for a class
+        %h5.card-header= t('home.index.search_for_class')
         %div.card-body 
           = form_tag(search_path, method: 'get') do
             %div.input-group.mb-3
               = text_field_tag('query', nil, class: 'form-control', placeholder: t('.query_placeholder'))
               = button_tag(class: 'btn btn-outline-primary') do
                 %i.fas.fa-search.fa-lg{'aria-hidden': 'true'}
-            = link_to('Advanced search', search_path(opt: 'advanced'), class: 'btn btn-link')
+            = link_to(t('home.index.advanced_search'), search_path(opt: 'advanced'), class: 'btn btn-link')
     %div.col
       -# Search for an ontology
       %div.card.h-100
-        %h5.card-header Find an ontology
+        %h5.card-header= t('home.index.find_an_ontology')
         %div.card-body 
           %input#find_ontology_id{type: 'hidden'}
           %div.input-group.mb-3
@@ -46,50 +46,50 @@
               %i.fas.fa-search.fa-lg{'aria-hidden': 'true'}
           %div.dropdown
             %div.btn-group
-              = tag.button('Browse ontologies', class: 'btn btn-outline-primary dropdown-toggle', type: 'button',
+              = tag.button(t('home.index.browse_ontologies'), class: 'btn btn-outline-primary dropdown-toggle', type: 'button',
                            'data-bs-toggle': 'dropdown', 'aria-expanded': 'false')
               %ul.dropdown-menu
-                = link_to('All', ontologies_path, class: 'dropdown-item')
+                = link_to(t('home.index.all'), ontologies_path, class: 'dropdown-item')
                 %li
                   %hr.dropdown-divider
                 %li
-                  %h6.dropdown-header Browse by group
+                  %h6.dropdown-header= t('home.index.browse_by_group')
                 - @groups.each do |group|
                   = link_to(group[:name], ontologies_path(filter: group[:acronym]), class: 'dropdown-item')
     %div.col
       -# Ontology visits chart
       %div.card.h-100
         %h5.card-header 
-          Ontology visits #{"in full #{$SITE} " if at_slice?}
+          = t('home.index.ontology_visits')
           - if @analytics&.date
             (#{@analytics.date.strftime("%B %Y")})
         = tag.div(id: 'ontology-visits-chart', class: 'card-body',
                   data: {ontnames: @anal_ont_names, ontnumbers: @anal_ont_numbers}) do
           %canvas#myChart
-          = link_to('More', visits_path, class: 'btn btn-link')
+          = link_to(t('home.index.more'), visits_path, class: 'btn btn-link')
     %div.col
       -# Statistics list group
       %div.card.h-100
-        %h5.card-header Statistics #{"in full #{$SITE}" if at_slice?}
+        %h5.card-header= t('home.index.statistics')
         %div.card-body
           %ul.list-group.list-group-flush
             %li.list-group-item 
               %div.d-flex.justify-content-between.align-items-center
-                Ontologies
+                = t('home.index.ontologies')
                 %h4
                   %span.badge.text-bg-secondary= number_with_delimiter(@ont_count)
             %li.list-group-item
               %div.d-flex.justify-content-between.align-items-center
-                Classes
+                = t('home.index.classes')
                 %h4
                   %span.badge.text-bg-secondary= number_with_delimiter(@cls_count)
             %li.list-group-item
               %div.d-flex.justify-content-between.align-items-center
-                Properties
+                = t('home.index.properties')
                 %h4
                   %span.badge.text-bg-secondary= number_with_delimiter(@prop_count)
             %li.list-group-item
               %div.d-flex.justify-content-between.align-items-center
-                Mappings
+                = t('home.index.mappings')
                 %h4
                   %span.badge.text-bg-secondary= number_with_delimiter(@map_count)

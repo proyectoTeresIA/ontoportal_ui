@@ -15,14 +15,14 @@
   %thead
     %tr
       - if session[:user]
-        %th.delete_mappings_column Delete
-      %th Mapping To
-      %th Ontology
-      %th Source
+        %th.delete_mappings_column= t('mappings.table.headers.delete')
+      %th= t('mappings.table.headers.mapping_to')
+      %th= t('mappings.table.headers.ontology')
+      %th= t('mappings.table.headers.source')
   - if @mappings.length < 1
     %tr
       %td{:class => 'delete_mappings_column', :style => "display: none;"}
-      %td{:colspan => "3"} There are currently no mappings for this class.
+      %td{:colspan => "3"}= t('mappings.table.none_for_class')
 
   - @mappings.each do |map|
     - cls = map.classes[0]

@@ -2,29 +2,29 @@
   %div.container-fluid
     = link_to(image_tag("logos/bioportal-logo.png"), root_path, class: "navbar-brand")
     = button_tag(type: "button", class: "navbar-toggler", "data-bs-toggle": "collapse",
-                 "data-bs-target": "#topNavigationToggler",
-                 aria: {controls: "topNavigationToggler", expanded: "false", label: "Toggle navigation"}) do
+                "data-bs-target": "#topNavigationToggler",
+                aria: {controls: "topNavigationToggler", expanded: "false", label: t('.toggle_navigation')}) do
       %span.navbar-toggler-icon
 
     %div#topNavigationToggler.navbar-collapse.collapse
       %ul{class: "navbar-nav me-auto"}
         %li.nav-item
-          = link_to("Ontologies", ontologies_path, class: "nav-link")
+          = link_to(t('.ontologies'), ontologies_path, class: "nav-link")
         %li.nav-item
-          = link_to("Search", search_path, class: "nav-link")
+          = link_to(t('.search'), search_path, class: "nav-link")
         %li.nav-item
-          = link_to("Annotator", annotator_index_path, class: "nav-link")
+          = link_to(t('.annotator'), annotator_index_path, class: "nav-link")
         %li.nav-item
-          = link_to("Recommender", recommender_index_path, class: "nav-link")
+          = link_to(t('.recommender'), recommender_index_path, class: "nav-link")
         %li.nav-item
-          = link_to("Mappings", mappings_path, class: "nav-link")
+          = link_to(t('.mappings'), mappings_path, class: "nav-link")
         -if session[:user].present? && session[:user].admin?
           %li.nav-item
-            = link_to("Admin", admin_index_path, class: "nav-link")
+            = link_to(t('.admin'), admin_index_path, class: "nav-link")
       %ul.navbar-nav
         - if session[:user].nil?
           %li.nav-item
-            = link_to("Login", login_index_path(redirect: request.original_url), class: "btn btn-login me-2")
+            = link_to(t('.login'), login_index_path(redirect: request.original_url), class: "btn btn-login me-2")
         - else
           -# Account menu
           %li.nav-item.dropdown
@@ -32,34 +32,42 @@
               = session[:user].username
             %ul.dropdown-menu.dropdown-menu-end
               %li
-                = link_to("Account settings", user_path(session[:user].username), class: "dropdown-item")
+                = link_to(t('.account_settings'), user_path(session[:user].username), class: "dropdown-item")
               - unless session[:ontologies].nil?
                 %li
                   %hr.dropdown-divider
                 %li
-                  %h6.dropdown-header Recently Viewed
+                  %h6.dropdown-header= t('.recently_viewed')
                   - for ont in session[:ontologies]
                     %li
                       = link_to(ont.ontology_name, "/ontologies/#{ont.ontology_acronym}/?p=classes&conceptid=#{CGI.escape(ont.concept)}", class: "dropdown-item")
                 %li
                   %hr.dropdown-divider
               %li
-                = link_to("Logout", logout_path, class: "dropdown-item")
+                = link_to(t('.logout'), logout_path, class: "dropdown-item")
+                -# Language selector
+        %li.nav-item.dropdown.me-2
+          = link_to("#{I18n.locale.to_s.upcase}", "#", class: "nav-link dropdown-toggle", role: "button", "data-bs-toggle": "dropdown", "aria-expanded": "false")
+          %ul.dropdown-menu.dropdown-menu-end
+            - I18n.available_locales.each do |loc|
+              %li
+                = link_to loc.to_s.upcase, set_locale_language_path(language: loc), method: :post, class: (loc == I18n.locale ? "dropdown-item active" : "dropdown-item")
+
         -# Support menu
         %li.nav-item.dropdown
           = link_to("#", class: "nav-link dropdown-toggle", role: "button", "data-bs-toggle": "dropdown", "aria-expanded": "false") do
-            Support
+            = t('.support')
           %ul.dropdown-menu.dropdown-menu-end
             %li
-              = link_to("Submit feedback", feedback_path, id: "submitFeedbackMenuItem", class: "dropdown-item",
+              = link_to(t('.submit_feedback'), feedback_path, id: "submitFeedbackMenuItem", class: "dropdown-item",
                         data: {controller: 'popup', action: 'click->popup#open'})
             %li
               %hr.dropdown-divider
             %li
-              %h6.dropdown-header Documentation
+              %h6.dropdown-header= t('.documentation')
             %li
-              = link_to("Help", Rails.configuration.settings.links[:help], target: "_blank", class: "dropdown-item")
+              = link_to(t('.help'), Rails.configuration.settings.links[:help], target: "_blank", class: "dropdown-item")
             %li
-              = link_to("Release notes", Rails.configuration.settings.links[:release_notes], target: "_blank", class: "dropdown-item")
+              = link_to(t('.release_notes'), Rails.configuration.settings.links[:release_notes], target: "_blank", class: "dropdown-item")
             %li
-              = link_to("How to cite", Rails.configuration.settings.links[:cite], target: "_blank", class: "dropdown-item")
+              = link_to(t('.how_to_cite'), Rails.configuration.settings.links[:cite], target: "_blank", class: "dropdown-item")

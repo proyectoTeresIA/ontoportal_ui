@@ -1,7 +1,7 @@
 - unless @errors.nil?
   %div.form-group.row
     %div.col-sm-10.offset-sm-2.enable-lists{style: "color:red;"}
-      %strong Errors On Form
+      %strong= t('submissions.form.errors_on_form')
       %ul
         - for error in @errors
           - if error.is_a? Array
@@ -18,7 +18,7 @@
 -# Description
 %div.row.mb-3
   %label{class: 'col-sm-2 col-form-label', for: "submission_description"}
-    Description
+    = t('submissions.form.description_label')
     %span.asterik *
   %div.col-sm-10
     = text_area(:submission, :description, rows: 5, value: @submission.description, required: true,
@@ -27,7 +27,7 @@
 -# Format
 %div.row.mb-3
   %label{class: 'col-sm-2 col-form-label', for: "submission_hasOntologyLanguage"}
-    Format
+    = t('submissions.form.format_label')
     %span.asterik *
   %div.col-sm-10
     - ont_formats = ["OBO", "OWL", "UMLS", "SKOS"].sort
@@ -36,14 +36,11 @@
     = select("submission", "hasOntologyLanguage", options_for_select(ont_formats, selected), {},
              {class: 'form-control'})
     %div.form-text#helpSkosFormat
-      SKOS vocabularies submitted to BioPortal must contain a minimum of one concept scheme and top concept |
-      assertion. Please refer to the NCBO wiki for a more |
-      <a href="https://www.bioontology.org/wiki/index.php/SKOSSupport", target="_blank">detailed explanation</a> |
-      with examples. |
+      = t('submissions.form.skos_help_html')
 
 %div.row.mb-3
   %div.col-sm-10.offset-sm-2
-    = tag.button('Show advanced OWL options', id: 'collapseOWLOptions', class: 'btn btn-outline-secondary',
+    = tag.button(t('submissions.form.show_advanced_owl_options'), id: 'collapseOWLOptions', class: 'btn btn-outline-secondary',
                  type: 'button', 'data-bs-toggle': 'collapse', 'data-bs-target': '#owl-options',
                  'aria-expanded': 'false', 'aria-controls': 'owl-options')
 
@@ -51,92 +48,89 @@
 %div#owl-options.collapse
   %div.row
     %div.col-sm-10.offset-sm-2
-      %p.lead Customize default property settings
+      %p.lead= t('submissions.form.customize_property_settings')
 
   -# Preferred name
   %div.row.mb-2
-    %label{for: "submission_prefLabelProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'} Preferred name
+    %label{for: "submission_prefLabelProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'}= t('submissions.form.preferred_name')
     %div.col-sm-10.offset-sm-2
       = text_field(:submission, :prefLabelProperty, value: @submission.prefLabelProperty,
                    class: "form-control form-control-sm", aria: {describedBy: "preferredNameHelpBlock"})
       %div{id: 'preferredNameHelpBlock', class: 'form-text'}
-        Enter a property ID, or leave blank to use the default setting:
+        = t('submissions.form.enter_property_id_or_blank')
         = link_to(nil, 'https://www.w3.org/2004/02/skos/core#prefLabel', target: '_blank')
 
   -# Synonym
   %div.row.mb-2
-    %label{for: "submission_synonymProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'} Synonym
+    %label{for: "submission_synonymProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'}= t('submissions.form.synonym')
     %div.col-sm-10.offset-sm-2
       = text_field(:submission, :synonymProperty, value: @submission.synonymProperty,
                    class: "form-control form-control-sm", aria: {describedBy: "synonymHelpBlock"})
       %div{id: 'synonymHelpBlock', class: 'form-text'}
-        Enter a property ID, or leave blank to use the default setting:
+        = t('submissions.form.enter_property_id_or_blank')
         = link_to(nil, 'https://www.w3.org/2004/02/skos/core#altLabel', target: '_blank')
 
   -# Definition
   %div.row.mb-2
-    %label{for: "submission_definitionProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'} Definition
+    %label{for: "submission_definitionProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'}= t('submissions.form.definition')
     %div.col-sm-10.offset-sm-2
       = text_field(:submission, :definitionProperty, value: @submission.definitionProperty,
                    class: "form-control form-control-sm", aria: {describedBy: "definitionHelpBlock"})
       %div{id: 'definitionHelpBlock', class: 'form-text'}
-        Enter a property ID, or leave blank to use the default setting:
+        = t('submissions.form.enter_property_id_or_blank')
         = link_to(nil, 'https://www.w3.org/2004/02/skos/core#definition', target: '_blank')
 
   -# Author
   %div.row.mb-3
-    %label{for: "submission_authorProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'} Author
+    %label{for: "submission_authorProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'}= t('submissions.form.author')
     %div.col-sm-10.offset-sm-2
       = text_field(:submission, :authorProperty, value: @submission.authorProperty,
                    class: "form-control form-control-sm", aria: {describedBy: "authorHelpBlock"})
       %div{id: 'authorHelpBlock', class: 'form-text'}
-        Enter a property ID, or leave blank to use the default setting:
+        = t('submissions.form.enter_property_id_or_blank')
         = link_to(nil, 'https://purl.org/dc/elements/1.1/creator', target: '_blank')
 
   -# Obsolete classes
   %div.row
     %div.col-sm-10.offset-sm-2
-      %p.lead Identify obsolete classes
+      %p.lead= t('submissions.form.identify_obsolete_classes')
 
   -# Obsolete property
   %div.row.mb-2
-    %label{for: "submission_obsoleteProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'} Obsolete property
+    %label{for: "submission_obsoleteProperty", class: 'col-sm-2 offset-sm-2 col-form-label-sm'}= t('submissions.form.obsolete_property')
     %div.col-sm-10.offset-sm-2
       = text_field(:submission, :obsoleteProperty, value: @submission.obsoleteProperty,
                    class: "form-control form-control-sm", aria: {describedBy: "obsoleteHelpBlock"})
       %div{id: 'obsoleteHelpBlock', class: 'form-text'}
-        Optionally enter a property ID that indicates obsolete status for ontology classes |
-        (the property value must be set to "true"). Note that by default, #{$SITE} checks for existence |
-        of the owl:deprecated property. |
+        = t('submissions.form.obsolete_property_help_html', site: $SITE)
 
   -# Obsolete branch root
   %div.row.mb-3
-    %label{for: "submission_obsoleteParent", class: 'col-sm-2 offset-sm-2 col-form-label-sm'} Obsolete branch root
+    %label{for: "submission_obsoleteParent", class: 'col-sm-2 offset-sm-2 col-form-label-sm'}= t('submissions.form.obsolete_branch_root')
     %div.col-sm-10.offset-sm-2
       = text_field(:submission, :obsoleteParent, value: @submission.obsoleteParent,
                    class: "form-control form-control-sm", aria: {describedBy: "obsoleteRootHelpBlock"})
       %div{id: 'obsoleteRootHelpBlock', class: 'form-text'}
-        Optionally enter a class ID for the root of an obsolete branch. All classes in the branch will be marked as |
-        obsolete, with the exception of the root class. |
+        = t('submissions.form.obsolete_branch_root_help')
 
 -# Version
 %div.row.mb-3
-  %label{class: 'col-sm-2 col-form-label', for: "submission_version"} Version
+  %label{class: 'col-sm-2 col-form-label', for: "submission_version"}= t('submissions.form.version_label')
   %div.col-sm-10
     = text_field(:submission, :version, value: @submission.version, class: 'form-control')
 
 -# Natural language
 %div.row.mb-3
-  %label{class: 'col-sm-2 col-form-label'} Language
+  %label{class: 'col-sm-2 col-form-label'}= t('submissions.form.language_label')
   %div.col-sm-10
     = natural_language_selector(@submission)
     %div{id: 'languageHelpBlock', class: 'form-text'}
-      Enter the language of the content of the ontology, i.e., English, French, etc.
+      = t('submissions.form.language_help')
 
 -# Status
 %div.row.mb-3
   %label{class: 'col-sm-2 col-form-label', for: "submission_status"}
-    Status
+    = t('submissions.form.status_label')
     %span.asterik *
   %div.col-sm-10
     - selected_status = @submission.status ? @submission.status : "alpha"
@@ -146,7 +140,7 @@
 -# Release date
 %div.row.mb-3
   %label{class: 'col-sm-2 col-form-label', for: 'datepicker'}
-    Release date
+    = t('submissions.form.release_date_label')
     %span.asterik *
   %div.col-sm-10
     %div.input-group
@@ -159,7 +153,7 @@
 -# Location
 %div.fieldset{id: '#submissionLocation', class: 'row mb-3'}
   %legend{class: 'col-form-label col-sm-2 pt-0'}
-    Location
+    = t('submissions.form.location_label')
     %span.asterik *
   %div.col-sm-10
     - if !@masterFileOptions
@@ -168,29 +162,29 @@
         = radio_button(:submission, :isRemote, 3, :onclick=>"$('.hidden_field').hide();", checked: checked,
                        aria: {describedBy: "metadataHelpBlock"}, class: "form-check-input")
         %label.form-check-label{for: "submission_isRemote_3"}
-          Metadata only
+          = t('submissions.form.metadata_only_label')
         %div{id: 'metadataHelpBlock', class: 'form-text'}
-          Allow users to view and search your ontology metadata, but not its classes and properties.
+          = t('submissions.form.metadata_only_help')
       %div.form-check
         - checked = !(@submission.pullLocation.nil? || @submission.pullLocation.empty?)
         = radio_button(:submission, :isRemote, 1, :onclick=>"location_toggle('remote');", checked: checked,
                        aria: {describedBy: "loadFromURLHelpBlock"}, class: "form-check-input")
         %label.form-check-label{for: "submission_isRemote_1"}
-          Load from URL
+          = t('submissions.form.load_from_url_label')
         %div{id: 'loadFromURLHelpBlock', class: 'form-text'}
-          New versions loaded on a nightly basis
+          = t('submissions.form.nightly_loads')
         - display = (checked and "" or "display:none;")
         %div{id: 'remote', class: 'hidden_field mt-2', style: display}
           = text_field(:submission, :pullLocation, value: @submission.pullLocation,
                        aria: {describedBy: "enterURLHelpBlock"}, class: "form-control")
           %div{id: 'enterURLHelpBlock', class: 'form-text'}
-            Enter a URL, including the name of your ontology source file, e.g., http://www.example.com/my_ontology.owl.
+            = t('submissions.form.enter_url_help')
       %div.form-check
         - checked = (!@ontology.summaryOnly) && @submission.pullLocation.nil?
         = radio_button(:submission, :isRemote, 0, :onclick=>"location_toggle('upload');", checked: checked,
                        class: "form-check-input")
         %label.form-check-label{for: "submission_isRemote_0"}
-          Upload local file
+          = t('submissions.form.upload_local_file_label')
         - display = (checked and "" or "display:none;")
         %div.hidden_field#upload{style: display}
           = f.file_field(:filePath, class: "mt-2")
@@ -199,7 +193,7 @@
       = radio_button :submission, :isRemote, 0, :onclick=>"location_toggle('upload');", checked: true
       Upload Local File
       %br/
-      %span{:style => "font-size:11px;"} (choose a file on your local file system to upload)
+      %span{:style => "font-size:11px;"}= t('submissions.form.choose_file_hint')
       - display = (checked and "" or "display:none;")
       %div#upload{style: display}
         = f.file_field :filePath, required: true
@@ -208,16 +202,16 @@
 -# Contact(s)
 %div#contacts.row.mb-3
   %label{class: 'col-sm-2 col-form-label'}
-    Contact
+    = t('submissions.form.contact_label')
     %span.asterik *
   - if @submission.contact && @submission.contact.size > 0
     - @submission.contact.each_with_index do |contact, i|
       - if i == 0
         -# Contact div
         %div.col-sm-10.d-flex.align-items-center.contact
-          %label Name
+          %label= t('submissions.form.name_label')
           = text_field :submission, :"contact[#{i}][name]", value: contact["name"], class: "form-control flex-grow-1 mx-2"
-          %label Email
+          %label= t('submissions.form.email_label')
           = text_field :submission, :"contact[#{i}][email]", value: contact["email"], class: "form-control flex-grow-1 mx-2"
           %button.btn.btn-success.add-contact
             %i{class: "fas fa-plus fa-lg", aria: {hidden: "true"}}
@@ -235,42 +229,42 @@
   - else
     -# TODO
     %div.col-sm-10.d-flex.align-items-center.contact
-      %label Name:
+      %label= t('submissions.form.name_label')
       = text_field :submission, :"contact[0][name]", class: "form-control flex-grow-1 mx-2"
-      %label Email:
+      %label= t('submissions.form.email_label')
       = text_field :submission, :"contact[0][email]", class: "form-control flex-grow-1 mx-2"
       %button.btn.btn-success.add-contact
         %i{class: "fas fa-plus fa-lg", aria: {hidden: "true"}}
 
 -# Home page
 %div.row.mb-3
-  %label{class: 'col-sm-2 col-form-label', for: "submission_homepage"} Homepage
+  %label{class: 'col-sm-2 col-form-label', for: "submission_homepage"}= t('submissions.form.homepage_label')
   %div.col-sm-10
     = text_field(:submission, :homepage, value: @submission.homepage, class: "form-control",
                  aria: {describedBy: "homepageHelpBlock"})
-    %div{id: 'homepageHelpBlock', class: 'form-text'} Enter a URL for the main page of your ontology
+    %div{id: 'homepageHelpBlock', class: 'form-text'}= t('submissions.form.homepage_help')
 
 -# Documentation page
 %div.row.mb-3
-  %label{class: 'col-sm-2 col-form-label', for: "submission_documentation"} Documentation
+  %label{class: 'col-sm-2 col-form-label', for: "submission_documentation"}= t('submissions.form.documentation_label')
   %div.col-sm-10
     = text_field(:submission, :documentation, value: @submission.documentation, class: "form-control",
                  aria: {describedBy: "docsHelpBlock"})
-    %div{id: 'docsHelpBlock', class: 'form-text'} Enter a URL for a page that provides ontology documentation
+    %div{id: 'docsHelpBlock', class: 'form-text'}= t('submissions.form.documentation_help')
 
 -# Publications page
 %div.row.mb-3
-  %label{class: 'col-sm-2 col-form-label', for: "submission_publication"} Publications
+  %label{class: 'col-sm-2 col-form-label', for: "submission_publication"}= t('submissions.form.publications_label')
   %div.col-sm-10
     = text_field(:submission, :publication, value: @submission.publication, class: "form-control",
                  aria: {describedBy: "pubsHelpBlock"})
-    %div{id: 'pubsHelpBlock', class: 'form-text'} Enter a URL for a page that lists publications about your ontology
+    %div{id: 'pubsHelpBlock', class: 'form-text'}= t('submissions.form.publications_help')
 
 %div.row.mb-3
   %div.col-sm-10.offset-sm-2
-    %label.col-form-label.fst-italic * Fields marked with an asterisk are required.
+    %label.col-form-label.fst-italic= t('submissions.form.required_fields_note')
 
 %div.row.mb-3
   %div.col-sm-10.offset-sm-2
     = submit_tag button_text, class: "btn btn-primary me-1"
-    = link_to "Cancel", ontology_path(@ontology.acronym), class: "btn btn-primary"
+    = link_to t('submissions.form.cancel'), ontology_path(@ontology.acronym), class: "btn btn-primary"

@@ -67,4 +67,4 @@
           = f.label :admin, 'Grant admin privileges', class: 'form-check-label'
       %div.mb-5
         = submit_tag('Update', class: 'btn btn-primary me-1')
-        = link_to 'Cancel', user_path(@user.username), class: 'btn btn-primary'
+        = link_to t('components.cancel_button'), user_path(@user.username), class: 'btn btn-primary'

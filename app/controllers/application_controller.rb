@@ -39,7 +39,7 @@ class ApplicationController < ActionController::Base
   # See ActionController::RequestForgeryProtection for details
   protect_from_forgery
 
-  before_action :set_global_thread_values, :domain_ontology_set, :clean_empty_strings_from_params_arrays, :init_trial_license
+  before_action :set_global_thread_values, :domain_ontology_set, :clean_empty_strings_from_params_arrays, :init_trial_license, :set_locale
 
 
   def ontology_not_found(ontology_acronym)
@@ -89,6 +89,21 @@ class ApplicationController < ActionController::Base
     end
 
     Thread.current[:slice] = @subdomain_filter
+  end
+
+  # Set locale based on param or cookie, falling back to default
+  def set_locale
+    desired = params[:locale]&.to_s&.strip&.downcase&.to_sym
+    from_cookie = cookies[:locale]&.to_s&.strip&.downcase&.to_sym
+    chosen = if desired && I18n.available_locales.include?(desired)
+               desired
+             elsif from_cookie && I18n.available_locales.include?(from_cookie)
+               from_cookie
+             else
+               I18n.default_locale
+             end
+    I18n.locale = chosen
+    cookies.permanent[:locale] = chosen
   end
 
   def anonymous_user

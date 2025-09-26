@@ -9,7 +9,7 @@
         {{#if label}}
           <tr>
             <td class="label">
-              Labels
+              #{t('ontologies.properties_template.labels')}
             </td>
             <td>
               <p>
@@ -21,7 +21,7 @@
         {{#if definition}}
           <tr>
             <td class="label">
-              Definitions
+              #{t('ontologies.properties_template.definitions')}
             </td>
             <td>
               <p>
@@ -31,7 +31,7 @@
           </tr>
         {{/if}}
         <tr>
-          <td class="label">ID</td>
+          <td class="label">#{t('ontologies.properties_template.id')}</td>
           <td>
             <p>
               {{id}}&nbsp;
@@ -40,7 +40,7 @@
         </tr>
         {{#if parents}}
           <tr>
-            <td class="label">Parent</td>
+            <td class="label">#{t('ontologies.properties_template.parent')}</td>
             <td>
               <p>
                 {{parents}}&nbsp;

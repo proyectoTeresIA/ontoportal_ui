@@ -1,4 +1,4 @@
-- @title = "Annotator Plus"
+- @title = t('annotatorplus.index.title', default: 'Annotator Plus')
 
 %head
   = javascript_include_tag "bp_annotatorplus"
@@ -9,55 +9,55 @@
     %p
       = t('annotator.index.intro').html_safe
       = link_to(Rails.configuration.settings.links[:help_annotator],
-                data: {controller: 'popup', action: 'click->popup#open'}, 'aria-label': 'View annotator help') do
+              data: {controller: 'popup', action: 'click->popup#open'}, 'aria-label': t('annotator.index.help_aria', default: 'View annotator help')) do
         %i{class: 'fa fa-question-circle fa-lg ps-1', "aria-hidden": "true"}
 %div.row
   %div.col
     %form
       %div.mb-3
         = text_area_tag("annotation_text", nil, rows: 10, class: "form-control",
-                        placeholder: "Enter or paste text to be annotated", "aria-describedby": "annotateTextHelpBlock")
+            placeholder: t('annotator.index.placeholders.input_text'), "aria-describedby": "annotateTextHelpBlock")
         %div#annotateTextHelpBlock.form-text
           %a#insert_text_link{href: "javascript:void(0);", class: 'link-secondary'} insert sample text
 
       %div.mb-4
-        %a#advancedOptionsLink{href: "javascript:void(0);"} Show advanced options >>
+        %a#advancedOptionsLink{href: "javascript:void(0);"}= t('search.index.show_advanced')
 
       %div#advanced-options-container
         %div.mb-3
           %div.form-check.form-check-inline
             = check_box_tag("longest_only", "all", false, class: "form-check-input")
-            %label.form-check-label{for: "longest_only"} Match longest only
+            %label.form-check-label{for: "longest_only"}= t('annotator.index.longest_only')
 
           %div.form-check.form-check-inline
             = check_box_tag("whole_word_only", "all", false, class: "form-check-input")
-            %label.form-check-label{for: "whole_word_only"} Match partial words
+            %label.form-check-label{for: "whole_word_only"}= t('annotator.index.partial_words')
 
           %div.form-check.form-check-inline
             = check_box_tag("mappings", "all", false, id: "mappings_all", class: "form-check-input")
-            %label.form-check-label{for: "mappings_all"} Include mappings
+            %label.form-check-label{for: "mappings_all"}= t('annotator.index.include_mappings')
 
           %div.form-check.form-check-inline
             = check_box_tag("exclude_numbers", "all", false, class: "form-check-input")
-            %label.form-check-label{for: "exclude_numbers"} Exclude numbers
+            %label.form-check-label{for: "exclude_numbers"}= t('annotator.index.exclude_numbers')
 
           %div.form-check.form-check-inline
             = check_box_tag("exclude_synonyms", "all", false, class: "form-check-input")
-            %label.form-check-label{for: "exclude_synonyms"} Exclude synonyms
+            %label.form-check-label{for: "exclude_synonyms"}= t('annotator.index.exclude_synonyms')
 
         %div.mb-3
-          %label.form-label{for: "ontology_ontologyId"} Select ontologies
+          %label.form-label{for: "ontology_ontologyId"}= t('shared.ontology_picker.select_ontologies')
           = select_tag("ontology_ontologyId", options_from_collection_for_select(@annotator_ontologies, :acronym, lambda { |ont| "#{ont.name} (#{ont.acronym})" }), |
               multiple: true, class: "form-select", "aria-describedby": "selectOntologiesHelpBlock") |
-          %div#selectOntologiesHelpBlock.form-text Start typing to select ontologies or leave blank to use all
+          %div#selectOntologiesHelpBlock.form-text= t('shared.ontology_picker.placeholder')
 
         - if @sem_type_ont
           %div.mb-3
-            %label.form-label{for: "semantic_types"} Select UMLS semantic types
+            %label.form-label{for: "semantic_types"}= t('annotator.index.select_umls_semantic_types')
             = select_tag("semantic_types", options_for_select(@semantic_types_for_select), multiple: "true",
                          class: "form-select", "aria-describedby": "selectSemanticTypesHelpBlock")
             %div#selectSemanticTypesHelpBlock.form-text
-              Start typing to select UMLS semantic types or leave blank to use all
+              = t('annotator.index.placeholders.select_umls_semantic_types')
 
           %div.mb-3
             %label.form-label{for: "semantic_groups"} Select UMLS semantic groups
@@ -67,7 +67,7 @@
               Start typing to select UMLS semantic groups or leave blank to use all
 
         %div.mb-3
-          %label.form-label{for: "class_hierarchy_max_level"} Include ancestors up to level:
+          %label.form-label{for: "class_hierarchy_max_level"}= t('annotator.index.include_ancestors_up_to_level') + ":"
           - options = [["none", 0], *(1..10).map {|i| [i, i]}, ["all", 999]]
           = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select")
 
@@ -95,7 +95,7 @@
 
         - if @recognizers.length > 1
           %div.mb-3
-            %label.form-label{for: "recognizer"} Entity recognizer:
+            %label.form-label{for: "recognizer"}= t('annotator.index.entity_recognizer') + ":"
             - default_recognizer = @recognizers.include?("mgrep") ? "mgrep" : @recognizers.first
             = select_tag("recognizer", options_for_select(@recognizers.map {|r| [r, r]}, default_recognizer),
                          class: "form-select")
@@ -117,7 +117,7 @@
             %div#temporalityHelp.form-text Detect when the annotated concept occurred (recent, historical, hypothetical)
 
       %div.mb-4
-        = tag.input(value: 'Get annotations', type: "button", id: "annotator_button", class: "btn btn-primary")
+        = tag.input(value: t('annotator.index.get_annotations'), type: "button", id: "annotator_button", class: "btn btn-primary")
         %span.annotator_spinner
           %img{src: asset_path('spinners/spinner_000000_16px.gif')}/
         %span#annotator_error.annotator_error
@@ -126,9 +126,9 @@
   %div.col
     #annotations_container
       #result_counts
-      %h4 Annotations
+      %h4= t('annotator.index.annotations')
       #filter_list{:style => "font-size: 9pt; color: gray; display: none; clear: both; margin: -15px 0 5px"}
-        %span#filter_title> Results are filtered by:
+        %span#filter_title>= t('annotator.index.results_filtered_by')
         \&nbsp;
         %span#filter_names
       #results_error{:style => "color: red; margin-bottom: 7px;"}
@@ -139,33 +139,33 @@
               Class
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_classes.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_classes.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#classes_filter_list.bp_popup_list
             %th
               Ontology
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_ontologies.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_ontologies.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#ontology_filter_list.bp_popup_list
             %th{class: "match_type"}
               Type
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_match_type.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_match_type.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#match_type_filter_list.bp_popup_list
-            %th UMLS Sem Type
-            %th{class: "match_context"} Context
+            %th= t('annotator.index.headers.umls_sem_type')
+            %th{class: "match_context"}= t('annotator.index.headers.context')
             %th
-              Matched Class
+              = t('annotator.index.headers.matched_class')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_matched_classes.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_matched_classes.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#matched_classes_filter_list.bp_popup_list
             %th
-              Matched Ontology
+              = t('annotator.index.headers.matched_ontology')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_matched_ontologies.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_matched_ontologies.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#matched_ontology_filter_list.bp_popup_list
             %th Score
             %th Negation
@@ -173,7 +173,7 @@
             %th Temporality
         %tbody
       %div.my-3
-        %b Format results as:
+        %b= t('annotator.index.format_results_as')
       %div.my-3
         %span#download_links_tabdelimited.link_button.ui_button
         %span#download_links_json.link_button.ui_button
@@ -181,9 +181,9 @@
         %span#download_links_text.link_button.ui_button
         -# %span#download_links_xml.link_button.ui_button
       %div.mt-3
-        Reproduce these results using the
+        = t('annotator.index.to_reproduce')
         %span#annotator_parameters
       %div.mb-4
         - external_api = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
-        Additional parameters explained at
-        = link_to('Annotator API documentation', "#{external_api}/documentation#nav_annotator", target: "_blank")
+        = t('annotator.index.additional_parameters_at')
+        = link_to(t('annotator.index.annotator_web_service'), "#{external_api}/documentation#nav_annotator", target: "_blank")

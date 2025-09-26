@@ -1,102 +1,98 @@
--@title = "OntoPortal Virtual Appliance Download"
+-@title = t('virtual_appliance.title', default: 'OntoPortal Virtual Appliance Download')
 
 %div{:style => "padding: 13px; max-width: 800px;", :class => "enable-lists"}
-  %h1 OntoPortal Virtual Appliance Download
+  %h1= t('virtual_appliance.heading', default: 'OntoPortal Virtual Appliance Download')
   %p
-    OntoPortal Virtual Appliance distribution contains a pre-installed,
-    pre-configured version of commonly-used open source NCBO software running
-    on a Linux operating system.
-  %p The following software is included on the image:
+    = t('virtual_appliance.description_intro')
+  %p= t('virtual_appliance.description_included')
   %ul
-    %li Ontologies API (REST service)
-    %li Annotator
-    %li Recommender
-    %li BioPortal Web User Interface (including ontology visualization, widgets, and Annotator UI)
+    %li= t('virtual_appliance.included.ontologies_api')
+    %li= t('virtual_appliance.included.annotator')
+    %li= t('virtual_appliance.included.recommender')
+    %li= t('virtual_appliance.included.bioportal_ui')
   %p
-    Please see our
-    =link_to 'documentation', 'https://ontoportal.github.io/documentation/administration/steps/getting_started', target: '_blank'
-    for more information on working with the Appliance.
-  %h2 Download Latest OntoPortal
+    = t('virtual_appliance.please_see_our')
+    =link_to t('virtual_appliance.documentation'), 'https://ontoportal.github.io/documentation/administration/steps/getting_started', target: '_blank'
+    = t('virtual_appliance.more_info_appliance')
+  %h2= t('virtual_appliance.download_latest', default: 'Download Latest OntoPortal')
   %ul
     %li
-      Version 3.2.2
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.2.2.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.2.2
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.2.2.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.2.1
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.2.1.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.2.1
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.2.1.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.2.0
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.2.0.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.2.0
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.2.0.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.1.1
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.1.1.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.1.1
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.1.1.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.1.0
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.1.0.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.1.0
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.1.0.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.0.6
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.6.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.0.6
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.6.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.0.5
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.5.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.0.5
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.5.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.0.4
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.4.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.0.4
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.4.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.0.3
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.3.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.0.3
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.3.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
     %li
-      Version 3.0.2
-      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.2.ova"> OVA</a>
+      #{t('virtual_appliance.version_label')} 3.0.2
+      <a href="https://www.bioontology.org/ontoportal-appliance/ontoportal_appliance-vmware-3.0.2.ova"> #{t('virtual_appliance.ova')}</a>
       |
-      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> Amazon EC2</a>
+      <a href="https://ontoportal.github.io/documentation/administration/steps/getting_started#amazon-aws-ami"> #{t('virtual_appliance.amazon_ec2')}</a>
 
   -if @virtual_appliance_access
-    %h3 Archives
+    %h3= t('virtual_appliance.archives')
     %p
-      The OntoPortal 2.5 Virtual Appliance is not longer offered for new
-      users. This archival distribution is available only as a backup for
-      those who registered for the Appliance before June 2020
+      = t('virtual_appliance.archives_paragraph')
     %ul
       %li
-        Version 2.5
-        =link_to 'OVF', 'https://www.bioontology.org/ontoportal-appliance/ontoportal-2.5.zip'
+        #{t('virtual_appliance.version_label')} 2.5
+        =link_to t('virtual_appliance.ovf'), 'https://www.bioontology.org/ontoportal-appliance/ontoportal-2.5.zip'
 
   -if @user.admin?
     %div{:style => "margin: 2em 0 0; padding: 1em 1em; border: solid thin gray; background-color: lightGray;"}
-      %h1{:style => "margin-bottom: 15px;"} Admin: Add Users
+      %h1{:style => "margin-bottom: 15px;"}= t('virtual_appliance.admin.add_users_heading')
       =form_for :appliance_user do |f|
-        = f.label :user_id, "Account Name: "
+        = f.label :user_id, t('virtual_appliance.admin.account_name_label')
         = f.text_field :user_id
         &nbsp;&nbsp;
-        = f.submit "Add User"
+        = f.submit t('virtual_appliance.admin.add_user_button')
 
       %h2{:style => "margin-top: 1em;"}
-        Accounts with access
+        = t('virtual_appliance.admin.accounts_with_access')
         %a#export{href: "#", style: "margin-left: 2em; margin-top: -1em; font-size: 11px;"}
-          Export Appliance Users As CSV
+          = t('virtual_appliance.admin.export_users_csv')
       %table#user_table.zebra{style: "border: thin lightGray solid; background-color: white;"}
         %thead
           %tr
-            %th BioPortal User ID
+            %th= t('virtual_appliance.admin.user_id_header')
         %tbody
         -@va_users.each do |u|
           %tr

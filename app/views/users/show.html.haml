@@ -1,46 +1,46 @@
-- @title = "Account Information"
+- @title = t('users.show.title')
 
 %div{class: 'container account-info my-4'}
   %h4{class: 'pb-2 mb-4 border-bottom'}
-    Account basics
+    = t('users.show.account_basics')
     = tag.small("(#{@user.username})", class: 'text-muted')
 
   %table.table
     %tr
-      %th First name
+      %th= t('users.show.first_name')
       %td= @user.firstName
     %tr
-      %th Last name
+      %th= t('users.show.last_name')
       %td= @user.lastName
     %tr
-      %th Email
+      %th= t('users.show.email')
       %td= @user.email
     %tr
-      %th GitHub username
+      %th= t('users.show.github_username')
       %td= @user.githubId
     %tr
-      %th ORCID iD
+      %th= t('users.show.orcid')
       %td= @user.orcidId
 
   %div{class: 'd-flex justify-content-end'}
-    = link_to('Edit account', edit_user_path(@user.username), class: 'btn btn-sm btn-outline-secondary')
-    = link_to('Change password', edit_password_path, class: 'btn btn-sm btn-outline-secondary ms-2')
+    = link_to(t('users.show.edit_account'), edit_user_path(@user.username), class: 'btn btn-sm btn-outline-secondary')
+    = link_to(t('users.show.change_password'), edit_password_path, class: 'btn btn-sm btn-outline-secondary ms-2')
 
   -# User's API key
-  %h4{class: 'pb-2 my-4 border-bottom'} API Key
-  = tag.p("Your API key can be used to access the #{$SITE} RESTful API and services", class: 'text-muted')
+  %h4{class: 'pb-2 my-4 border-bottom'}= t('users.show.api_key')
+  = tag.p(t('users.show.api_key_help', site: $SITE), class: 'text-muted')
   = session[:user].apikey
   = content_tag(:span, style: 'display: inline-block;') do
     = render ClipboardComponent.new(message: session[:user].apikey, title: 'Copy API Key', show_content: false)
 
   -# User's subscriptions
   - unless @user.subscription.blank?
-    %h4{class: 'pb-2 mt-5 mb-4 border-bottom'} Subscriptions
+    %h4{class: 'pb-2 mt-5 mb-4 border-bottom'}= t('users.show.subscriptions')
     %table.table
       %thead.table-light
         %tr
-          %th Ontology
-          %th Subscription type
+          %th= t('users.show.headers.ontology')
+          %th= t('users.show.headers.subscription_type')
           %th &nbsp;
       - @user.subscription.each do |subscription|
         - ont = (!subscription[:ontology].nil? ? subscription[:ontology].split('/').last: nil) # ensure we get the acronym
@@ -59,16 +59,16 @@
 
   -# Projects this user created
   - unless @user_projects.blank?
-    %h4{class: 'pb-2 mt-5 mb-4 border-bottom'} Projects
-    = tag.p("Projects you created in #{$SITE}", class: 'text-muted')
+    %h4{class: 'pb-2 mt-5 mb-4 border-bottom'}= t('users.show.projects')
+    = tag.p(t('users.show.projects_you_created', site: $SITE), class: 'text-muted')
     %div{class: 'administered-objects'}
       - @user_projects.each do |p|
         = render ChipButtonComponent.new(url: project_path(p.acronym), text: p.name, type: 'clickable')
 
   -# Ontologies this user administers
   - unless @admin_ontologies.blank?
-    %h4{class: 'pb-2 mt-5 mb-4 border-bottom'} Ontologies
-    = tag.p("Ontologies you have administrative access to in #{$SITE}", class: 'text-muted')
+    %h4{class: 'pb-2 mt-5 mb-4 border-bottom'}= t('users.show.ontologies')
+    = tag.p(t('users.show.ontologies_admin_access', site: $SITE), class: 'text-muted')
     %div{class: 'administered-objects'}
       - @admin_ontologies.each do |ont|
         = render ChipButtonComponent.new(url: ontology_path(ont.acronym), text: ont.name, type: 'clickable')

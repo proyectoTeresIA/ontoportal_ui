@@ -1,7 +1,7 @@
 %div{class: 'modal-header'}
   %h5{class: 'modal-title', id: 'changeRequestModalLabel'}
-    = "Add synonym proposal for #{@concept_label}"
-  %button{type: 'button', class: 'btn-close', 'data-bs-dismiss': 'modal', 'aria-label': 'Close'}
+    = t('change_requests.create_synonym.title', concept_label: @concept_label)
+  %button{type: 'button', class: 'btn-close', 'data-bs-dismiss': 'modal', 'aria-label': t('shared.close')}
 = form_with scope: :create_synonym, url: change_requests_path, local: false do |f|
   = hidden_field_tag 'concept_id', @concept_id
   = hidden_field_tag 'concept_label', @concept_label
@@ -12,14 +12,14 @@
   = hidden_field_tag 'operation', KGCL::Operations::NEW_SYNONYM
   %div{class: 'modal-body'}
     %div.mb-3
-      = f.label :preferred_label, 'Label', class: 'form-label'
+      = f.label :preferred_label, t('change_requests.create_synonym.labels.preferred_label'), class: 'form-label'
       = f.text_field :preferred_label, class: 'form-control'
     %div.mb-3
-      = f.label :qualifier, 'Type', class: 'form-label'
+      = f.label :qualifier, t('change_requests.create_synonym.labels.qualifier'), class: 'form-label'
       = synonym_qualifier_select(f)
     %div.mb-3
-      = f.label :comment, 'Comment', class: 'form-label'
+      = f.label :comment, t('change_requests.create_synonym.labels.comment'), class: 'form-label'
       = f.text_area :comment, rows: 5, class: 'form-control'
   %div{class: 'modal-footer'}
-    %button{type: 'button', class: 'btn btn-secondary', 'data-bs-dismiss': 'modal'} Close
-    = submit_tag 'Submit', id: 'create_synonym_button', class: 'btn btn-primary'
+    %button{type: 'button', class: 'btn btn-secondary', 'data-bs-dismiss': 'modal'}= t('change_requests.create_synonym.close')
+    = submit_tag t('change_requests.create_synonym.submit'), id: 'create_synonym_button', class: 'btn btn-primary'

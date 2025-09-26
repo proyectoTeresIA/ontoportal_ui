@@ -67,6 +67,10 @@ Rails.application.routes.draw do
   # Robots.txt
   get '/robots.txt' => 'robots#index'
 
+  # Language
+  post '/language', to: 'language#set_locale_language', as: :set_locale_language
+  get '/language', to: 'language#set_locale_language'
+
   # Ontologies
   resources :ontologies do
     resources :submissions do

@@ -30,13 +30,21 @@ module SubmissionInputsHelper
     end
 
     def help_text
+      return nil unless @attr_metadata
+      key = @attr_metadata['attribute']
+      # Attempt i18n lookup first; fallback to original helpText
+      i18n_key = "submission_metadata.help.#{key}"
+      translated = I18n.t(i18n_key, default: nil)
+      return translated if translated.present?
       CGI.unescape_html(@attr_metadata['helpText']) if @attr_metadata['helpText']
     end
 
     def label
       return attr_key unless @attr_metadata
-
-      @label || @attr_metadata['label'] || @attr_metadata['attribute'].humanize
+      key = @attr_metadata['attribute']
+      i18n_key = "submission_metadata.labels.#{key}"
+      i18n_val = I18n.t(i18n_key, default: nil)
+      return @label || i18n_val || @attr_metadata['label'] || @attr_metadata['attribute'].humanize
     end
 
     def type?(type)
@@ -101,13 +109,13 @@ module SubmissionInputsHelper
 
   end
 
-  def ontology_name_input(ontology = @ontology, label: 'Name')
+  def ontology_name_input(ontology = @ontology, label: I18n.t('submission_inputs.name'))
     content_tag(:div, class: 'mb-2') do
       text_input(name: 'ontology[name]', value: ontology.name, label: label_required(label))
     end
   end
 
-  def ontology_acronym_input(ontology = @ontology, update: @is_update_ontology, label: 'Acronym')
+  def ontology_acronym_input(ontology = @ontology, update: @is_update_ontology, label: I18n.t('submission_inputs.acronym'))
     out = text_input(name: 'ontology[acronym]', value: ontology.acronym, disabled: update, label: label_required(label))
     out += hidden_field_tag('ontology[acronym]', ontology.acronym) if update
     content_tag(:div, out, class: 'my-1')
@@ -145,7 +153,7 @@ module SubmissionInputsHelper
   def ontology_categories_input(ontology = @ontology, categories = @categories)
     categories ||= LinkedData::Client::Models::Category.all(display_links: false, display_context: false)
 
-    render Input::InputFieldComponent.new(name: '', label: 'Categories') do
+    render Input::InputFieldComponent.new(name: '', label: t('submission_inputs.categories')) do
       content_tag(:div, class: 'upload-ontology-chips-container') do
         hidden_field_tag('ontology[hasDomain][]') +
           categories.map do |category|
@@ -523,7 +531,14 @@ module SubmissionInputsHelper
   end
 
   def enforced_values(attr)
-    attr.metadata['enforcedValues'].collect { |k, v| [v || k, k] }
+    raw = attr.metadata['enforcedValues']
+    return [] unless raw
+    raw.collect do |k, v|
+      display = v || k
+      i18n_key = "submission_metadata.enforced_values.#{attr.metadata['attribute']}.#{k}"
+      translated = I18n.t(i18n_key, default: display)
+      [translated, k]
+    end
   end
 
   def selected_values(attr, enforced_values)

@@ -20,5 +20,5 @@
     = tag.div('Optionally enter a comment giving a reason for the rename', class: 'form-text',
               id: 'nodeRenameCommentHelpBlock')
   = submit_tag 'Submit', id: 'node_rename_button', class: 'btn btn-primary'
-  = tag.button('Cancel', type: 'button',
+  = tag.button(t('components.cancel_button'), type: 'button',
                'data-action': 'click->change-requests#clearProposalForm', class: 'btn btn-primary')

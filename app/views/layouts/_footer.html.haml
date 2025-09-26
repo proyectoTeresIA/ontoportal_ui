@@ -8,44 +8,44 @@
   %div.container
     %div.row
       %div{class: 'col-6 col-md mb-3'}
-        %h6 PRODUCTS
+        %h6= t('layouts.footer_nav.headers.products')
         %ul{class: 'nav flex-column list-unstyled'}
           %li.nav-item
-            = link_to('BioPortal', root_path, class: 'nav-link p-0')
+            = link_to(t('layouts.footer_nav.links.bioportal'), root_path, class: 'nav-link p-0')
           %li.nav-item
-            = link_to('BioPortal REST API', Rails.configuration.settings.links[:rest_api], class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.rest_api'), Rails.configuration.settings.links[:rest_api], class: 'nav-link p-0',
                       target: '_blank')
           %li.nav-item
-            = link_to('BioPortal Virtual Appliance', Rails.configuration.settings.links[:virtual_appliance],
+            = link_to(t('layouts.footer_nav.links.virtual_appliance'), Rails.configuration.settings.links[:virtual_appliance],
                       class: 'nav-link p-0', target: '_blank')
           %li.nav-item
-            = link_to('NCBO Web Widgets', Rails.configuration.settings.links[:widgets], class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.widgets'), Rails.configuration.settings.links[:widgets], class: 'nav-link p-0',
                       target: '_blank')
       %div{class: 'col-6 col-md mb-3 footer-support'}
-        %h6 SUPPORT
+        %h6= t('layouts.footer_nav.headers.support')
         %ul{class: 'nav flex-column list-unstyled'}
           %li.nav-item
-            = link_to('Contact Us', feedback_path, class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.contact_us'), feedback_path, class: 'nav-link p-0',
                       data: {controller: 'popup', action: 'click->popup#open'})
           %li.nav-item
-            = link_to('Documentation', Rails.configuration.settings.links[:help], class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.documentation'), Rails.configuration.settings.links[:help], class: 'nav-link p-0',
                       target: '_blank')
           %li.nav-item
-            = link_to('NCBO Wiki', Rails.configuration.settings.links[:wiki], class: 'nav-link p-0', target: '_blank')
+            = link_to(t('layouts.footer_nav.links.wiki'), Rails.configuration.settings.links[:wiki], class: 'nav-link p-0', target: '_blank')
       %div{class: 'col-6 col-md mb-3'}
-        %h6 ABOUT
+        %h6= t('layouts.footer_nav.headers.about')
         %ul{class: 'nav flex-column list-unstyled'}
           %li.nav-item
-            = link_to('About Us', Rails.configuration.settings.links[:about], class: 'nav-link p-0', target: '_blank')
+            = link_to(t('layouts.footer_nav.links.about_us'), Rails.configuration.settings.links[:about], class: 'nav-link p-0', target: '_blank')
           %li.nav-item
-            = link_to(raw('Mission & Vision'), Rails.configuration.settings.links[:mission], class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.mission_vision'), Rails.configuration.settings.links[:mission], class: 'nav-link p-0',
                       target: '_blank')
           %li.nav-item
-            = link_to('Team', Rails.configuration.settings.links[:team], class: 'nav-link p-0', target: '_blank')
+            = link_to(t('layouts.footer_nav.links.team'), Rails.configuration.settings.links[:team], class: 'nav-link p-0', target: '_blank')
           %li.nav-item
-            = link_to('Projects', projects_path, class: 'nav-link p-0')
+            = link_to(t('layouts.footer_nav.links.projects'), projects_path, class: 'nav-link p-0')
       %div{class: 'col-12 col-md'}
-        %h6 CONNECT
+        %h6= t('layouts.footer_nav.headers.connect')
         %ul.list-inline
           %li.list-inline-item
             = link_to(Rails.configuration.settings.links[:facebook], target: '_blank') do
@@ -69,21 +69,21 @@
       %div.col
         %ul.list-inline.nav
           %li.list-inline-item.nav-item
-            = link_to('Cite Us', Rails.configuration.settings.links[:cite], class: 'nav-link p-0', target: '_blank')
+            = link_to(t('layouts.footer_nav.links.cite_us'), Rails.configuration.settings.links[:cite], class: 'nav-link p-0', target: '_blank')
           %li.list-inline-item
             %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
           %li.list-inline-item
-            = link_to('Privacy Policy', Rails.configuration.settings.links[:privacy_policy],class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.privacy_policy'), Rails.configuration.settings.links[:privacy_policy],class: 'nav-link p-0',
                       target: '_blank')
           %li.list-inline-item
             %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
           %li.list-inline-item
-            = link_to('Terms of Use', Rails.configuration.settings.links[:terms], class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.terms'), Rails.configuration.settings.links[:terms], class: 'nav-link p-0',
                       target: '_blank')
           %li.list-inline-item
             %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
           %li.list-inline-item
-            = link_to('Use of Cookies', Rails.configuration.settings.links[:cookies], class: 'nav-link p-0',
+            = link_to(t('layouts.footer_nav.links.cookies'), Rails.configuration.settings.links[:cookies], class: 'nav-link p-0',
                       target: '_blank')
 
 = javascript_include_tag "application"

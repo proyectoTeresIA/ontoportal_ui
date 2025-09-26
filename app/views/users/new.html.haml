@@ -1,45 +1,45 @@
-- @title = "Register"
+- @title = t('users.new.title', default: 'Register')
 
 %div.signup
   = form_with scope: :user, url: users_path, class: 'form-signup' do |f|
-    %h4.mb-4 Create an account
+    %h4.mb-4= t('users.new.create_account', default: 'Create an account')
 
     -# TODO: display errors in a standard Rails flash message
     - if @errors.present?
       %div.enable-lists
-        Errors creating account:
+        = t('users.new.errors_creating_account', default: 'Errors creating account:')
         %ul
           - for error in @errors
             %li= error
 
     %div.form-floating.mb-3
-      = f.text_field(:firstName, class: 'form-control', placeholder: 'First name', required: 'true')
-      = f.label(:firstName, 'First name', class: 'form-label')
+      = f.text_field(:firstName, class: 'form-control', placeholder: t('users.new.first_name', default: 'First name'), required: 'true')
+      = f.label(:firstName, t('users.new.first_name', default: 'First name'), class: 'form-label')
 
     %div.form-floating.mb-3
-      = f.text_field(:lastName, class: 'form-control', placeholder: 'Last name (optional)')
-      = f.label(:lastName, 'Last name (optional)', class: 'form-label')
+      = f.text_field(:lastName, class: 'form-control', placeholder: t('users.new.last_name_optional', default: 'Last name (optional)'))
+      = f.label(:lastName, t('users.new.last_name_optional', default: 'Last name (optional)'), class: 'form-label')
 
     %div.form-floating.mb-3
-      = f.text_field(:username, class: 'form-control', placeholder: 'Username', required: 'true')
-      = f.label(:username, class: 'form-label')
+      = f.text_field(:username, class: 'form-control', placeholder: t('users.new.username', default: 'Username'), required: 'true')
+      = f.label(:username, t('users.new.username', default: 'Username'), class: 'form-label')
 
     %div.form-floating.mb-3
-      = f.email_field(:email, class: 'form-control', placeholder: 'Email address', required: 'true')
-      = f.label(:email, class: 'form-label')
+      = f.email_field(:email, class: 'form-control', placeholder: t('users.new.email', default: 'Email address'), required: 'true')
+      = f.label(:email, t('users.new.email', default: 'Email address'), class: 'form-label')
 
     %div.form-floating.mb-3
-      = f.password_field(:password, class: 'form-control', placeholder: 'Password', required: 'true',
+      = f.password_field(:password, class: 'form-control', placeholder: t('users.new.password', default: 'Password'), required: 'true',
                          autocomplete: 'new-password')
-      = f.label(:password, class: 'form-label')
+      = f.label(:password, t('users.new.password', default: 'Password'), class: 'form-label')
 
     - if using_captcha?
       %div.mb-4
         = recaptcha_tags
 
     %div.d-grid
-      = submit_tag('Sign Up', class: 'btn btn-lg btn-primary btn-block')
+      = submit_tag(t('users.new.sign_up', default: 'Sign Up'), class: 'btn btn-lg btn-primary btn-block')
 
     %p.text-muted.mt-2
-      Already have an account?
-      = link_to('Log in', login_index_path)
+      = t('users.new.have_account', default: 'Already have an account?')
+      = link_to(t('users.new.log_in', default: 'Log in'), login_index_path)

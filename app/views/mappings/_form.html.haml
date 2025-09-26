@@ -6,25 +6,25 @@
 
 %div.form
   %div.mb-3
-    %label{for: "map_to_picker", class: 'form-label'} Target ontology or view
+    %label{for: "map_to_picker", class: 'form-label'}= t('mappings.form.target_ontology_or_view')
     = select_tag("map_to_picker", options_for_select(onts_and_views_for_select()), class: "form-control")
   %div.mb-3
-    %label{for: "map_to", class: 'form-label'} Target class
+    %label{for: "map_to", class: 'form-label'}= t('mappings.form.target_class')
     = text_field_tag(:map_to, @concept_to.label,
                      class: "bp_internal_form_complete-#{ontology_to_id}-name search_autocomplete form-control",
-                     placeholder: "Start typing to select a class")
+                     placeholder: t('mappings.form.map_to_placeholder'))
     = hidden_field_tag :map_to_bioportal_full_id, @concept_to.id
     = hidden_field_tag :map_to_bioportal_ontology_id, @ontology_to.acronym
     = hidden_field_tag :map_from_bioportal_full_id, @concept_from.id
     = hidden_field_tag :map_from_bioportal_ontology_id, @ontology_from.acronym
   %div.mb-3
-    %label{for: "map_to_concept_details_table", class: 'form-label'} Details
+    %label{for: "map_to_concept_details_table", class: 'form-label'}= t('mappings.form.details')
     %div#map_to_concept_details_table.form-control
   %div.mb-3
-    %label{for: "mapping_comment", class: 'form-label'} Comment
+    %label{for: "mapping_comment", class: 'form-label'}= t('mappings.form.comment')
     = text_area(:mapping, :comment, rows: 5, class: "form-control")
   %div.mb-3
-    %label{for: "mapping_relation", class: 'form-label'} Mapping relation type
+    %label{for: "mapping_relation", class: 'form-label'}= t('mappings.form.mapping_relation_type')
     = select("mapping", "relation", options_for_select(@mapping_relation_options, @mapping_relation_options.first), {},
              class: "form-control")
   %div.mb-1

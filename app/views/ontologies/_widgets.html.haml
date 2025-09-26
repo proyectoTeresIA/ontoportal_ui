@@ -5,23 +5,23 @@
   - if @ontology.metadata_only?
     #widgets_content{:style => "padding: 1em;"}
       %p
-        Widgets are only available for ontologies stored in #{$SITE}.
+        = t('ontologies.widgets_page.not_available_html', site: $SITE).html_safe
   - else
     #widgets_content
-      %h5.pb-3 Add #{$ORG} Web Widgets to your site for #{@ontology.acronym}
+      %h5.pb-3= t('ontologies.widgets_page.add_widgets_heading_html', org: $ORG, acronym: @ontology.acronym).html_safe
       %table#widget_table{width: "100%"}
         %tr
           %th
-            Widget type
+            = t('ontologies.widgets_page.headers.widget_type')
           %th
-            Widget demonstration
+            = t('ontologies.widgets_page.headers.widget_demo')
         %tr
           %td
             %div.card
               %div.card-body
-                %h5.card-title Jump To
-                %p.card-text Type a class name from #{@ontology.acronym} and jump to it in #{$SITE}
-                %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=jump".html_safe} Get code
+                %h5.card-title= t('ontologies.widgets_page.cards.jump_to.title')
+                %p.card-text= t('ontologies.widgets_page.cards.jump_to.description', acronym: @ontology.acronym, site: $SITE)
+                %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=jump".html_safe}= t('ontologies.widgets_page.get_code')
           %td
             #bp_quick_jump
             :javascript
@@ -29,40 +29,49 @@
               var BP_SITE = "#{$SITE}";
               var BP_ORG = "#{$ORG}";
               var BP_ontology_id = "#{@ontology.acronym}";
+              window.BP_I18N = {
+                jump_to_label: "#{j t('ontologies.widgets_page.quick_jump.jump_to_label')}",
+                go_to_button: "#{j t('ontologies.widgets_page.quick_jump.go_to_button', site: $SITE)}",
+                not_found_confirm: "#{j t('ontologies.widgets_page.quick_jump.not_found_confirm', site: $SITE)}",
+                retrieving_definitions: "#{j t('ontologies.widgets_page.quick_jump.retrieving_definitions')}",
+                synonyms_prefix: "#{j t('ontologies.widgets_page.quick_jump.synonyms_prefix')}",
+                results_provided_by: "#{j t('ontologies.widgets_page.quick_jump.results_provided_by')}",
+                obsolete_class_title: "#{j t('ontologies.widgets_page.quick_jump.obsolete_class_title')}"
+              };
             = javascript_include_tag "/javascripts/widgets/quick_jump.js"
             #jump{:style => "display:none;"}
-              %h2 Step 2: Follow the Instructions
+              %h2= t('ontologies.widgets_page.step2_heading')
               %hr/
               .enable-lists
                 %ul
                   %li
-                    Download the
+                    = t('ontologies.widgets_page.instructions.download_the')
                     %a.external.free{:href => "/javascripts/widgets/quick_jump.js", :rel => "nofollow", :title => "/javascripts/widgets/quick_jump.js"}
-                      %b quick_jump.js file
-                    and put it on your server
+                      %b= t('ontologies.widgets_page.instructions.quick_jump_file')
+                    = t('ontologies.widgets_page.instructions.put_on_server')
                   %li
-                    Copy the code below and paste it to your HTML page
+                    = t('ontologies.widgets_page.instructions.copy_code_html')
                   %li
-                    %b Note:
-                    If you would like to use Quick Jump across multiple ontologies:
+                    %b= t('ontologies.widgets_page.instructions.note')
+                    = t('ontologies.widgets_page.instructions.quick_jump_multi')
                     %ul
                       %li
-                        You can enter a comma-separated list of ontology ids:
+                        = t('ontologies.widgets_page.instructions.multi_ids')
                         %br/
                         var BP_ontology_id = "NCIt,SNOMEDCT";
                       %li
-                        You can set the variable to 'all' to search all ontologies in #{$SITE}:
+                        = t('ontologies.widgets_page.instructions.all_ontologies', site: $SITE)
                         %br/
                         var BP_ontology_id = "all";
                   %li
-                    To include definitions in the Jump To drop-down, add the following variable in Javascript:
+                    = t('ontologies.widgets_page.instructions.include_definitions')
                     %br/
                     %pre var BP_include_definitions = true;
                   %li
-                    In the code that you just pasted, make sure to change the path to the quick_jump.js file to point to the location where you put the file (relative to your HTML file)
+                    = t('ontologies.widgets_page.instructions.change_path')
                     %ul
                       %li
-                        For example, if you put the quick_jump.js file in the same directory as your HTML file, this is the code you would use:
+                        = t('ontologies.widgets_page.instructions.example_same_dir')
                         %pre
                           = preserve do
                             :escaped
@@ -71,82 +80,80 @@
                                   var BP_ontology_id = "#{@ontology.acronym}";</script>
                               <script src="quick_jump.js" type="text/javascript" charset="utf-8"></script>
               %p
-                For more help visit
+                = t('ontologies.widgets_page.instructions.more_help')
                 %a{:href => "http://bioontology.org/wiki/index.php/NCBO_Widgets#How_to_use_NCBO_Widgets", :target => "_blank"} NCBO Widget Wiki
         %tr
           %td
             %div.card
               %div.card-body
-                %h5.card-title Form Autocomplete
-                %p.card-text Fill your form fields with classes from #{@ontology.acronym}
-                %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=form".html_safe} Get code
+                %h5.card-title= t('ontologies.widgets_page.cards.form_autocomplete.title')
+                %p.card-text= t('ontologies.widgets_page.cards.form_autocomplete.description', acronym: @ontology.acronym)
+                %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=form".html_safe}= t('ontologies.widgets_page.get_code')
           %td
             = javascript_include_tag "/javascripts/widgets/form_complete.js"
-            Example 1 (start typing the class name to get its full URI)
+            = t('ontologies.widgets_page.examples.example1')
             %br/
             %input{:class => "bp_form_complete-#{CGI.escape(@ontology.acronym).sub('-', '%2d')}-uri", :name => "a", :size => "100", :type => "text"}/
             %br/
-            Example 2 (get the ID for a class)
+            = t('ontologies.widgets_page.examples.example2')
             %br/
             %input{:class => "bp_form_complete-#{CGI.escape(@ontology.acronym).sub('-', '%2d')}-shortid", :name => "b", :size => "100", :type => "text"}/
             %br/
-            Example 3 (get the preferred name for a class)
+            = t('ontologies.widgets_page.examples.example3')
             %br/
             %input{:class => "bp_form_complete-#{CGI.escape(@ontology.acronym).sub('-', '%2d')}-name", :name => "c", :size => "100", :type => "text"}/
             #form{:style => "display:none;"}
               .enable-lists
-                %h2 Step 2: Follow the Instructions
+                %h2= t('ontologies.widgets_page.step2_heading')
                 %hr/
                 %ul
                   %li
-                    Download the
+                    = t('ontologies.widgets_page.instructions.download_the')
                     %a.external.free{:href => "/javascripts/widgets/form_complete.js", :rel => "nofollow", :title => "/javascripts/widgets/form_complete.js"}
-                      %b form_complete.js file
-                    and put it on your server.
+                      %b = t('ontologies.widgets_page.instructions.form_complete_file')
+                    = t('ontologies.widgets_page.instructions.put_on_server_period')
                   %li
-                    In the header for the page where you want the form field, include the
-                    %b form_complete.js
-                    file.
+                    = t('ontologies.widgets_page.instructions.include_header_form_complete_html')
                   %li
-                    On your form, for the fields where you want to use the class-selection widget, specify the field's class in the following format:
+                    = t('ontologies.widgets_page.instructions.field_class_format')
                     %code bp_form_complete-{ontology_id_list}-{value}
                     %ul
                       %li
-                        For example,
+                        = t('ontologies.widgets_page.instructions.for_example')
                         %code bp_form_complete-NCIT-uri
-                        will use NCI Thesaurus (ontology id is NCIT) and will put the class URI in the field after the user selects the class from the pull-down list.
+                        = t('ontologies.widgets_page.instructions.ncit_uri_behavior')
                         %ul
                           %li
-                            %b Note:
-                            In addition to single ontology ids, you can use a list:
+                            %b= t('ontologies.widgets_page.instructions.note')
+                            = t('ontologies.widgets_page.instructions.single_or_list')
                             %br/
                             %code bp_form_complete-NCIT,NCBITAXON-uri
                           %li
-                            %b OR
-                            use 'all' to search across all #{$SITE} ontologies:
+                            %b= t('ontologies.widgets_page.instructions.or')
+                            = t('ontologies.widgets_page.instructions.all_site_ontologies', site: $SITE)
                             %br/
                             %code bp_form_complete-all-uri
                           %li The autocomplete widget accesses ontology content from the latest version of the ontology.
                       %li
-                        You can use the following parameters to select which value will be placed into the user-visible input field:
+                        = t('ontologies.widgets_page.instructions.parameters_intro')
                         %ul
                           %li
                             %code uri
-                            put the complete URI of the class (e.g.,
+                            = t('ontologies.widgets_page.instructions.param_uri')
                             = succeed ")" do
                               %a.external.free{:href => @ontology.explore.classes["collection"].first.id, :rel => "nofollow", :title => "/visualize/39478/Common_Neoplasm"}
                                 = @ontology.explore.classes["collection"].first.id
                           %li
                             %code shortid
-                            put the short id of the class, as used in #{$SITE} (e.g., "Common_Neoplasm");
+                            = t('ontologies.widgets_page.instructions.param_shortid', site: $SITE)
                           %li
                             %code name
-                            put the preferred name of the class (e.g., "Common Neoplasm");
+                            = t('ontologies.widgets_page.instructions.param_name')
                   %li
-                    In addition to the input element you defined, there are four hidden form elements that are created and then set when a user selects a class from the list. For example, if you create a field with this code:
+                    = t('ontologies.widgets_page.instructions.hidden_elements_intro')
                     %ul
                     %pre= h '<input type="text" name="a" class="bp_form_complete-all-uri" size="100"/>'
-                The 'name' attribute is used to create the four following fields (note how the 'a' from the name attribute is appended to the id attribute):
+                = t('ontologies.widgets_page.instructions.name_attribute_explanation')
                 %ul
                   %li
                     %pre= h '<input type="hidden" id="a_bioportal_preferred_name">'
@@ -157,25 +164,25 @@
                   %li
                     %pre= h '<input type="hidden" id="a_bioportal_full_id">'
                   %li
-                    Additional parameters are documented on the
+                    = t('ontologies.widgets_page.instructions.additional_params')
                     %a{:href => "http://bioontology.org/wiki/index.php/NCBO_Widgets#How_to_use_NCBO_Widgets", :target => "_blank"} NCBO Widget Wiki
                 %p
-                  For more help visit
+                  = t('ontologies.widgets_page.instructions.more_help')
                   %a{:href => "http://bioontology.org/wiki/index.php/NCBO_Widgets#How_to_use_NCBO_Widgets", :target => "_blank"} NCBO Widget Wiki
         %tr
           %td
             %div.card
               %div.card-body
-                %h5.card-title Visualization
-                %p.card-text Display a visualization for a given class in #{@ontology.acronym}
-                %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=vis".html_safe} Get code
+                %h5.card-title= t('ontologies.widgets_page.cards.visualization.title')
+                %p.card-text= t('ontologies.widgets_page.cards.visualization.description', acronym: @ontology.acronym)
+                %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=vis".html_safe}= t('ontologies.widgets_page.get_code')
           %td
             #bp_vis_container
               <iframe frameborder="0" src="/widgets/visualization?ontology=#{@ontology.acronym}&class=#{CGI.escape(@ontology.explore.classes["collection"].first.id)}&apikey=#{$APIKEY}" width="100%" height="350"></iframe>
             #vis{:style => "display:none;"}
-              %h2 Step 2: Follow the Instructions
+              %h2= t('ontologies.widgets_page.step2_heading')
               %hr/
-              %b Copy the code below and paste it to your HTML page
+              %b= t('ontologies.widgets_page.instructions.copy_code_html')
               %br/
               %br/
               %pre
@@ -183,7 +190,7 @@
                   :escaped
                     <iframe frameborder="0" src="/widgets/visualization?ontology=#{@ontology.acronym}&class=#{CGI.escape(@ontology.explore.classes["collection"].first.id)}&apikey=YOUR_API_KEY"></iframe>
               %p
-                For more help visit
+                = t('ontologies.widgets_page.instructions.more_help')
                 %a{:href => "http://bioontology.org/wiki/index.php/NCBO_Widgets#How_to_use_NCBO_Widgets", :target => "_blank"} NCBO Widget Wiki
 
         - unless @ontology.flat?
@@ -191,9 +198,9 @@
             %td
               %div.card
                 %div.card-body
-                  %h5.card-title Tree Widget
-                  %p.card-text Display a class tree with a search field for #{@ontology.acronym}
-                  %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=widget_tree_popup".html_safe} Get code
+                  %h5.card-title= t('ontologies.widgets_page.cards.tree_widget.title')
+                  %p.card-text= t('ontologies.widgets_page.cards.tree_widget.description', acronym: @ontology.acronym)
+                  %a.btn.btn-info.thickbox{href: "#{get_code_prefix}&inlineId=widget_tree_popup".html_safe}= t('ontologies.widgets_page.get_code')
             %td
               #bp_widget_tree_container
               <link rel="stylesheet" type="text/css" href="/widgets/jquery.ncbo.tree.css">
@@ -209,9 +216,9 @@
                 })
 
               #widget_tree_popup{:style => "display:none;"}
-                %h2 Step 2: Follow the Instructions
+                %h2= t('ontologies.widgets_page.step2_heading')
                 %hr/
-                %b Copy the code below and paste it to your HTML page
+                %b= t('ontologies.widgets_page.instructions.copy_code_html')
                 %br/
                 %br/
                 %pre
@@ -226,8 +233,8 @@
                       });
 
                 %p
-                  You can also view a
-                  %a{href: "/widgets/ncbo_tree.html"} detailed demonstration
+                  = t('ontologies.widgets_page.instructions.detailed_demo_prefix')
+                  %a{href: "/widgets/ncbo_tree.html"}= t('ontologies.widgets_page.instructions.detailed_demo_link')
                 %p
-                  For more help visit
+                  = t('ontologies.widgets_page.instructions.more_help')
                   %a{:href => "http://bioontology.org/wiki/index.php/NCBO_Widgets#How_to_use_NCBO_Widgets", :target => "_blank"} NCBO Widget Wiki

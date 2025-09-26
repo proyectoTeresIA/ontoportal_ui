@@ -1,16 +1,16 @@
 %div#change-request-notice
   %div#addProposalDropdownDiv{class: 'd-flex flex-row-reverse'}
     %div.btn-group.dropstart
-      = button_tag('Add a proposal', id: 'addProposalDropdown', class: 'btn btn-sm btn-primary dropdown-toggle',
+      = button_tag(t('ontologies.add_proposal.add_proposal'), id: 'addProposalDropdown', class: 'btn btn-sm btn-primary dropdown-toggle',
                        type: 'button', 'data-bs-toggle': 'dropdown',  'aria-haspopup': 'true', 'aria-expanded': 'false')
       %div.dropdown-menu{'aria-labelledby': 'addProposalDropdown'}
-        = link_to('Deepen class', '#', class: 'dropdown-item disabled')
-        = link_to('Delete class', '#', class: 'dropdown-item disabled')
-        = link_to('Obsolete class',
+        = link_to(t('ontologies.add_proposal.deepen_class'), '#', class: 'dropdown-item disabled')
+        = link_to(t('ontologies.add_proposal.delete_class'), '#', class: 'dropdown-item disabled')
+        = link_to(t('ontologies.add_proposal.obsolete_class'),
                       change_requests_node_obsoletion_path(concept_id: @concept.id, concept_label: @concept.prefLabel,
                                                            ont_acronym: @ontology.acronym),
                       class: 'dropdown-item', 'data-turbo': 'true', 'data-turbo-stream': 'true', 'data-turbo-frame': '_top')
-        = link_to('Rename class',
+        = link_to(t('ontologies.add_proposal.rename_class'),
                       change_requests_node_rename_path(concept_id: @concept.id, concept_label: @concept.prefLabel,
                                                        ont_acronym: @ontology.acronym),
                       class: 'dropdown-item', 'data-turbo': 'true', 'data-turbo-stream': 'true','data-turbo-frame': '_top')

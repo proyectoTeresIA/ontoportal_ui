@@ -1,24 +1,20 @@
 %div.p-4
-  %h2.pb-3 Ontology submitted successfully!
+  %h2.pb-3= t('ontologies.submit_success.title')
   -if @ontology.summaryOnly
-    %p Thank you for submitting your metadata-only ontology to #{$SITE}.
+    %p= t('ontologies.submit_success.thanks_metadata', site: $SITE)
     %p
-      Users can now see
-      = link_to "your ontology", ontology_path(@ontology.acronym)
-      in our ontology list but they cannot explore or search it. To enable exploring and searching,
-      please upload a full version of your ontology.
+      = t('ontologies.submit_success.visible_but_not_browsable_html', link: link_to(t('ontologies.submit_success.your_ontology'), ontology_path(@ontology.acronym))).html_safe
   -else
     -if @ontology.viewOf
-      %p Thank you for submitting your ontology view to #{$SITE}.
+      %p= t('ontologies.submit_success.thanks_view', site: $SITE)
     -else
-      %p Thank you for submitting your ontology to #{$SITE}.
+      %p= t('ontologies.submit_success.thanks', site: $SITE)
     %p
-      We will now put your ontology in the queue to be processed. Please keep in mind that it may take up to several
-      hours before #{$SITE} users will be able to explore and search your ontology.
+      = t('ontologies.submit_success.processing_time', site: $SITE)
     %p
-      When your ontology is ready for viewing, it will be available here:
+      = t('ontologies.submit_success.ready_here')
       = link_to ontology_url(@ontology.acronym), ontology_path(@ontology.acronym)
     %p
-      If you have any questions or problems, please email the #{$SITE} support team at:
+      = t('ontologies.submit_success.contact_support_intro', site: $SITE)
       = mail_to "#{$SUPPORT_EMAIL}", "#{$SUPPORT_EMAIL}"
 

@@ -1,55 +1,55 @@
-- @title = "Search"
+- @title = t('search.index.title')
 
 %div.container.mt-5
   %h1.display-4 
-    Class Search
+    = t('search.index.heading')
 
   = form_tag("/search", method: "post") do
     %div.mb-3
       = text_field_tag("search_keywords", nil, class: "form-control", aria: {describedby: "classSearchHelpBlock"})
       %div#classSearchHelpBlock.form-text
         = t(".search_keywords_placeholder")
-        = link_to('help', Rails.configuration.settings.links[:help_search],
+        = link_to(t('search.index.help'), Rails.configuration.settings.links[:help_search],
                   data: {controller: 'popup', action: 'click->popup#open'},
-                  aria: {label: 'View search documentation'})
+                  aria: {label: t('search.index.view_search_documentation')})
     %div.mb-3
-      = link_to("Show advanced options >>", "javascript:void(0)", id: "advanced_options",
-                data: {text_swap: "Hide advanced options <<"})
+      = link_to(t('search.index.show_advanced'), "javascript:void(0)", id: "advanced_options",
+            data: {text_swap: t('search.index.hide_advanced')})
 
     -# Advanced search options
     %div#search_options{class: 'mb-3', style: 'display: none;'}
       %fieldset.row.mb-3
-        %legend{class: 'col-form-label col-sm-2 pt-0'} Include in search:
+        %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.include_in_search')
         %div.col-sm-10
           %div.form-check
             = check_box(:search, :include_properties, class: "form-check-input")
-            = label(:search, :include_properties, "Property values", class: "form-check-label definition",
+            = label(:search, :include_properties, t('search.index.property_values'), class: "form-check-label definition",
                     title: t(".property_definition"), for: 'search_include_properties')
           %div.form-check
             = check_box(:search, :include_obsolete, class: "form-check-input")
-            = label(:search, :include_obsolete, "Obsolete classes", class: "form-check-label definition",
+            = label(:search, :include_obsolete, t('search.index.obsolete_classes'), class: "form-check-label definition",
                     title: t(".obsolete_definition").chomp, for: 'search_include_obsolete')
           %div.form-check
             = check_box(:search, :include_views, class: "form-check-input")
-            = label(:search, :include_views, "Ontology views", class: "form-check-label", for: 'search_include_views')
+            = label(:search, :include_views, t('search.index.ontology_views'), class: "form-check-label", for: 'search_include_views')
       %fieldset.row.mb-3
-        %legend{class: 'col-form-label col-sm-2 pt-0'} Narrow search to:
+        %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.narrow_search_to')
         %div.col-sm-10
           %div.form-check
             = check_box(:search, :exact_match, class: "form-check-input")
-            = label(:search, :exact_match, "Exact matches", class: "form-check-label", for: 'search_exact_match')
+            = label(:search, :exact_match, t('search.index.exact_matches'), class: "form-check-label", for: 'search_exact_match')
           %div.form-check
             = check_box(:search, :require_definition, class: "form-check-input")
-            = label(:search, :require_definition, "Classes with definitions", class: "form-check-label",
+            = label(:search, :require_definition, t('search.index.classes_with_definitions'), class: "form-check-label",
                     for: 'search_require_definition')
 
       %div.mb-3
-        %h6{style: "font-size: 10pt !important"} Categories
+        %h6{style: "font-size: 10pt !important"}= t('search.index.categories')
         = select(:search, :categories, options_for_select(categories_for_select), {}, style: "width: 432px", multiple: "true", data: {placeholder: t(".categories_placeholder")})
       %div.mb-5
-        = render :partial => "shared/ontology_picker", locals: {sel_text: "Ontologies"}
+        = render :partial => "shared/ontology_picker", locals: {sel_text: t('shared.ontology_picker.select_ontologies')}
 
-    = button_tag("Search", id: "search_button", class: "btn btn-primary")
+    = button_tag(t('search.index.search_button'), id: "search_button", class: "btn btn-primary")
     = content_tag(:span, id: "search_spinner") do
       %img{src: asset_path('spinners/spinner_000000_16px.gif'), style: "vertical-align: middle;"}
 

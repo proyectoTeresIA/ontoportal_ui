@@ -1,7 +1,7 @@
 %div{class: 'modal-header'}
   %h5{class: 'modal-title', id: 'changeRequestModalLabel'}
-    = "Remove synonym proposal for #{@concept_label}"
-  %button{type: 'button', class: 'btn-close', 'data-bs-dismiss': 'modal', 'aria-label': 'Close'}
+    = t('change_requests.remove_synonym.title', concept_label: @concept_label)
+  %button{type: 'button', class: 'btn-close', 'data-bs-dismiss': 'modal', 'aria-label': t('shared.close')}
 = form_with scope: :remove_synonym, url: change_requests_path, local: false do |f|
   = hidden_field_tag 'concept_id', @concept_id
   = hidden_field_tag 'concept_label', @concept_label
@@ -12,11 +12,11 @@
   = hidden_field_tag 'operation', KGCL::Operations::REMOVE_SYNONYM
   %div{class: 'modal-body'}
     %div.mb-3
-      %label{for: 'remove_synonym_synonym', class: 'form-label'} Synonyms
+      %label{for: 'remove_synonym_synonym', class: 'form-label'}= t('change_requests.remove_synonym.labels.synonym')
       = f.select :synonym, options_for_select(@concept_synonyms, 0), {}, { class: 'form-select' }
     %div.mb-3
-      = f.label :comment, 'Comment', class: 'form-label'
+      = f.label :comment, t('change_requests.remove_synonym.labels.comment'), class: 'form-label'
       = f.text_area :comment, rows: 5, class: 'form-control'
   %div{class: 'modal-footer'}
-    %button{type: 'button', class: 'btn btn-secondary', 'data-bs-dismiss': 'modal'} Close
-    = submit_tag 'Submit', id: 'remove_synonym_button', class: 'btn btn-primary'
+    %button{type: 'button', class: 'btn btn-secondary', 'data-bs-dismiss': 'modal'}= t('change_requests.remove_synonym.close')
+    = submit_tag t('change_requests.remove_synonym.submit'), id: 'remove_synonym_button', class: 'btn btn-primary'

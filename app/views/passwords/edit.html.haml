@@ -15,4 +15,4 @@
         = f.password_field :password_confirmation, class: 'form-control', required: 'true'
       %div
         = submit_tag('Update', class: 'btn btn-primary me-1')
-        = link_to 'Cancel', user_path(@user.username), class: 'btn btn-primary'
+        = link_to t('components.cancel_button'), user_path(@user.username), class: 'btn btn-primary'

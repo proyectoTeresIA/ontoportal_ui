@@ -5,16 +5,16 @@
   </head>
   <body>
     <p>
-      Name: <%=@name%>      
+      <%= t('notifier.feedback.name') %>: <%=@name%>      
     </p>
     <p>
-      Email: <%=@email%>
+      <%= t('notifier.feedback.email') %>: <%=@email%>
     </p>
     <p>
-      Location: <%=@location%>
+      <%= t('notifier.feedback.location') %>: <%=@location%>
     </p>
     <p>
-      <br /><strong>Feedback:</strong>
+      <br /><strong><%= t('notifier.feedback.feedback') %>:</strong>
       <%=simple_format(@comment)%>
     </p>
   </body>

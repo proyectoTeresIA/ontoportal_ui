@@ -1,64 +1,64 @@
-- @title = "Recommender"
+- @title = t('recommender.index.title', default: 'Recommender')
 
-%h2.mt-4 Ontology Recommender
+%h2.mt-4= t('recommender.index.heading', default: 'Ontology Recommender')
 %p
   = t('recommender.intro').html_safe
   = link_to(Rails.configuration.settings.links[:help_recommender],
             data: {controller: 'popup', action: 'click->popup#open'},
-            'aria-label': 'View ontology recommender help') do
+            'aria-label': t('recommender.index.help_aria', default: 'View ontology recommender help')) do
     %i{class: 'fas fa-question-circle fa-lg ps-1', "aria-hidden": "true"}
 
 %form
   -# Specify input format
   %div.mb-3
-    %h5 Input
+    %h5= t('recommender.index.input_section', default: 'Input')
     %div.form-check.form-check-inline
       %input#radioItText.form-check-input{name: "input_type", type: "radio", value: "1", checked: "checked"}
-      %label.form-check-label{for: "radioItText"} Text
+      %label.form-check-label{for: "radioItText"}= t('recommender.index.input_text_label', default: 'Text')
     %div.form-check.form-check-inline
       %input#radioItKeywords.form-check-input{name: "input_type", type: "radio", value: "2"}
-      %label.form-check-label{for: "radioItKeywords"} Keywords (separated by commas)
+      %label.form-check-label{for: "radioItKeywords"}= t('recommender.index.input_keywords_label', default: 'Keywords (separated by commas)')
   
   -# Specify output format
   %div.mb-3
-    %h5 Output
+    %h5= t('recommender.index.output_section', default: 'Output')
     %div.form-check.form-check-inline
       %input#radioOtSingle.form-check-input{name: "output_type", type: "radio", value: "1", checked: "checked"}
-      %label.form-check-label{for: "radioOtSingle"} Ontologies
+      %label.form-check-label{for: "radioOtSingle"}= t('recommender.index.output_ontologies_label', default: 'Ontologies')
     %div.form-check.form-check-inline
       %input#radioOtSets.form-check-input{name: "output_type", type: "radio", value: "2"}
-      %label.form-check-label{for: "radioOtSets"} Ontology sets
+      %label.form-check-label{for: "radioOtSets"}= t('recommender.index.output_sets_label', default: 'Ontology sets')
   
   -# Input text or keywords
   %div.mb-3
-    = text_area_tag("inputText", nil, rows: 10, class: "form-control default", placeholder: "Paste a paragraph of text or some keywords to use in calculating ontology recommendations", aria: {describedby: "inputTextHelpBlock"})
+    = text_area_tag("inputText", nil, rows: 10, class: "form-control default", placeholder: t('recommender.index.textarea_placeholder'), aria: {describedby: "inputTextHelpBlock"})
     %div.card#inputTextHighlighted
       %div.card-body
     %div#inputTextHelpBlock.form-text
-      %a#insertInputLink{href: "javascript:void(0);"} insert sample input
+      %a#insertInputLink{href: "javascript:void(0);"}= t('recommender.index.insert_sample_input')
 
   %div.mb-3
-    %a#advancedOptionsLink{:href => "javascript:void(0);"} Show advanced options >>
+    %a#advancedOptionsLink{:href => "javascript:void(0);"}= t('recommender.index.show_advanced')
 
   -# Advanced options
   %div#advancedOptions
     -# Specify weights
-    %h6 Weights configuration
+    %h6= t('recommender.index.weights_configuration')
     %div.row.mb-3
       %div.col-md-2
-        %label{for: "input_wc"} Coverage
+        %label{for: "input_wc"}= t('recommender.index.coverage_label')
         = number_field_tag("input_wc", "0.55", min: "0", step: "1", class: "form-control")
       %div.col-md-2
-        %label{for: "input_wa"} Acceptance
+        %label{for: "input_wa"}= t('recommender.index.acceptance_label')
         = number_field_tag("input_wa", "0.15", min: "0", step: "1", class: "form-control")
       %div.col-md-2
-        %label{for: "input_wd"} Knowledge detail
+        %label{for: "input_wd"}= t('recommender.index.knowledge_detail_label')
         = number_field_tag("input_wd", "0.15", min: "0", step: "1", class: "form-control")
       %div.col-md-2
-        %label{for: "input_ws"} Specialization
+        %label{for: "input_ws"}= t('recommender.index.specialization_label')
         = number_field_tag("input_ws", "0.15", min: "0", step: "1", class: "form-control")
     -# Specify ontology set size
-    %h6 Maximum ontologies per set
+    %h6= t('recommender.index.max_ontologies_per_set')
     %div.row.mb-3
       %div.col-md-2
         = number_field_tag("input_max_ontologies", "3", in: 2...5, class: "form-control")
@@ -68,42 +68,42 @@
         = render(partial: "shared/ontology_picker")
 
   %div.my-4
-    = submit_tag("Get Recommendations", id: "recommenderButton", type: "button", class: "btn btn-primary")
-    = submit_tag("Edit Input", id: "editButton", type: "button", style: "display: none;", class: "btn btn-primary")
+    = submit_tag(t('recommender.index.get_recommendations'), id: "recommenderButton", type: "button", class: "btn btn-primary")
+    = submit_tag(t('recommender.index.edit_input'), id: "editButton", type: "button", style: "display: none;", class: "btn btn-primary")
     = content_tag(:span, class: "recommenderSpinner") do
       = image_tag("spinners/spinner_000000_16px.gif", style: "vertical-align: middle;")
 
 %div.row#recommenderErrorsDisplay.mb-4
   %div.col
     %span.notTextError
-      Please paste a paragraph of text or some keywords to use in calculating ontology recommendations.
+      = t('recommender.index.errors.not_text')
       %br/
     %span.sumWeightsError
-      The sum of the weights must be greater than zero.
+      = t('recommender.index.errors.sum_weights')
       %br/
     %span.rangeWeightsError
-      All the weights must be greater or equal to zero.
+      = t('recommender.index.errors.range_weights')
       %br/
     %span.invalidWeightsError
-      All the weights must be valid numeric values.
+      = t('recommender.index.errors.invalid_weights')
       %br/
     %span.invalidMaxOntError
-      The maximum ontologies per set must be a valid integer value.
+      = t('recommender.index.errors.invalid_max_ont')
       %br/
     %span.maxOntologiesError
-      The maximum ontologies per set must be a number between 2 and 4.
+      = t('recommender.index.errors.max_ontologies')
       %br/
     %span.generalError
-      Problem getting recommendations, please try again.
+      = t('recommender.index.errors.general')
       %br/
     %span#noResults
-      No recommendations found.
+      = t('recommender.index.errors.no_results')
       %br/
     %span#noResultsSets
-      There are no ontology sets recommended for the input provided. Please try the "Ontologies" output.
+      = t('recommender.index.errors.no_results_sets')
       %br/
     %span.inputSizeError
-      Please use less than 500 words. If you need to annotate larger pieces of text you can use the Recommender Web Service.
+      = t('recommender.index.errors.input_size')
 
 %div.row#resultsDisplay
   %div.col

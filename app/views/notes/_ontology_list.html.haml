@@ -6,23 +6,23 @@
 .notes_list_container
   .add_comment{style: "float: left; margin-right: 1em;"}
     - if session[:user].nil?
-      = link_to "Add comment", login_index_path(redirect: request.url), class: "link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
+      = link_to t('notes.add_comment'), login_index_path(redirect: request.url), class: "link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
     - else
-      = link_to "Add comment", "javascript:void(0);", class: "add_comment link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
+      = link_to t('notes.add_comment'), "javascript:void(0);", class: "add_comment link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
   .add_proposal{style: "float: left; margin-right: 1em;"}
     - if session[:user].nil?
-      = link_to "Add proposal", login_index_path(redirect: request.url), class: "link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
+      = link_to t('ontologies.add_proposal.add_proposal'), login_index_path(redirect: request.url), class: "link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
     - else
-      = link_to "Add proposal", "javascript:void(0);", class: "add_proposal link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
+      = link_to t('ontologies.add_proposal.add_proposal'), "javascript:void(0);", class: "add_proposal link_button", style: "font-size: .9em", data: { parent_id: "#{@ontology.id}", parent_type: "ontology" }
   .subscribe_to_notes{:style => "float: left;"}
     = subscribe_button(@ontology.acronym)
   .notes_delete{:style => "float: left; margin-left: 1em;"}
     / TODO_REV: Enable notes deletion
     / delete_button
   %div.ont_notes_filter{style: "clear: both; padding-top: 10px; float: right;"}
-    Filter:
+    = t('notes.filter')
     %input#hide_archived_ont{:checked => "true", :name => "hide_archived_ont", :type => "checkbox"}
-    %label{:for => "hide_archived_ont"} Hide Archived
+    %label{:for => "hide_archived_ont"}= t('notes.hide_archived')
   %div.create_note_form{style: "display: none; clear: both;"}
 
   .ont_notes_table_container{:style => "clear: both;"}
@@ -30,25 +30,25 @@
       %thead
         %tr
           %th.notes_delete
-            Delete
+            = t('notes.headers.delete')
           %th
-            Subject
+            = t('notes.headers.subject')
           %th
             Subject Sort
           %th
             Archive Sort
           %th
-            Author
+            = t('notes.headers.author')
           %th
-            Type
+            = t('notes.headers.type')
           %th
-            Class
+            = t('notes.headers.class')
           %th
-            Created
+            = t('notes.headers.created')
       %tbody
         - if @notes.nil? || @notes.empty?
           %tr#ont_no_notes
-            %td No notes to display
+            %td = t('notes.none_to_display')
             %td
             %td
             %td
@@ -68,7 +68,7 @@
                 &nbsp;&nbsp;&nbsp;
                 %span{:id => "#{note.id}_row_archived", :style => "font-size: x-small; color: grey;"}
                   - if note.archived
-                    archived
+                    = t('notes.archived')
               %td
                 = note.subject
               %td
@@ -76,7 +76,7 @@
               %td
                 = note.creator.split('/')[-1]
               %td
-                = note.proposal ? get_note_type_text(note.proposal.type) : "Comment"
+                = note.proposal ? get_note_type_text(note.proposal.type) : t('notes.comment_label')
               %td
                 - if note.relatedClass && note.relatedClass.length > 0
                   %a{href: "/ontologies/#{@ontology.acronym}?p=classes&conceptid=#{CGI.escape(note.relatedClass.first)}"}= note.relatedClass.first

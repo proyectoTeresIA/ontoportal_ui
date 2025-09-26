@@ -1,4 +1,4 @@
-- @title = "Annotator"
+- @title = t('annotator.index.title')
 
 %head
   = javascript_include_tag "bp_annotator"
@@ -6,62 +6,62 @@
 %div.mt-4
   = t(".annotatorplus_html", annotatorplus_href: annotatorplus_path())
 
-%h2.mt-4 Annotator
+%h2.mt-4= t('annotator.index.title', default: 'Annotator')
 %p
   = t('.intro').html_safe
   = link_to(Rails.configuration.settings.links[:help_annotator],
-            data: {controller: 'popup', action: 'click->popup#open'}, 'aria-label': 'View annotator help') do
+            data: {controller: 'popup', action: 'click->popup#open'}, 'aria-label': t('annotator.index.help_aria', default: 'View annotator help')) do
     %i{class: 'fas fa-question-circle fa-lg ps-1', 'aria-hidden': 'true'}
 
 %form.mb-4
   %div.mb-3
     = text_area_tag("annotation_text", nil, rows: 10, class: "form-control",
-                    placeholder: "Enter or paste text to be annotated", 'aria-describedby': "inputTextHelpBlock")
+                    placeholder: t('annotator.index.placeholders.input_text'), 'aria-describedby': "inputTextHelpBlock")
     %div#inputTextHelpBlock
-      = link_to('insert sample text', 'javascript:void(0);', id: 'insert_text_link', class: 'form-text')
+      = link_to(t('annotator.index.insert_sample_text'), 'javascript:void(0);', id: 'insert_text_link', class: 'form-text')
 
   %div.mb-3
     %div.form-check.form-check-inline
       = check_box_tag("longest_only", "all", false, class: "form-check-input")
-      %label.form-check-label{for: "longest_only"} Match longest only
+      %label.form-check-label{for: "longest_only"}= t('annotator.index.longest_only')
     %div.form-check.form-check-inline
       = check_box_tag("whole_word_only", "all", false, class: "form-check-input")
-      %label.form-check-label{for: "whole_word_only"} Match partial words
+      %label.form-check-label{for: "whole_word_only"}= t('annotator.index.partial_words')
     %div.form-check.form-check-inline
       = check_box_tag("mappings", "all", false, id: "mappings_all", class: "form-check-input")
-      %label.form-check-label{for: "mappings_all"} Include mappings
+      %label.form-check-label{for: "mappings_all"}= t('annotator.index.include_mappings')
     %div.form-check.form-check-inline
       = check_box_tag("exclude_numbers", "all", false, class: "form-check-input")
-      %label.form-check-label{for: "exclude_numbers"} Exclude numbers
+      %label.form-check-label{for: "exclude_numbers"}= t('annotator.index.exclude_numbers')
     %div.form-check.form-check-inline
       = check_box_tag("exclude_synonyms", "all", false, class: "form-check-input")
-      %label.form-check-label{for: "exclude_synonyms"} Exclude synonyms
+      %label.form-check-label{for: "exclude_synonyms"}= t('annotator.index.exclude_synonyms')
 
   %div.mb-3
     = render partial: 'shared/ontology_picker', locals: { custom_ontologies: @annotator_ontologies }
   
   - if @sem_type_ont
     %div.mb-3
-      %label{for: "semantic_types", class: 'form-label'} Select UMLS semantic types
+      %label{for: "semantic_types", class: 'form-label'}= t('annotator.index.select_umls_semantic_types')
       = select_tag("semantic_types", options_for_select(@semantic_types_for_select), multiple: "true",
-                   data: {placeholder: "Start typing to select UMLS semantic types"}, class: "form-select",
+                   data: {placeholder: t('annotator.index.placeholders.select_umls_semantic_types')}, class: "form-select",
                    style: "width: 432px")
 
   %div.mb-3
-    %label{for: "class_hierarchy_max_level", class: 'form-label'} Include ancestors up to level
+    %label{for: "class_hierarchy_max_level", class: 'form-label'}= t('annotator.index.include_ancestors_up_to_level')
     - options = [["none", 0], *(1..10).map {|i| [i, i]}, ["all", 999]]
     = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select",
                  style: "width: 432px")
 
   - if @recognizers.length > 1
     %div.mb-3
-      %label{for: "recognizer", class: 'form-label'} Entity recognizer
+      %label{for: "recognizer", class: 'form-label'}= t('annotator.index.entity_recognizer')
       - default_recognizer = @recognizers.include?("mgrep") ? "mgrep" : @recognizers.first
       = select_tag("recognizer", options_for_select(@recognizers.map { |r| [r, r] }, default_recognizer),
                    class: "form-select", style: "width: 432px")
 
   %div.mb-3
-    %input#annotator_button{type: "button", value: "Get Annotations", class: "btn btn-primary"}/
+    %input#annotator_button{type: "button", value: t('annotator.index.get_annotations'), class: "btn btn-primary"}/
     %span.annotator_spinner{style: "display: none;"}
       %img{src: asset_path('spinners/spinner_000000_16px.gif'), style: "vertical-align: middle;"}/
     %span#annotator_error.annotator_error{style: "color: red; vertical-align: middle; margin-left: 3px;"}
@@ -71,9 +71,9 @@
     #annotations_container
       #result_counts
       %h2{:style => "margin-bottom: 0;"}
-        Annotations
+        = t('annotator.index.annotations')
       #filter_list{:style => "font-size: 9pt; color: gray; display: none; clear: both; margin: -15px 0 5px"}
-        %span#filter_title> Results are filtered by:
+        %span#filter_title>= t('annotator.index.results_filtered_by')
         \&nbsp;
         %span#filter_names
       #results_error{:style => "color: red; margin-bottom: 7px;"}
@@ -81,51 +81,51 @@
         %thead
           %tr
             %th
-              Class
+              = t('annotator.index.headers.class')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_classes.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_classes.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#classes_filter_list.bp_popup_list
             %th
-              Ontology
+              = t('annotator.index.headers.ontology')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_ontologies.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_ontologies.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#ontology_filter_list.bp_popup_list
             %th{class: "match_type"}
-              Type
+              = t('annotator.index.headers.type')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_match_type.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_match_type.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#match_type_filter_list.bp_popup_list
-            %th UMLS Sem Type
-            %th{class: "match_context"} Context
+            %th= t('annotator.index.headers.umls_sem_type')
+            %th{class: "match_context"}= t('annotator.index.headers.context')
             %th
-              Matched Class
+              = t('annotator.index.headers.matched_class')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_matched_classes.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_matched_classes.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#matched_classes_filter_list.bp_popup_list
             %th
-              Matched Ontology
+              = t('annotator.index.headers.matched_ontology')
               %span.popup_container
                 %span.bp_popup_link_container
-                  %a#filter_matched_ontologies.bp_popup_link{:href => "javascript:void(0);"} filter
+                  %a#filter_matched_ontologies.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#matched_ontology_filter_list.bp_popup_list
         %tbody
       #download_links{:style => "margin-top: 1.5em;"}
         %p
           %span{:style => "padding: 0 3px 0 0;"}>
-            %b Format results as:
+            %b= t('annotator.index.format_results_as')
             %span#download_links_tabdelimited.link_button.ui_button
             %span#download_links_json.link_button.ui_button
             %span#download_links_text.link_button.ui_button
           %span#download_links_xml.link_button.ui_button
         %span{:style => "font-size: smaller;"}
-          To reproduce these results:
+          = t('annotator.index.to_reproduce')
           %br/
           %span#annotator_parameters
           %br/
           - external_api = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
-          Additional parameters are documented at
-          \#{link_to 'Annotator Web Service', "#{external_api}/documentation#nav_annotator", :target => "_blank"}
+          = t('annotator.index.additional_parameters_at')
+          \#{link_to t('annotator.index.annotator_web_service'), "#{external_api}/documentation#nav_annotator", :target => "_blank"}

@@ -313,13 +313,15 @@ function clearAllSelections() {
 
 <div id="ont_select_adv" style="overflow: visible; z-index: 100; display: none; text-align: left; border: thin solid gray; position: fixed; background: white; max-width: 550px; box-shadow: 0 0 10px gray;">
   <div id="ont_select_adv_inner" style="padding: 15px 10px 3px; background: white; z-index: 5000;">
-    <h2>Select Multiple Ontologies <a href="javascript:void(0);" id="close_adv_select" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" style="-moz-user-select: none; float: right;"><span class="ui-icon ui-icon-closethick" unselectable="on" style="-moz-user-select: none;">close</span></a></h2>
+    <h2><%= t('shared.ontology_picker_advanced.heading') %> <a href="javascript:void(0);" id="close_adv_select" class="ui-dialog-titlebar-close ui-corner-all" role="button" unselectable="on" style="-moz-user-select: none; float: right;"><span class="ui-icon ui-icon-closethick" unselectable="on" style="-moz-user-select: none;"><%= t('shared.ontology_picker_advanced.close') %></span></a></h2>
 
-    <input type="text" id="advanced_filter_input" class="help_text" style="width: 300px; margin-bottom: 10px;" title="Search all ontology names">
+    <input type="text" id="advanced_filter_input" class="help_text" style="width: 300px; margin-bottom: 10px;" title="<%= t('shared.ontology_picker_advanced.search_all_ontology_names') %>">
 
     <span class="popup_container">
       <span class="bp_popup_link_container" style="box-shadow: none; padding-left: 25px;">
-        <a href="javascript:void(0);" id="select_groups" class="bp_popup_link" style="padding: 4px 10px 6px; font-size: small; text-transform: none; display: inline-block;">Groups</a>
+        <a href="javascript:void(0);" id="select_groups" class="bp_popup_link" style="padding: 4px 10px 6px; font-size: small; text-transform: none; display: inline-block;">
+          <%= t('shared.ontology_picker_advanced.select_groups') %>
+        </a>
       </span>
       <div id="group_list_container" class="bp_popup_list" style="display: none; font-size: 9pt;">
         <table id="group_list">
@@ -335,7 +337,9 @@ function clearAllSelections() {
 
     <span class="popup_container" style="margin-left: 95px;">
       <span class="bp_popup_link_container">
-        <a href="javascript:void(0);" id="select_categories" class="bp_popup_link" style="padding: 4px 10px 6px; font-size: small; text-transform: none; display: inline-block;">Categories</a>
+        <a href="javascript:void(0);" id="select_categories" class="bp_popup_link" style="padding: 4px 10px 6px; font-size: small; text-transform: none; display: inline-block;">
+          <%= t('shared.ontology_picker_advanced.select_categories') %>
+        </a>
       </span>
       <div id="category_list_container" class="bp_popup_list" style="display: none; font-size: 9pt;">
         <table id="category_list">
@@ -350,7 +354,10 @@ function clearAllSelections() {
     </span>
 
     <div id="ont_list_container" style="overflow: auto; position: relative;">
-      <div id="groups_categories_names_container" style="display: none; font-weight: bold; font-style: oblique; color: gray; padding: 0 1em 1em 0;">Filtered Groups and Categories: <span id="groups_and_category_names" style="font-weight: normal; font-style: none;"></div>
+      <div id="groups_categories_names_container" style="display: none; font-weight: bold; font-style: oblique; color: gray; padding: 0 1em 1em 0;">
+        <%= t('shared.ontology_picker_advanced.filtered_groups_and_categories') %>
+        <span id="groups_and_category_names" style="font-weight: normal; font-style: none;"></span>
+      </div>
 
       <table id="ont_list">
         <!--
@@ -362,7 +369,7 @@ function clearAllSelections() {
 
         <tr id="select_all_filtered_row" style="display: none;">
           <td style="padding-bottom: 15px;"><%= check_box_tag "ont_select_all_filtered" %></td>
-          <td style="padding: 0 0 15px 5px;"><%= label_tag "ont_select_all_filtered", "Select all filtered ontologies", :style => "color: #234979; font-weight: bold;" %>&nbsp;&nbsp;(<a href="javascript:void(0);" id="show_all_filtered_ontologies">show all</a>)</td>
+          <td style="padding: 0 0 15px 5px;"><%= label_tag "ont_select_all_filtered", t('shared.ontology_picker_advanced.select_all_filtered_ontologies'), :style => "color: #234979; font-weight: bold;" %>&nbsp;&nbsp;(<a href="javascript:void(0);" id="show_all_filtered_ontologies"><%= t('shared.ontology_picker_advanced.show_all') %></a>)</td>
         </tr>
 
         <% @onts_for_select.each do |ont| %>

@@ -548,14 +548,6 @@ en:
         tree_widget:
           title: "Tree Widget"
           description: "Display a class tree with a search field for %{acronym}"
-      quick_jump:
-        jump_to_label: "Jump To"
-        go_to_button: "Go to OntoPortal"
-        not_found_confirm: "Class not found"
-        retrieving_definitions: "Retrieving definitions..."
-        synonyms_prefix: "Synonyms:"
-        results_provided_by: "Results provided by"
-        obsolete_class_title: "Obsolete Class"
       instructions:
         download_the: "Download the"
         quick_jump_file: "quick_jump.js file"
@@ -602,6 +594,17 @@ en:
         format: "Format"
         missing_status: "Missing Status"
         admin_only: "Admin Only"
+        types:
+          ontology: Ontology
+          ontology_view: Ontology View
+        upload_date_options:
+          day: Day
+          week: Week
+          month: Month
+          three_months: 3 Months
+          six_months: 6 Months
+          year: Year
+          all: All
       search_placeholder: "Search"
       showing: "Showing"
       of: "of"

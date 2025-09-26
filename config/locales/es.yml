@@ -537,7 +537,6 @@ es:
         jump_to:
           title: "Ir a"
           description: "Escribe el nombre de una clase de %{acronym} y ve a ella en %{site}"
-          button: Ir a OntoPortal
         form_autocomplete:
           title: "Autocompletado de formulario"
           description: "Rellena los campos de tu formulario con clases de %{acronym}"
@@ -547,14 +546,6 @@ es:
         tree_widget:
           title: "Widget de árbol"
           description: "Muestra un árbol de clases con un campo de búsqueda para %{acronym}"
-      quick_jump:
-        jump_to_label: "Ir a:"
-        go_to_button: "Ir a OntoPortal"
-        not_found_confirm: "Clase no encontrada"
-        retrieving_definitions: "Recuperando definiciones..."
-        synonyms_prefix: "Sinónimos:"
-        results_provided_by: "Resultados proporcionados por"
-        obsolete_class_title: "Clase obsoleta"
       instructions:
         download_the: "Descarga el"
         quick_jump_file: "archivo quick_jump.js"
@@ -601,6 +592,17 @@ es:
         format: "Formato"
         missing_status: "Estado faltante"
         admin_only: "Solo administrador"
+        types:
+          ontology: Ontología
+          ontology_view: Vista de ontología
+        upload_date_options:
+          day: Día
+          week: Semana
+          month: Mes
+          three_months: 3 meses
+          six_months: 6 meses
+          year: Año
+          all: Todas
       search_placeholder: "Buscar"
       showing: "Mostrando"
       of: "de"

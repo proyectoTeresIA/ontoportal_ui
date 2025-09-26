@@ -56,7 +56,9 @@
             <span ng-repeat="type in types | toArray | orderBy:'sort'">
               <input type="checkbox" checklist-model="facets.types.active" checklist-value="type.id" id="include_{{type.id}}" name="include_{{type.id}}" ng-disabled="!facet_counts['types'][type.id]">
               <label for="include_{{type.id}}" ng-class="{facet_disabled: !facet_counts['types'][type.id]}">
-                {{type.id | idToTitle}}
+                <span ng-if="type.id == 'ontology'"><%= t('ontologies.browse.facets.types.ontology') %></span>
+                <span ng-if="type.id == 'ontology_view'"><%= t('ontologies.browse.facets.types.ontology_view') %></span>
+                <span ng-if="type.id != 'ontology' && type.id != 'ontology_view'">{{type.id | idToTitle}}</span>
                 <span class="smaller">({{facet_counts["types"][type.id] || 0}})</span>
               </label>
               <br/>
@@ -69,7 +71,13 @@
           <div class="checkbox_list">
             <select ng-model="facets.upload_date.active" ng-change="ontologySortOrder('-creationDate')">
               <option ng-repeat="day in facets.upload_date.day_text" value="{{facets.upload_date.values[day]}}">
-                {{day | idToTitle}}
+                <span ng-if="day == 'day'"><%= t('ontologies.browse.facets.upload_date_options.day') %></span>
+                <span ng-if="day == 'week'"><%= t('ontologies.browse.facets.upload_date_options.week') %></span>
+                <span ng-if="day == 'month'"><%= t('ontologies.browse.facets.upload_date_options.month') %></span>
+                <span ng-if="day == 'three_months'"><%= t('ontologies.browse.facets.upload_date_options.three_months') %></span>
+                <span ng-if="day == 'six_months'"><%= t('ontologies.browse.facets.upload_date_options.six_months') %></span>
+                <span ng-if="day == 'year'"><%= t('ontologies.browse.facets.upload_date_options.year') %></span>
+                <span ng-if="day == 'all'"><%= t('ontologies.browse.facets.upload_date_options.all') %></span>
               </option>
             </select>
           </div>

@@ -189,6 +189,9 @@ en:
     ontology_umls_language_link: by the UMLS2RDF tool.
     ontology_umls_language_help: >
       UMLS-RRF resources are usually produced %{link}
+    ontology_ontolex_language_link: OntoLex documentation
+    ontology_ontolex_language_help: >
+      OntoLex lexical resources submitted to %{portal_name} will be parsed and indexed using the OntoLex-aware pipeline. Please ensure your data follows OntoLex/LEMON patterns (lexical entries, senses, forms, lexical concepts). %{link}
     categories: Categories
     groups: Groups
     visibility: Visibility
@@ -997,6 +1000,7 @@ en:
         OBO: OBO
         SKOS: SKOS
         UMLS: UMLS
+        ONTOLEX: ONTOLEX
       deprecated:
         true: Yes
         false: No

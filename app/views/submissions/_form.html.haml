@@ -30,7 +30,7 @@
     = t('submissions.form.format_label')
     %span.asterik *
   %div.col-sm-10
-    - ont_formats = ["OBO", "OWL", "UMLS", "SKOS"].sort
+    - ont_formats = ["OBO", "OWL", "UMLS", "SKOS", "ONTOLEX"].sort
     - selected = @submission.hasOntologyLanguage ? @submission.hasOntologyLanguage : "OWL"
     -# TODO: Add/remove aria-describedby attribute for SKOS help text display
     = select("submission", "hasOntologyLanguage", options_for_select(ont_formats, selected), {},

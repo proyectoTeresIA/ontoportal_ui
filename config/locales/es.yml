@@ -191,6 +191,9 @@ es:
     ontology_umls_language_link: mediante la herramienta UMLS2RDF.
     ontology_umls_language_help: >
       Los recursos UMLS-RRF suelen producirse %{link}
+    ontology_ontolex_language_link: Documentación OntoLex
+    ontology_ontolex_language_help: >
+      Los recursos OntoLex enviados a %{portal_name} se analizarán e indexarán usando la canalización compatible con OntoLex. Por favor, asegúrate de que tus datos siguen los patrones OntoLex/LEMON (entradas léxicas, sentidos, formas, conceptos léxicos). %{link}
 
     categories: Categorías
     groups: Grupos
@@ -1004,6 +1007,7 @@ es:
         OBO: OBO
         SKOS: SKOS
         UMLS: UMLS
+        ONTOLEX: ONTOLEX
       deprecated:
         true: Sí
         false: No

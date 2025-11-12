@@ -64,6 +64,19 @@
         %div.modal-footer
           %button.btn.btn-secondary{"data-bs-dismiss": "modal"} Close
 
+  -# Modal for OntoLex entity details (shared across all OntoLex sections)
+  %div#ontolexModal.modal.fade{tabindex: "-1", aria: {labelledby: "ontolexModalLabel", hidden: "true"}}
+    %div.modal-dialog.modal-lg
+      %div.modal-content
+        %div.modal-header
+          %h5#ontolexModalLabel.modal-title OntoLex Entity Details
+          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": "Close"}
+        %div.modal-body
+          %div#ontolexModalContent
+            %p.text-center Loading...
+
+  = javascript_include_tag 'ontolex_modal'
+
   = render partial: 'kgcl_dialogs'
 
   -# A header of sorts to display ontology name and subset of details.

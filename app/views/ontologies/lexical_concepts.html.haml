@@ -1,0 +1,131 @@
+= render TurboFrameComponent.new(id: 'lexical_concepts', data: {"turbo-frame-target": "frame"}) do
+  %div.ont-ontolex-lexical-concepts.py-3
+    %div#lexical-concepts-container.container-fluid
+      %div.row
+        %div.col-12
+          %h4= t('ontology_details.sections.lexical_concepts')
+          %p.text-muted Loading lexical concepts...
+  
+  :javascript
+    $(document).ready(function() {
+      var currentPage = 1;
+      var pageSize = 50;
+      var externalRestUrl = "#{external_rest_url}";
+      var apikey = "#{get_apikey}";
+      var ontologyAcronym = "#{@ontology.acronym}";
+      
+      // Initialize the modal
+      OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
+
+      function loadLexicalConcepts(page) {
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var items = data.collection || [];
+            var container = $('#lexical-concepts-container');
+            container.empty();
+            
+            if (items.length === 0) {
+              container.html('<p class="text-muted">No lexical concepts found.</p>');
+            } else {
+              var listHtml = '<div class="list-group">';
+              items.forEach(function(item) {
+                var itemId = item['@id'] || item.id || 'Unknown';
+                var definition = 'No definition available';
+                
+                if (item.definition && Array.isArray(item.definition) && item.definition.length > 0) {
+                  if (item.definition[0].label) {
+                    definition = item.definition[0].label;
+                  } else if (typeof item.definition[0] === 'string') {
+                    definition = item.definition[0];
+                  }
+                }
+                
+                var subject = item.subject && item.subject.prefLabel ? item.subject.prefLabel : null;
+                var shortId = itemId.split('/').pop();
+                
+                listHtml += '<a href="#" class="list-group-item list-group-item-action" onclick="OntolexModal.loadEntity(\'lexical_concepts\', \'' + itemId + '\', \'' + shortId + '\'); return false;">';
+                listHtml += '<div class="d-flex w-100 justify-content-between">';
+                listHtml += '<h6 class="mb-1">ID: ' + itemId + '</h6>';
+                if (subject) {
+                  listHtml += '<span class="badge bg-info">' + subject + '</span>';
+                }
+                listHtml += '</div>';
+                listHtml += '<p class="mb-1 small">' + definition + '</p>';
+                listHtml += '</a>';
+              });
+              listHtml += '</div>';
+              container.html(listHtml);
+            }
+            
+            // Update pagination
+            updatePagination(data);
+          },
+          error: function(xhr, status, error) {
+            $('#lexical-concepts-container').html('<div class="alert alert-danger">Error loading lexical concepts: ' + error + '</div>');
+          }
+        });
+      }
+      
+      function updatePagination(data) {
+        var totalPages = data.pageCount || 1;
+        var paginationHtml = '<nav aria-label="Lexical concepts pagination"><ul class="pagination justify-content-center">';
+        
+        // Previous button
+        if (currentPage > 1) {
+          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + (currentPage - 1) + '" href="#">Previous</a></li>';
+        } else {
+          paginationHtml += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
+        }
+        
+        // Page numbers
+        var startPage = Math.max(1, currentPage - 2);
+        var endPage = Math.min(totalPages, currentPage + 2);
+        
+        if (startPage > 1) {
+          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="1" href="#">1</a></li>';
+          if (startPage > 2) {
+            paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+          }
+        }
+        
+        for (var i = startPage; i <= endPage; i++) {
+          if (i === currentPage) {
+            paginationHtml += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
+          } else {
+            paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + i + '" href="#">' + i + '</a></li>';
+          }
+        }
+        
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
+          }
+          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + totalPages + '" href="#">' + totalPages + '</a></li>';
+        }
+        
+        // Next button
+        if (currentPage < totalPages) {
+          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + (currentPage + 1) + '" href="#">Next</a></li>';
+        } else {
+          paginationHtml += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
+        }
+        
+        paginationHtml += '</ul></nav>';
+        $('#lexical-concepts-pagination').html(paginationHtml);
+        
+        // Attach click handlers to pagination links
+        $('.page-nav').click(function(e) {
+          e.preventDefault();
+          currentPage = parseInt($(this).data('page'));
+          loadLexicalConcepts(currentPage);
+        });
+      }
+      
+      // Initial load
+      loadLexicalConcepts(currentPage);
+    });

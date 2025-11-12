@@ -326,8 +326,12 @@ es:
       notes: Notas
       mappings: Mapeos
       widgets: Widgets
-      sparql: SPARQL
+      sparql: Sparql
       concepts: Conceptos
+      lexical_concepts: Conceptos Léxicos
+      lexical_entries: Entradas Léxicas
+      forms: Formas
+      lexical_senses: Sentidos Léxicos
 
   concepts:
     error_valid_concept: "Error: debes proporcionar un identificador de concepto válido"

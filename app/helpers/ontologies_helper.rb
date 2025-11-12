@@ -383,10 +383,14 @@ module OntologiesHelper
   def sections_to_show
     sections = ['summary']
     if !@ontology.summaryOnly && (submission_ready?(@submission_latest) || @old_submission_ready)
-      sections += ['classes']
-      sections += %w[properties]
-      # sections += %w[schemes collections] if skos?
-      # sections += %w[instances] unless skos?
+      if ontolex_ontology?
+        sections += ['lexical_concepts', 'lexical_entries', 'forms', 'lexical_senses']
+      else
+        sections += ['classes']
+        sections += %w[properties]
+        # sections += %w[schemes collections] if skos?
+        # sections += %w[instances] unless skos?
+      end
       # sections += %w[notes mappings widgets sparql]
       sections += %w[notes mappings widgets]
     end

@@ -57,6 +57,11 @@ module ApplicationHelper
     submission&.hasOntologyLanguage === 'SKOS'
   end
 
+  def ontolex_ontology?
+    submission = @submission || @submission_latest
+    submission&.hasOntologyLanguage === 'ONTOLEX'
+  end
+
   def clean(string)
     string = string.gsub("\"", '\'')
     string.gsub("\n", '')

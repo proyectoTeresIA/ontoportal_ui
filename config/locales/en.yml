@@ -323,6 +323,10 @@ en:
       widgets: Widgets
       sparql: Sparql
       concepts: Concepts
+      lexical_concepts: Lexical Concepts
+      lexical_entries: Lexical Entries
+      forms: Forms
+      lexical_senses: Lexical Senses
 
   concepts:
     error_valid_concept: "Error: You must provide a valid concept id"

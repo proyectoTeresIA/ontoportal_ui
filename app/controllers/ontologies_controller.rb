@@ -11,7 +11,7 @@ class OntologiesController < ApplicationController
 
   before_action :authorize_and_redirect, :only=>[:edit,:update,:create,:new]
 
-  KNOWN_PAGES = Set.new(["terms", "classes", "mappings", "notes", "widgets", "summary", "properties"])
+  KNOWN_PAGES = Set.new(["terms", "classes", "mappings", "notes", "widgets", "summary", "properties", "lexical_concepts", "lexical_entries", "forms", "lexical_senses"])
 
 
   include ActionView::Helpers::NumberHelper
@@ -142,6 +142,38 @@ class OntologiesController < ApplicationController
       return render 'properties', :layout => false
     else
       return render 'properties', :layout => "ontology_viewer"
+    end
+  end
+
+  def lexical_concepts
+    if request.xhr?
+      return render 'lexical_concepts', :layout => false
+    else
+      return render 'lexical_concepts', :layout => "ontology_viewer"
+    end
+  end
+
+  def lexical_entries
+    if request.xhr?
+      return render 'lexical_entries', :layout => false
+    else
+      return render 'lexical_entries', :layout => "ontology_viewer"
+    end
+  end
+
+  def forms
+    if request.xhr?
+      return render 'forms', :layout => false
+    else
+      return render 'forms', :layout => "ontology_viewer"
+    end
+  end
+
+  def lexical_senses
+    if request.xhr?
+      return render 'lexical_senses', :layout => false
+    else
+      return render 'lexical_senses', :layout => "ontology_viewer"
     end
   end
 
@@ -311,6 +343,18 @@ class OntologiesController < ApplicationController
         return
       when "properties"
         self.properties #rescue self.summary
+        return
+      when "lexical_concepts"
+        self.lexical_concepts
+        return
+      when "lexical_entries"
+        self.lexical_entries
+        return
+      when "forms"
+        self.forms
+        return
+      when "lexical_senses"
+        self.lexical_senses
         return
       when "summary"
         self.summary

@@ -1,0 +1,117 @@
+= render TurboFrameComponent.new(id: 'forms', data: {"turbo-frame-target": "frame"}) do
+  %div.ont-ontolex-forms.py-3
+    %div#forms-container.container-fluid
+      %div.row
+        %div.col-12
+          %h4= t('ontology_details.sections.forms')
+          %p.text-muted Loading forms...
+
+  :javascript
+    $(document).ready(function(){
+      var currentPage = 1;
+      var ontologyAcronym = "#{@ontology.acronym}";
+      var externalRestUrl = "#{external_rest_url}";
+      var apikey = "#{get_apikey}";
+      
+      // Initialize the modal
+      OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
+      
+      function loadForms(page) {
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/forms?page=" + page + "&apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var items = data.collection || [];
+            var html = '<div class="list-group">';
+            
+            if (items.length === 0) {
+              html += '<div class="alert alert-info">No forms found.</div>';
+            } else {
+              items.forEach(function(item) {
+                var writtenRep = item.writtenRep || 'Unnamed';
+                
+                // Extract gender
+                var gender = '';
+                if (item.gender) {
+                  var genderValue = item.gender.split('#').pop() || item.gender.split('/').pop();
+                  gender = ' <span class="badge bg-secondary">Gender: ' + genderValue + '</span>';
+                }
+                
+                // Extract number
+                var number = '';
+                if (item.number) {
+                  var numberValue = item.number.split('#').pop() || item.number.split('/').pop();
+                  number = ' <span class="badge bg-secondary">Number: ' + numberValue + '</span>';
+                }
+                
+                var itemId = item['@id'] || item.id || 'Unknown';
+                
+                html += '<a href="#" class="list-group-item list-group-item-action" onclick="OntolexModal.loadEntity(\'forms\', \'' + itemId + '\', \'' + writtenRep + '\'); return false;">';
+                html += '<div class="d-flex w-100 justify-content-between">';
+                html += '<h5 class="mb-1">' + writtenRep + '</h5>';
+                html += '<div>' + gender + number + '</div>';
+                html += '</div>';
+                html += '<small class="text-muted">ID: ' + itemId + '</small>';
+                html += '</a>';
+              });
+            }
+            
+            html += '</div>';
+            
+            // Pagination controls
+            if (data.pageCount && data.pageCount > 1) {
+              html += '<nav aria-label="Pagination" class="mt-3">';
+              html += '<ul class="pagination justify-content-center">';
+              
+              // Previous button
+              if (data.page > 1) {
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">Previous</a></li>';
+              } else {
+                html += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
+              }
+              
+              // Page numbers (show max 5 pages)
+              var startPage = Math.max(1, data.page - 2);
+              var endPage = Math.min(data.pageCount, startPage + 4);
+              startPage = Math.max(1, endPage - 4);
+              
+              for (var i = startPage; i <= endPage; i++) {
+                if (i === data.page) {
+                  html += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
+                } else {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                }
+              }
+              
+              // Next button
+              if (data.page < data.pageCount) {
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">Next</a></li>';
+              } else {
+                html += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
+              }
+              
+              html += '</ul>';
+              html += '<p class="text-center text-muted">Page ' + data.page + ' of ' + data.pageCount + '</p>';
+              html += '</nav>';
+            }
+            
+            $('#forms-container').html(html);
+            
+            // Attach click handlers to pagination links
+            $('#forms-container .pagination a').on('click', function(e) {
+              e.preventDefault();
+              var page = $(this).data('page');
+              loadForms(page);
+            });
+          },
+          error: function(xhr, status, error) {
+            $('#forms-container').html('<div class="alert alert-danger">Error loading forms: ' + error + '</div>');
+          }
+        });
+      }
+      
+      loadForms(currentPage);
+    });

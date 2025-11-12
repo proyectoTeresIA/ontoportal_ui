@@ -1,0 +1,122 @@
+= render TurboFrameComponent.new(id: 'lexical_entries', data: {"turbo-frame-target": "frame"}) do
+  %div.ont-ontolex-lexical-entries.py-3
+    %div#lexical-entries-container.container-fluid
+      %div.row
+        %div.col-12
+          %h4= t('ontology_details.sections.lexical_entries')
+          %p.text-muted Loading lexical entries...
+
+  :javascript
+    $(document).ready(function(){
+      var currentPage = 1;
+      var ontologyAcronym = "#{@ontology.acronym}";
+      var externalRestUrl = "#{external_rest_url}";
+      var apikey = "#{get_apikey}";
+      
+      // Initialize the modal
+      OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
+      
+      function loadLexicalEntries(page) {
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_entries?page=" + page + "&apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var items = data.collection || [];
+            var html = '<div class="list-group">';
+            
+            if (items.length === 0) {
+              html += '<div class="alert alert-info">No lexical entries found.</div>';
+            } else {
+              items.forEach(function(item) {
+                // Extract lemma
+                var lemma = 'Unnamed';
+                if (item.lemma) {
+                  lemma = item.lemma;
+                }
+                
+                // Extract language
+                var language = '';
+                if (item.language) {
+                  var langCode = item.language.split('/').pop();
+                  language = ' <span class="badge bg-info">' + langCode + '</span>';
+                }
+                
+                // Extract part of speech
+                var partOfSpeech = '';
+                if (item.partOfSpeech) {
+                  var pos = item.partOfSpeech.split('#').pop() || item.partOfSpeech.split('/').pop();
+                  partOfSpeech = '<span class="badge bg-secondary">' + pos + '</span> ';
+                }
+                
+                var itemId = item['@id'] || item.id || 'Unknown';
+                var shortId = itemId.split('/').pop();
+                
+                html += '<a href="#" class="list-group-item list-group-item-action" onclick="OntolexModal.loadEntity(\'lexical_entries\', \'' + itemId + '\', \'' + lemma + '\'); return false;">';
+                html += '<div class="d-flex w-100 justify-content-between">';
+                html += '<h5 class="mb-1">' + lemma + language + '</h5>';
+                html += partOfSpeech;
+                html += '</div>';
+                html += '<small class="text-muted">ID: ' + itemId + '</small>';
+                html += '</a>';
+              });
+            }
+            
+            html += '</div>';
+            
+            // Pagination controls
+            if (data.pageCount && data.pageCount > 1) {
+              html += '<nav aria-label="Pagination" class="mt-3">';
+              html += '<ul class="pagination justify-content-center">';
+              
+              // Previous button
+              if (data.page > 1) {
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">Previous</a></li>';
+              } else {
+                html += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
+              }
+              
+              // Page numbers (show max 5 pages)
+              var startPage = Math.max(1, data.page - 2);
+              var endPage = Math.min(data.pageCount, startPage + 4);
+              startPage = Math.max(1, endPage - 4);
+              
+              for (var i = startPage; i <= endPage; i++) {
+                if (i === data.page) {
+                  html += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
+                } else {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                }
+              }
+              
+              // Next button
+              if (data.page < data.pageCount) {
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">Next</a></li>';
+              } else {
+                html += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
+              }
+              
+              html += '</ul>';
+              html += '<p class="text-center text-muted">Page ' + data.page + ' of ' + data.pageCount + '</p>';
+              html += '</nav>';
+            }
+            
+            $('#lexical-entries-container').html(html);
+            
+            // Attach click handlers to pagination links
+            $('#lexical-entries-container .pagination a').on('click', function(e) {
+              e.preventDefault();
+              var page = $(this).data('page');
+              loadLexicalEntries(page);
+            });
+          },
+          error: function(xhr, status, error) {
+            $('#lexical-entries-container').html('<div class="alert alert-danger">Error loading lexical entries: ' + error + '</div>');
+          }
+        });
+      }
+      
+      loadLexicalEntries(currentPage);
+    });

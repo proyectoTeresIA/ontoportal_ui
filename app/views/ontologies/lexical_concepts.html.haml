@@ -1,10 +1,11 @@
 = render TurboFrameComponent.new(id: 'lexical_concepts', data: {"turbo-frame-target": "frame"}) do
-  %div.ont-ontolex-lexical-concepts.py-3
+  %div.ont-ontolex-lexical-concepts.ontolex-container
     %div#lexical-concepts-container.container-fluid
       %div.row
         %div.col-12
           %h4= t('ontology_details.sections.lexical_concepts')
           %p.text-muted Loading lexical concepts...
+          %div#lexical-concepts-pagination.ontolex-pagination.mt-3
   
   :javascript
     $(document).ready(function() {
@@ -30,15 +31,17 @@
             container.empty();
             
             if (items.length === 0) {
-              container.html('<p class="text-muted">No lexical concepts found.</p>');
+              container.html('<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No lexical concepts found.</p></div>');
             } else {
-              var listHtml = '<div class="list-group">';
+              var listHtml = '<div class="ontolex-list-group">';
               items.forEach(function(item) {
                 var itemId = item['@id'] || item.id || 'Unknown';
                 var definition = 'No definition available';
                 
                 if (item.definition && Array.isArray(item.definition) && item.definition.length > 0) {
-                  if (item.definition[0].label) {
+                  if (item.definition[0].value) {
+                    definition = item.definition[0].value;
+                  } else if (item.definition[0].label) {
                     definition = item.definition[0].label;
                   } else if (typeof item.definition[0] === 'string') {
                     definition = item.definition[0];
@@ -46,17 +49,22 @@
                 }
                 
                 var subject = item.subject && item.subject.prefLabel ? item.subject.prefLabel : null;
+                var notesCount = item.note && Array.isArray(item.note) ? item.note.length : (item.note ? 1 : 0);
+                var evokedCount = item.isEvokedBy && Array.isArray(item.isEvokedBy) ? item.isEvokedBy.length : (item.isEvokedBy ? 1 : 0);
+                var sensesCount = item.lexicalizedSense && Array.isArray(item.lexicalizedSense) ? item.lexicalizedSense.length : (item.lexicalizedSense ? 1 : 0);
                 var shortId = itemId.split('/').pop();
                 
-                listHtml += '<a href="#" class="list-group-item list-group-item-action" onclick="OntolexModal.loadEntity(\'lexical_concepts\', \'' + itemId + '\', \'' + shortId + '\'); return false;">';
-                listHtml += '<div class="d-flex w-100 justify-content-between">';
-                listHtml += '<h6 class="mb-1">ID: ' + itemId + '</h6>';
-                if (subject) {
-                  listHtml += '<span class="badge bg-info">' + subject + '</span>';
-                }
+                listHtml += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'lexical_concepts\', \'' + itemId + '\', \'' + shortId + '\'); return false;" style="cursor: pointer;">';
+                listHtml += '<div class="entity-id">' + itemId + '</div>';
+                listHtml += '<div class="entity-main-text">' + shortId + '</div>';
+                listHtml += '<p class="mb-2 text-muted small">' + definition + '</p>';
+                listHtml += '<div class="entity-metadata">';
+                if (subject) { listHtml += '<span class="ontolex-badge badge-subject">' + subject + '</span>'; }
+                if (notesCount > 0) { listHtml += '<span class="ontolex-badge badge-count">Notes: ' + notesCount + '</span>'; }
+                if (evokedCount > 0) { listHtml += '<span class="ontolex-badge badge-count">Evoked: ' + evokedCount + '</span>'; }
+                if (sensesCount > 0) { listHtml += '<span class="ontolex-badge badge-count">Senses: ' + sensesCount + '</span>'; }
                 listHtml += '</div>';
-                listHtml += '<p class="mb-1 small">' + definition + '</p>';
-                listHtml += '</a>';
+                listHtml += '</div>';
               });
               listHtml += '</div>';
               container.html(listHtml);

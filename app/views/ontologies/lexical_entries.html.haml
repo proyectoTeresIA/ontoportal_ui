@@ -1,10 +1,11 @@
 = render TurboFrameComponent.new(id: 'lexical_entries', data: {"turbo-frame-target": "frame"}) do
-  %div.ont-ontolex-lexical-entries.py-3
+  %div.ont-ontolex-lexical-entries.ontolex-container
     %div#lexical-entries-container.container-fluid
       %div.row
         %div.col-12
           %h4= t('ontology_details.sections.lexical_entries')
           %p.text-muted Loading lexical entries...
+          %div#lexical-entries-pagination.ontolex-pagination.mt-3
 
   :javascript
     $(document).ready(function(){
@@ -25,10 +26,10 @@
           dataType: 'json',
           success: function(data) {
             var items = data.collection || [];
-            var html = '<div class="list-group">';
+            var html = '<div class="ontolex-list-group">';
             
             if (items.length === 0) {
-              html += '<div class="alert alert-info">No lexical entries found.</div>';
+              html = '<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No lexical entries found.</p></div>';
             } else {
               items.forEach(function(item) {
                 // Extract lemma
@@ -38,29 +39,44 @@
                 }
                 
                 // Extract language
-                var language = '';
+                var languageBadge = '';
                 if (item.language) {
                   var langCode = item.language.split('/').pop();
-                  language = ' <span class="badge bg-info">' + langCode + '</span>';
+                  languageBadge = '<span class="ontolex-badge badge-language">' + langCode + '</span>';
                 }
                 
                 // Extract part of speech
-                var partOfSpeech = '';
+                var posBadge = '';
                 if (item.partOfSpeech) {
                   var pos = item.partOfSpeech.split('#').pop() || item.partOfSpeech.split('/').pop();
-                  partOfSpeech = '<span class="badge bg-secondary">' + pos + '</span> ';
+                  posBadge = '<span class="ontolex-badge badge-pos">' + pos + '</span>';
+                }
+                
+                // Notes count
+                var notesCount = item.note && Array.isArray(item.note) ? item.note.length : (item.note ? 1 : 0);
+
+                // Term type
+                var termTypeBadge = '';
+                if (item.termType) { 
+                  var termType = item.termType.split('#').pop() || item.termType.split('/').pop();
+                  termTypeBadge = '<span class="ontolex-badge badge-termtype">' + termType + '</span>'; 
                 }
                 
                 var itemId = item['@id'] || item.id || 'Unknown';
                 var shortId = itemId.split('/').pop();
                 
-                html += '<a href="#" class="list-group-item list-group-item-action" onclick="OntolexModal.loadEntity(\'lexical_entries\', \'' + itemId + '\', \'' + lemma + '\'); return false;">';
-                html += '<div class="d-flex w-100 justify-content-between">';
-                html += '<h5 class="mb-1">' + lemma + language + '</h5>';
-                html += partOfSpeech;
+                html += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'lexical_entries\', \'' + itemId + '\', \'' + lemma + '\'); return false;" style="cursor: pointer;">';
+                html += '<div class="entity-id">' + itemId + '</div>';
+                html += '<div class="entity-main-text">' + lemma + '</div>';
+                html += '<div class="entity-metadata">';
+                if (languageBadge) html += languageBadge;
+                if (posBadge) html += posBadge;
+                if (termTypeBadge) html += termTypeBadge;
+                if (notesCount > 0) { html += '<span class="ontolex-badge badge-count">Notes: ' + notesCount + '</span>'; }
                 html += '</div>';
-                html += '<small class="text-muted">ID: ' + itemId + '</small>';
-                html += '</a>';
+                if (item.casNumber) { html += '<div class="small text-muted mt-2">CAS: ' + item.casNumber + '</div>'; }
+                if (item.code) { html += '<div class="small text-muted">Code: ' + item.code + '</div>'; }
+                html += '</div>';
               });
             }
             

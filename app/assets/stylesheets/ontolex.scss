@@ -1,0 +1,230 @@
+// OntoLex Styles
+// Custom styling for OntoLex entities (Lexical Concepts, Entries, Forms, Senses)
+
+// Main container
+.ontolex-container {
+  padding: 1rem 0;
+}
+
+// Entity cards - cleaner, more compact design
+.entity-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: #4a90e2;
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.15);
+  }
+
+  .entity-id {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+    font-family: 'Courier New', monospace;
+    word-break: break-all;
+  }
+
+  .entity-main-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.75rem;
+  }
+
+  .entity-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+}
+
+// OntoLex badges - custom color scheme
+.ontolex-badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 4px;
+  white-space: nowrap;
+
+  &.badge-language {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #90caf9;
+  }
+
+  &.badge-pos {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+    border: 1px solid #ce93d8;
+  }
+
+  &.badge-gender {
+    background-color: #fce4ec;
+    color: #c2185b;
+    border: 1px solid #f48fb1;
+  }
+
+  &.badge-number {
+    background-color: #e8eaf6;
+    color: #3f51b5;
+    border: 1px solid #9fa8da;
+  }
+
+  &.badge-subject {
+    background-color: #e0f2f1;
+    color: #00796b;
+    border: 1px solid #80cbc4;
+  }
+
+  &.badge-count {
+    background-color: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffcc80;
+  }
+
+  &.badge-termtype {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #a5d6a7;
+  }
+
+  &.badge-auth {
+    background-color: #e1f5fe;
+    color: #0277bd;
+    border: 1px solid #81d4fa;
+  }
+
+  &.badge-reliability {
+    background-color: #fff9c4;
+    color: #f57f17;
+    border: 1px solid #fff59d;
+  }
+}
+
+// List group improvements for OntoLex
+.ontolex-list-group {
+  .list-group-item {
+    border-left: 3px solid transparent;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-left-color: #4a90e2;
+      background-color: #f8f9fa;
+      padding-left: 1.25rem;
+    }
+  }
+}
+
+// Modal improvements
+#ontolexModal {
+  .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .entity-details {
+    font-size: 0.95rem;
+
+    h6 {
+      color: #4a90e2;
+      border-bottom: 2px solid #4a90e2;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    strong {
+      color: #555;
+    }
+
+    code {
+      background-color: #f4f4f4;
+      color: #c7254e;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.85rem;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .list-unstyled li {
+      padding: 0.25rem 0;
+    }
+
+    .text-muted {
+      font-size: 0.85rem;
+    }
+
+    // Semantic relations section
+    .semantic-relations {
+      background-color: #f9f9f9;
+      padding: 0.75rem;
+      border-radius: 4px;
+      border-left: 3px solid #4a90e2;
+    }
+  }
+}
+
+// Pagination for OntoLex
+.ontolex-pagination {
+  margin-top: 2rem;
+
+  .pagination {
+    .page-link {
+      color: #4a90e2;
+      border-color: #dee2e6;
+
+      &:hover {
+        background-color: #e3f2fd;
+        border-color: #4a90e2;
+      }
+    }
+
+    .page-item.active .page-link {
+      background-color: #4a90e2;
+      border-color: #4a90e2;
+    }
+  }
+}
+
+// Empty state
+.ontolex-empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #999;
+
+  i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  p {
+    font-size: 1.1rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .entity-card {
+    padding: 0.75rem;
+
+    .entity-metadata {
+      flex-direction: column;
+    }
+  }
+
+  .ontolex-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.4rem;
+  }
+}

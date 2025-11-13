@@ -106,25 +106,57 @@ window.OntolexModal = (function () {
       html += '<h6>Lexical Concept</h6>';
       html += '<p class="text-muted small mb-3"><strong>ID:</strong> <code>' + itemId + '</code></p>';
 
+      // Definitions - expanded with value and language
       if (data.definition && Array.isArray(data.definition) && data.definition.length > 0) {
-        html += '<div class="mb-3"><strong class="d-block mb-2">Definition:</strong>';
+        html += '<div class="mb-3"><strong class="d-block mb-2">Definitions (' + data.definition.length + '):</strong>';
+        html += '<ul class="list-unstyled ps-3">';
         data.definition.forEach(function (def) {
-          if (def.label) {
-            html += '<div class="ps-3 mb-2">' + def.label;
+          if (typeof def === 'object') {
+            // Try to get a meaningful text from the definition object
+            var text =
+              def.value || def.label || (def['@id'] ? def['@id'].split('/').pop().split('#').pop() : 'Definition');
+            html += '<li class="mb-2 small">';
+            html += text;
             if (def.language) {
-              html += ' <span class="badge bg-secondary ms-2">' + def.language + '</span>';
+              html += ' <span class="ontolex-badge badge-language ms-2">' + def.language + '</span>';
             }
-            html += '</div>';
+            if (def.wasDerivedFrom) {
+              var refs = Array.isArray(def.wasDerivedFrom) ? def.wasDerivedFrom : [def.wasDerivedFrom];
+              html += '<div class="text-muted small ms-3 mt-1">References: ';
+              refs.forEach(function (ref, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof ref === 'object') {
+                  // Try to get a meaningful text from the reference object
+                  var refText =
+                    ref.label || ref.value || (ref['@id'] ? ref['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += refText;
+                } else {
+                  html += ref;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small"><code>' + def + '</code></li>';
           }
         });
-        html += '</div>';
+        html += '</ul></div>';
       }
 
       if (data.subject && data.subject.prefLabel) {
         html +=
-          '<div class="mb-3"><strong>Subject:</strong> <span class="badge bg-info ms-2">' +
+          '<div class="mb-3"><strong>Subject:</strong> <span class="ontolex-badge badge-subject ms-2">' +
           data.subject.prefLabel +
           '</span></div>';
+      }
+
+      // Source
+      if (data.source) {
+        html +=
+          '<div class="mb-3"><strong>Source:</strong> <div class="mt-1 small text-break">' +
+          data.source +
+          '</div></div>';
       }
 
       if (data.inScheme) {
@@ -132,6 +164,48 @@ window.OntolexModal = (function () {
           '<div class="mb-3"><strong>In Scheme:</strong> <div class="mt-1"><code class="small">' +
           data.inScheme +
           '</code></div></div>';
+      }
+
+      // Semantic Relations - all in compact format with source indication
+      var semanticRelations = [
+        { key: 'broader', label: 'Broader' },
+        { key: 'narrower', label: 'Narrower' },
+        { key: 'related', label: 'Related' },
+        { key: 'differentFrom', label: 'Different From' },
+        { key: 'antonym', label: 'Antonym' },
+        { key: 'isPartOf', label: 'Is Part Of' },
+        { key: 'hasPart', label: 'Has Part' },
+        { key: 'capital', label: 'Capital' },
+        { key: 'currency', label: 'Currency' },
+        { key: 'causedBy', label: 'Caused By' },
+        { key: 'precedesInTime', label: 'Precedes In Time' },
+        { key: 'followsInTime', label: 'Follows In Time' },
+        { key: 'hasLocation', label: 'Has Location' },
+      ];
+
+      var hasAnyRelation = semanticRelations.some(function (rel) {
+        return data[rel.key] && data[rel.key].length > 0;
+      });
+
+      if (hasAnyRelation) {
+        html += '<div class="mb-3"><strong class="d-block mb-2">Semantic Relations:</strong>';
+        html += '<div class="ps-3">';
+        semanticRelations.forEach(function (rel) {
+          if (data[rel.key] && data[rel.key].length > 0) {
+            html += '<div class="mb-2 small"><strong>' + rel.label + ':</strong> ';
+            var items = Array.isArray(data[rel.key]) ? data[rel.key] : [data[rel.key]];
+            items.slice(0, 5).forEach(function (uri, idx) {
+              if (idx > 0) html += ', ';
+              var shortId = uri.split('/').pop();
+              html += '<code class="small">' + shortId + '</code>';
+            });
+            if (items.length > 5) {
+              html += ' <span class="text-muted">+' + (items.length - 5) + ' more</span>';
+            }
+            html += '</div>';
+          }
+        });
+        html += '</div></div>';
       }
 
       if (data.isEvokedBy && data.isEvokedBy.length > 0) {
@@ -151,6 +225,60 @@ window.OntolexModal = (function () {
         }
         html += '</ul></div>';
       }
+
+      // Notes
+      if (data.note && data.note.length > 0) {
+        html += '<div class="mb-3"><strong class="d-block mb-2">Notes (' + data.note.length + '):</strong>';
+        html += '<ul class="list-unstyled ps-3">';
+        data.note.slice(0, 10).forEach(function (n) {
+          if (typeof n === 'object') {
+            var text = n.value || n.label || 'Note';
+            html += '<li class="mb-2 small">' + text;
+            if (n.language) {
+              html += ' <span class="ontolex-badge badge-language ms-2">' + n.language + '</span>';
+            }
+            if (n.wasDerivedFrom) {
+              var refs = Array.isArray(n.wasDerivedFrom) ? n.wasDerivedFrom : [n.wasDerivedFrom];
+              html += '<div class="text-muted small ms-3 mt-1">References: ';
+              refs.forEach(function (ref, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof ref === 'object') {
+                  // Try to get a meaningful text from the reference object
+                  var refText =
+                    ref.label || ref.value || (ref['@id'] ? ref['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += refText;
+                } else {
+                  html += ref;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small">' + n + '</li>';
+          }
+        });
+        if (data.note.length > 10) {
+          html += '<li class="text-muted small">... and ' + (data.note.length - 10) + ' more</li>';
+        }
+        html += '</ul></div>';
+      }
+
+      // Mappings (exactMatch, closeMatch, broaderMatch, etc.)
+      var mappingProps = ['exactMatch', 'closeMatch', 'broadMatch', 'narrowMatch', 'relatedMatch', 'mappingRelation'];
+      mappingProps.forEach(function (prop) {
+        if (data[prop] && data[prop].length > 0) {
+          html += '<div class="mb-3"><strong class="d-block mb-2">' + prop + ' (' + data[prop].length + '):</strong>';
+          html += '<ul class="list-unstyled ps-3">';
+          data[prop].slice(0, 10).forEach(function (mId) {
+            html += '<li class="mb-1"><code>' + mId + '</code></li>';
+          });
+          if (data[prop].length > 10) {
+            html += '<li class="text-muted small">... and ' + (data[prop].length - 10) + ' more</li>';
+          }
+          html += '</ul></div>';
+        }
+      });
 
       if (data.lexicalizedSense && data.lexicalizedSense.length > 0) {
         html +=
@@ -186,13 +314,104 @@ window.OntolexModal = (function () {
       if (data.language) {
         var langCode = data.language.split('/').pop();
         html +=
-          '<div class="mb-3"><strong>Language:</strong> <span class="badge bg-info ms-2">' + langCode + '</span></div>';
+          '<div class="mb-3"><strong>Language:</strong> <span class="ontolex-badge badge-language ms-2">' +
+          langCode +
+          '</span></div>';
+      }
+
+      // Provenance fields
+      if (data.wasDerivedFrom) {
+        var derived = Array.isArray(data.wasDerivedFrom) ? data.wasDerivedFrom : [data.wasDerivedFrom];
+        html += '<div class="mb-3"><strong class="d-block mb-2">Derived From:</strong><ul class="ps-3">';
+        derived.forEach(function (d) {
+          if (typeof d === 'object' && d['@id']) {
+            var refText = d.label || d.value || d['@id'];
+            html += '<li class="small"><code>' + refText + '</code></li>';
+          } else {
+            html += '<li class="small"><code>' + d + '</code></li>';
+          }
+        });
+        html += '</ul></div>';
+      }
+
+      if (data.wasInfluencedBy) {
+        var infl = Array.isArray(data.wasInfluencedBy) ? data.wasInfluencedBy : [data.wasInfluencedBy];
+        html += '<div class="mb-3"><strong class="d-block mb-2">Influenced By (Activities):</strong><ul class="ps-3">';
+        infl.forEach(function (activity) {
+          if (typeof activity === 'object' && activity['@id']) {
+            var actText =
+              (activity.label || 'Activity') + (activity.endedAtTime ? ' (' + activity.endedAtTime + ')' : '');
+            html += '<li class="small">' + actText;
+            if (activity.hasDerivation) {
+              var agents = Array.isArray(activity.hasDerivation) ? activity.hasDerivation : [activity.hasDerivation];
+              html += ' <em class="text-muted">by:</em> ';
+              agents.forEach(function (agent, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof agent === 'object' && agent.name) {
+                  html += agent.name + (agent.mbox ? ' &lt;' + agent.mbox + '&gt;' : '');
+                } else {
+                  html += agent;
+                }
+              });
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="small"><code>' + activity + '</code></li>';
+          }
+        });
+        html += '</ul></div>';
+      }
+
+      if (data.casNumber) {
+        html += '<div class="mb-3"><strong>CAS Number:</strong> <span class="ms-2">' + data.casNumber + '</span></div>';
+      }
+
+      if (data.code) {
+        html += '<div class="mb-3"><strong>Code:</strong> <span class="ms-2">' + data.code + '</span></div>';
+      }
+
+      if (data.hasValency && data.hasValency.length > 0) {
+        html += '<div class="mb-3"><strong>Has Valency:</strong> ';
+        data.hasValency.forEach(function (val, idx) {
+          if (idx > 0) html += ', ';
+          var valShort = val.split('#').pop() || val.split('/').pop();
+          html += '<span class="ontolex-badge badge-pos ms-1">' + valShort + '</span>';
+        });
+        html += '</div>';
+      }
+
+      // Signed Form with Videos
+      if (data.signedForm && data.signedForm.length > 0) {
+        html +=
+          '<div class="mb-3"><strong class="d-block mb-2">Signed Forms (' + data.signedForm.length + '):</strong>';
+        html += '<ul class="list-unstyled ps-3">';
+        data.signedForm.forEach(function (sf) {
+          if (typeof sf === 'object') {
+            html += '<li class="mb-2 small">';
+            if (sf.signedRep) {
+              var videos = Array.isArray(sf.signedRep) ? sf.signedRep : [sf.signedRep];
+              videos.forEach(function (vid) {
+                if (typeof vid === 'object' && vid.url) {
+                  html += '<a href="' + vid.url + '" target="_blank" class="text-decoration-none">';
+                  html += '<i class="fas fa-video me-1"></i>Video';
+                  html += '</a>';
+                } else {
+                  html += '<code>' + vid + '</code>';
+                }
+              });
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small"><code>' + sf + '</code></li>';
+          }
+        });
+        html += '</ul></div>';
       }
 
       if (data.partOfSpeech) {
         var pos = data.partOfSpeech.split('#').pop() || data.partOfSpeech.split('/').pop();
         html +=
-          '<div class="mb-3"><strong>Part of Speech:</strong> <span class="badge bg-secondary ms-2">' +
+          '<div class="mb-3"><strong>Part of Speech:</strong> <span class="ontolex-badge badge-pos ms-2">' +
           pos +
           '</span></div>';
       }
@@ -223,6 +442,11 @@ window.OntolexModal = (function () {
         html += '</ul></div>';
       }
 
+      // Term type (if present on entry)
+      if (data.termType) {
+        html += '<div class="mb-3"><strong>Term Type:</strong> <span class="ms-2">' + data.termType + '</span></div>';
+      }
+
       if (data.sense && Array.isArray(data.sense) && data.sense.length > 0) {
         html += '<div class="mb-3"><strong class="d-block mb-2">Senses (' + data.sense.length + '):</strong>';
         html += '<ul class="list-unstyled ps-3">';
@@ -251,7 +475,7 @@ window.OntolexModal = (function () {
       if (data.gender) {
         var gender = data.gender.split('#').pop() || data.gender.split('/').pop();
         html +=
-          '<div class="mb-3"><strong>Gender:</strong> <span class="badge bg-secondary ms-2">' +
+          '<div class="mb-3"><strong>Gender:</strong> <span class="ontolex-badge badge-gender ms-2">' +
           gender +
           '</span></div>';
       }
@@ -259,9 +483,37 @@ window.OntolexModal = (function () {
       if (data.number) {
         var number = data.number.split('#').pop() || data.number.split('/').pop();
         html +=
-          '<div class="mb-3"><strong>Number:</strong> <span class="badge bg-secondary ms-2">' +
+          '<div class="mb-3"><strong>Number:</strong> <span class="ontolex-badge badge-number ms-2">' +
           number +
           '</span></div>';
+      }
+
+      // Signed form / video
+      if (data.signedForm) {
+        var sf = Array.isArray(data.signedForm) ? data.signedForm : [data.signedForm];
+        html += '<div class="mb-3"><strong class="d-block mb-2">Signed Form(s):</strong><ul class="ps-3">';
+        sf.forEach(function (s) {
+          if (typeof s === 'object') {
+            html += '<li class="small">Signed representation';
+            if (s.signedRep) {
+              var videos = Array.isArray(s.signedRep) ? s.signedRep : [s.signedRep];
+              html += ' (';
+              videos.forEach(function (v, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof v === 'object' && v.url) {
+                  html += '<a href="' + v.url + '" target="_blank">Video</a>';
+                } else {
+                  html += v;
+                }
+              });
+              html += ')';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="small"><code>' + s + '</code></li>';
+          }
+        });
+        html += '</ul></div>';
       }
     } else if (type === 'lexical_senses') {
       html += '<h6>Lexical Sense</h6>';
@@ -283,6 +535,30 @@ window.OntolexModal = (function () {
 
       if (data.reference) {
         html += '<div class="mb-3"><strong>Reference:</strong> <span class="ms-2">' + data.reference + '</span></div>';
+      }
+
+      // Term metadata
+      if (data.termType) {
+        var termType = data.termType.split('#').pop() || data.termType.split('/').pop();
+        html +=
+          '<div class="mb-3"><strong>Term Type:</strong> <span class="ontolex-badge badge-termtype ms-2">' +
+          termType +
+          '</span></div>';
+      }
+
+      if (data.normativeAuthorization) {
+        var normAuth = data.normativeAuthorization.split('#').pop() || data.normativeAuthorization.split('/').pop();
+        html +=
+          '<div class="mb-3"><strong>Normative Authorization:</strong> <span class="ontolex-badge badge-auth ms-2">' +
+          normAuth +
+          '</span></div>';
+      }
+
+      if (data.reliabilityCode) {
+        html +=
+          '<div class="mb-3"><strong>Reliability Code:</strong> <span class="ontolex-badge badge-reliability ms-2">' +
+          data.reliabilityCode +
+          '</span></div>';
       }
 
       if (data.isSenseOf) {
@@ -337,6 +613,95 @@ window.OntolexModal = (function () {
         if (data.translation.length > 10) {
           html += '<li class="text-muted small">... and ' + (data.translation.length - 10) + ' more</li>';
         }
+        html += '</ul></div>';
+      }
+
+      // Usage examples (usageExample) and usages
+      if (data.usageExample && data.usageExample.length > 0) {
+        html +=
+          '<div class="mb-3"><strong class="d-block mb-2">Usage Examples (' + data.usageExample.length + '):</strong>';
+        html += '<ul class="list-unstyled ps-3">';
+        data.usageExample.slice(0, 10).forEach(function (u) {
+          if (typeof u === 'string') {
+            html += '<li class="mb-2 small"><em>' + u + '</em></li>';
+          } else if (typeof u === 'object') {
+            var text = u.value || u.label || (u['@id'] ? u['@id'].split('/').pop().split('#').pop() : 'Example');
+            html += '<li class="mb-2"><em class="small">' + text + '</em>';
+            if (u.language) {
+              html += ' <span class="ontolex-badge badge-language ms-2">' + u.language + '</span>';
+            }
+            if (u.source) {
+              var sources = Array.isArray(u.source) ? u.source : [u.source];
+              html += '<div class="text-muted small ms-3 mt-1">Source: ';
+              sources.forEach(function (src, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof src === 'object') {
+                  // Try to get a meaningful text from the source object
+                  var sourceText =
+                    src.label || src.value || (src['@id'] ? src['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += sourceText;
+                } else {
+                  html += src;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small">' + JSON.stringify(u) + '</li>';
+          }
+        });
+        if (data.usageExample.length > 10) {
+          html += '<li class="text-muted small">... and ' + (data.usageExample.length - 10) + ' more</li>';
+        }
+        html += '</ul></div>';
+      }
+
+      if (data.usage && data.usage.length > 0) {
+        html += '<div class="mb-3"><strong class="d-block mb-2">Usage Notes (' + data.usage.length + '):</strong>';
+        html += '<ul class="list-unstyled ps-3">';
+        data.usage.slice(0, 10).forEach(function (u) {
+          if (typeof u === 'object') {
+            var text = u.value || u.label || (u['@id'] ? u['@id'].split('/').pop().split('#').pop() : 'Usage note');
+            html += '<li class="mb-2 small">' + text;
+            if (u.language) {
+              html += ' <span class="ontolex-badge badge-language ms-2">' + u.language + '</span>';
+            }
+            if (u.source) {
+              var sources = Array.isArray(u.source) ? u.source : [u.source];
+              html += '<div class="text-muted small ms-3 mt-1">Source: ';
+              sources.forEach(function (src, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof src === 'object') {
+                  // Try to get a meaningful text from the source object
+                  var sourceText =
+                    src.label || src.value || (src['@id'] ? src['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += sourceText;
+                } else {
+                  html += src;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small">' + (u.label || u || JSON.stringify(u)) + '</li>';
+          }
+        });
+        if (data.usage.length > 10) {
+          html += '<li class="text-muted small">... and ' + (data.usage.length - 10) + ' more</li>';
+        }
+        html += '</ul></div>';
+      }
+
+      // References / provenance
+      if (data.reference || data.references) {
+        var refs = data.reference || data.references;
+        refs = Array.isArray(refs) ? refs : [refs];
+        html += '<div class="mb-3"><strong class="d-block mb-2">Reference(s):</strong><ul class="ps-3">';
+        refs.forEach(function (r) {
+          html += '<li class="small">' + (r.label || r || JSON.stringify(r)) + '</li>';
+        });
         html += '</ul></div>';
       }
     }

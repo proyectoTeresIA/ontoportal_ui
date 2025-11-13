@@ -1,10 +1,11 @@
 = render TurboFrameComponent.new(id: 'forms', data: {"turbo-frame-target": "frame"}) do
-  %div.ont-ontolex-forms.py-3
+  %div.ont-ontolex-forms.ontolex-container
     %div#forms-container.container-fluid
       %div.row
         %div.col-12
           %h4= t('ontology_details.sections.forms')
           %p.text-muted Loading forms...
+          %div#forms-pagination.ontolex-pagination.mt-3
 
   :javascript
     $(document).ready(function(){
@@ -25,37 +26,42 @@
           dataType: 'json',
           success: function(data) {
             var items = data.collection || [];
-            var html = '<div class="list-group">';
+            var html = '<div class="ontolex-list-group">';
             
             if (items.length === 0) {
-              html += '<div class="alert alert-info">No forms found.</div>';
+              html = '<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No forms found.</p></div>';
             } else {
               items.forEach(function(item) {
                 var writtenRep = item.writtenRep || 'Unnamed';
                 
                 // Extract gender
-                var gender = '';
+                var genderBadge = '';
                 if (item.gender) {
                   var genderValue = item.gender.split('#').pop() || item.gender.split('/').pop();
-                  gender = ' <span class="badge bg-secondary">Gender: ' + genderValue + '</span>';
+                  genderBadge = '<span class="ontolex-badge badge-gender">' + genderValue + '</span>';
                 }
                 
                 // Extract number
-                var number = '';
+                var numberBadge = '';
                 if (item.number) {
                   var numberValue = item.number.split('#').pop() || item.number.split('/').pop();
-                  number = ' <span class="badge bg-secondary">Number: ' + numberValue + '</span>';
+                  numberBadge = '<span class="ontolex-badge badge-number">' + numberValue + '</span>';
                 }
                 
                 var itemId = item['@id'] || item.id || 'Unknown';
+                var signedCount = item.signedForm && Array.isArray(item.signedForm) ? item.signedForm.length : (item.signedForm ? 1 : 0);
+                var videoCount = item.video && Array.isArray(item.video) ? item.video.length : (item.video ? 1 : 0);
                 
-                html += '<a href="#" class="list-group-item list-group-item-action" onclick="OntolexModal.loadEntity(\'forms\', \'' + itemId + '\', \'' + writtenRep + '\'); return false;">';
-                html += '<div class="d-flex w-100 justify-content-between">';
-                html += '<h5 class="mb-1">' + writtenRep + '</h5>';
-                html += '<div>' + gender + number + '</div>';
+                html += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'forms\', \'' + itemId + '\', \'' + writtenRep + '\'); return false;" style="cursor: pointer;">';
+                html += '<div class="entity-id">' + itemId + '</div>';
+                html += '<div class="entity-main-text">' + writtenRep + '</div>';
+                html += '<div class="entity-metadata">';
+                if (genderBadge) html += genderBadge;
+                if (numberBadge) html += numberBadge;
+                if (signedCount > 0) { html += '<span class="ontolex-badge badge-count">Signed: ' + signedCount + '</span>'; }
+                if (videoCount > 0) { html += '<span class="ontolex-badge badge-count">Video: ' + videoCount + '</span>'; }
                 html += '</div>';
-                html += '<small class="text-muted">ID: ' + itemId + '</small>';
-                html += '</a>';
+                html += '</div>';
               });
             }
             

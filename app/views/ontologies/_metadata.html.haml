@@ -98,6 +98,22 @@
             %tr
               %td= t('ontologies.metrics.labels.properties')
               %td= number_with_delimiter(@metrics.properties)
+            - if @metrics.respond_to?(:ontolexEntries) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexEntries))
+              %tr
+                %td= 'Lexical entries'
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexEntries)
+            - if @metrics.respond_to?(:ontolexConcepts) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexConcepts))
+              %tr
+                %td= 'Lexical concepts'
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexConcepts)
+            - if @metrics.respond_to?(:ontolexForms) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexForms))
+              %tr
+                %td= 'Forms'
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexForms)
+            - if @metrics.respond_to?(:ontolexSenses) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexSenses))
+              %tr
+                %td= 'Lexical senses'
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexSenses)
             %tr
               %td= t('ontologies.metrics.labels.max_depth')
               %td= number_with_delimiter(@metrics.maxDepth)

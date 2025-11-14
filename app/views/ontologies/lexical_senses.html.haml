@@ -10,6 +10,7 @@
   :javascript
     $(document).ready(function(){
       var currentPage = 1;
+      var pageSize = 15;
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
@@ -18,7 +19,7 @@
       OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
       
       function loadLexicalSenses(page) {
-        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_senses?page=" + page + "&apikey=" + apikey;
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_senses?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
         
         $.ajax({
           url: apiUrl,

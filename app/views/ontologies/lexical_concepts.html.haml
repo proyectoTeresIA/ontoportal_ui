@@ -10,7 +10,7 @@
   :javascript
     $(document).ready(function() {
       var currentPage = 1;
-      var pageSize = 50;
+      var pageSize = 15;
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
       var ontologyAcronym = "#{@ontology.acronym}";
@@ -27,13 +27,11 @@
           dataType: 'json',
           success: function(data) {
             var items = data.collection || [];
-            var container = $('#lexical-concepts-container');
-            container.empty();
+            var html = '<div class="ontolex-list-group">';
             
             if (items.length === 0) {
-              container.html('<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No lexical concepts found.</p></div>');
+              html += '<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No lexical concepts found.</p></div>';
             } else {
-              var listHtml = '<div class="ontolex-list-group">';
               items.forEach(function(item) {
                 var itemId = item['@id'] || item.id || 'Unknown';
                 var definition = 'No definition available';
@@ -54,86 +52,73 @@
                 var sensesCount = item.lexicalizedSense && Array.isArray(item.lexicalizedSense) ? item.lexicalizedSense.length : (item.lexicalizedSense ? 1 : 0);
                 var shortId = itemId.split('/').pop();
                 
-                listHtml += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'lexical_concepts\', \'' + itemId + '\', \'' + shortId + '\'); return false;" style="cursor: pointer;">';
-                listHtml += '<div class="entity-id">' + itemId + '</div>';
-                listHtml += '<div class="entity-main-text">' + shortId + '</div>';
-                listHtml += '<p class="mb-2 text-muted small">' + definition + '</p>';
-                listHtml += '<div class="entity-metadata">';
-                if (subject) { listHtml += '<span class="ontolex-badge badge-subject">' + subject + '</span>'; }
-                if (notesCount > 0) { listHtml += '<span class="ontolex-badge badge-count">Notes: ' + notesCount + '</span>'; }
-                if (evokedCount > 0) { listHtml += '<span class="ontolex-badge badge-count">Evoked: ' + evokedCount + '</span>'; }
-                if (sensesCount > 0) { listHtml += '<span class="ontolex-badge badge-count">Senses: ' + sensesCount + '</span>'; }
-                listHtml += '</div>';
-                listHtml += '</div>';
+                html += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'lexical_concepts\', \'' + itemId + '\', \'' + shortId + '\'); return false;" style="cursor: pointer;">';
+                html += '<div class="entity-id">' + itemId + '</div>';
+                html += '<div class="entity-main-text">' + shortId + '</div>';
+                html += '<p class="mb-2 text-muted small">' + definition + '</p>';
+                html += '<div class="entity-metadata">';
+                if (subject) { html += '<span class="ontolex-badge badge-subject">' + subject + '</span>'; }
+                if (notesCount > 0) { html += '<span class="ontolex-badge badge-count">Notes: ' + notesCount + '</span>'; }
+                if (evokedCount > 0) { html += '<span class="ontolex-badge badge-count">Evoked: ' + evokedCount + '</span>'; }
+                if (sensesCount > 0) { html += '<span class="ontolex-badge badge-count">Senses: ' + sensesCount + '</span>'; }
+                html += '</div>';
+                html += '</div>';
               });
-              listHtml += '</div>';
-              container.html(listHtml);
+              html += '</div>';
             }
             
-            // Update pagination
-            updatePagination(data);
+            // Pagination controls
+            if (data.pageCount && data.pageCount > 1) {
+              html += '<nav aria-label="Pagination" class="mt-3">';
+              html += '<ul class="pagination justify-content-center">';
+              
+              // Previous button
+              if (data.page > 1) {
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">Previous</a></li>';
+              } else {
+                html += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
+              }
+              
+              // Page numbers (show max 5 pages)
+              var startPage = Math.max(1, data.page - 2);
+              var endPage = Math.min(data.pageCount, startPage + 4);
+              startPage = Math.max(1, endPage - 4);
+              
+              for (var i = startPage; i <= endPage; i++) {
+                if (i === data.page) {
+                  html += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
+                } else {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                }
+              }
+              
+              // Next button
+              if (data.page < data.pageCount) {
+                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">Next</a></li>';
+              } else {
+                html += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
+              }
+              
+              html += '</ul>';
+              html += '<p class="text-center text-muted">Page ' + data.page + ' of ' + data.pageCount + '</p>';
+              html += '</nav>';
+            }
+            
+            $('#lexical-concepts-container').html(html);
+            
+            // Attach click handlers to pagination links
+            $('#lexical-concepts-container .pagination a').on('click', function(e) {
+              e.preventDefault();
+              var page = $(this).data('page');
+              loadLexicalConcepts(page);
+            });
           },
           error: function(xhr, status, error) {
             $('#lexical-concepts-container').html('<div class="alert alert-danger">Error loading lexical concepts: ' + error + '</div>');
           }
         });
       }
-      
-      function updatePagination(data) {
-        var totalPages = data.pageCount || 1;
-        var paginationHtml = '<nav aria-label="Lexical concepts pagination"><ul class="pagination justify-content-center">';
-        
-        // Previous button
-        if (currentPage > 1) {
-          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + (currentPage - 1) + '" href="#">Previous</a></li>';
-        } else {
-          paginationHtml += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
-        }
-        
-        // Page numbers
-        var startPage = Math.max(1, currentPage - 2);
-        var endPage = Math.min(totalPages, currentPage + 2);
-        
-        if (startPage > 1) {
-          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="1" href="#">1</a></li>';
-          if (startPage > 2) {
-            paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-          }
-        }
-        
-        for (var i = startPage; i <= endPage; i++) {
-          if (i === currentPage) {
-            paginationHtml += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
-          } else {
-            paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + i + '" href="#">' + i + '</a></li>';
-          }
-        }
-        
-        if (endPage < totalPages) {
-          if (endPage < totalPages - 1) {
-            paginationHtml += '<li class="page-item disabled"><span class="page-link">...</span></li>';
-          }
-          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + totalPages + '" href="#">' + totalPages + '</a></li>';
-        }
-        
-        // Next button
-        if (currentPage < totalPages) {
-          paginationHtml += '<li class="page-item"><a class="page-link page-nav" data-page="' + (currentPage + 1) + '" href="#">Next</a></li>';
-        } else {
-          paginationHtml += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
-        }
-        
-        paginationHtml += '</ul></nav>';
-        $('#lexical-concepts-pagination').html(paginationHtml);
-        
-        // Attach click handlers to pagination links
-        $('.page-nav').click(function(e) {
-          e.preventDefault();
-          currentPage = parseInt($(this).data('page'));
-          loadLexicalConcepts(currentPage);
-        });
-      }
-      
+
       // Initial load
       loadLexicalConcepts(currentPage);
     });

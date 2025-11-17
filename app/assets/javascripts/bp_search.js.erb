@@ -1,5 +1,13 @@
 "use strict";
 
+// i18n translations for OntoLex search
+var ONTOLEX_I18N = {
+    domains: <%= I18n.t('search.ontolex.domains').to_json %>,
+    otherForms: <%= I18n.t('search.ontolex.other_forms').to_json %>,
+    viewEntry: <%= I18n.t('search.ontolex.view_entry').to_json %>,
+    viewEntries: <%= I18n.t('search.ontolex.view_entries').to_json %>
+};
+
 // History and navigation management
 (function(window, undefined) {
     // Establish Variables
@@ -157,6 +165,37 @@ jQuery(document).ready(function() {
 
     jQuery("#search_results a.additional_ont_results_link").live("click", showAdditionalOntResults);
     jQuery("#search_results a.additional_cls_results_link").live("click", showAdditionalClsResults);
+    
+    // Event handlers for OntoLex modal links in search results
+    jQuery("#search_results").on("click", "a.lexical_form_link", function(e) {
+        e.preventDefault();
+        var formId = jQuery(this).data("form-id");
+        var ontAcronym = jQuery(this).data("ont-acronym");
+        var title = jQuery(this).text();
+        
+        if (window.OntolexModal && formId && ontAcronym) {
+            // Initialize if needed
+            var restUrl = jQuery(document).data().bp.config.rest_url;
+            var apikey = jQuery(document).data().bp.config.apikey;
+            window.OntolexModal.init(ontAcronym, restUrl, apikey);
+            window.OntolexModal.loadEntity('forms', formId, title);
+        }
+    });
+    
+    jQuery("#search_results").on("click", "a.lexical_entry_link", function(e) {
+        e.preventDefault();
+        var entryId = jQuery(this).data("entry-id");
+        var ontAcronym = jQuery(this).data("ont-acronym");
+        var title = jQuery(this).text();
+        
+        if (window.OntolexModal && entryId && ontAcronym) {
+            // Initialize if needed
+            var restUrl = jQuery(document).data().bp.config.rest_url;
+            var apikey = jQuery(document).data().bp.config.apikey;
+            window.OntolexModal.init(ontAcronym, restUrl, apikey);
+            window.OntolexModal.loadEntity('lexical_entries', entryId, title);
+        }
+    });
 
     jQuery("#advanced_options").on('click', toggleAdvancedSearchOptions);
 
@@ -278,18 +317,26 @@ function currentSearchParams() {
     var params = {}, ont_val = null;
     // Search query
     params.q = jQuery("#search_keywords").val();
+    // Resource type (class vs lexical)
+    params.resource_type = jQuery("input[name='search[resource_type]']:checked").val() || 'class';
     // Ontologies
     ont_val = jQuery("#ontology_ontologyId").val();
     params.ontologies = (ont_val === null) ? "" : ont_val.join(",");
-    // Advanced options
+    // Advanced options (class search)
     params.include_properties = jQuery("#search_include_properties").is(":checked");
     params.include_views = jQuery("#search_include_views").is(":checked");
     params.includeObsolete = jQuery("#search_include_obsolete").is(":checked");
-    // params.includeNonProduction =
-    // jQuery("#search_include_non_production").is(":checked");
     params.require_definition = jQuery("#search_require_definition").is(":checked");
     params.exact_match = jQuery("#search_exact_match").is(":checked");
     params.categories = jQuery("#search_categories").val() || "";
+    
+    // Lexical-specific options (Forms)
+    if (params.resource_type === 'form') {
+        params.language = jQuery("#search_language").val() || "";
+        params.part_of_speech = jQuery("#search_part_of_speech").val() || "";
+        params.subjects = jQuery("#search_subjects").val() || "";
+    }
+    
     return params;
 }
 
@@ -315,38 +362,55 @@ function performSearch() {
     var ont_val = jQuery("#ontology_ontologyId").val() || null,
         onts = (ont_val === null) ? "" : ont_val.join(","),
         query = jQuery("#search_keywords").val(),
-        // Advanced options
+        resourceType = jQuery("input[name='search[resource_type]']:checked").val() || 'class',
+        // Advanced options (class search)
         includeProps = jQuery("#search_include_properties").is(":checked"),
         includeViews = jQuery("#search_include_views").is(":checked"),
         includeObsolete = jQuery("#search_include_obsolete").is(":checked"),
         includeNonProduction = jQuery("#search_include_non_production").is(":checked"),
         includeOnlyDefinitions = jQuery("#search_require_definition").is(":checked"),
         exactMatch = jQuery("#search_exact_match").is(":checked"),
-        categories = jQuery("#search_categories").val() || "";
+        categories = jQuery("#search_categories").val() || "",
+        // Lexical-specific options
+        language = jQuery("#search_language").val() || "",
+        partOfSpeech = jQuery("#search_part_of_speech").val() || "",
+        subjects = jQuery("#search_subjects").val() || "";
 
     // Set the list of search words to be blacklisted for the ontology ownership algorithm
     blacklistSearchWordsArr = query.split(/\s+/);
+    
+    // Build request data based on resource type
+    var requestData = {
+        q: query,
+        resource_type: resourceType,
+        exact_match: exactMatch,
+        ontologies: onts,
+        pagesize: 150,
+        apikey: jQuery(document).data().bp.config.apikey,
+        userapikey: jQuery(document).data().bp.config.userapikey,
+        format: "jsonp",
+        ncbo_slice: (("ncbo_slice" in jQuery(document).data().bp.config) ? jQuery(document).data().bp.config.ncbo_slice : '')
+    };
+    
+    // Add class-specific or form-specific parameters
+    if (resourceType === 'form') {
+        if (language) requestData.language = language;
+        if (partOfSpeech) requestData.part_of_speech = partOfSpeech;
+        if (subjects) requestData.subjects = subjects;
+    } else {
+        requestData.include_properties = includeProps;
+        requestData.include_views = includeViews;
+        requestData.obsolete = includeObsolete;
+        requestData.include_non_production = includeNonProduction;
+        requestData.require_definition = includeOnlyDefinitions;
+        requestData.categories = categories;
+    }
 
     jQuery.ajax({
         // bp.config is created in views/layouts/_header..., which calls
         // ApplicationController::bp_config_json
         url: determineHTTPS(jQuery(document).data().bp.config.rest_url) + "/search",
-        data: {
-            q: query,
-            include_properties: includeProps,
-            include_views: includeViews,
-            obsolete: includeObsolete,
-            include_non_production: includeNonProduction,
-            require_definition: includeOnlyDefinitions,
-            exact_match: exactMatch,
-            categories: categories,
-            ontologies: onts,
-            pagesize: 150,
-            apikey: jQuery(document).data().bp.config.apikey,
-            userapikey: jQuery(document).data().bp.config.userapikey,
-            format: "jsonp",
-            ncbo_slice: (("ncbo_slice" in jQuery(document).data().bp.config) ? jQuery(document).data().bp.config.ncbo_slice : '')
-        },
+        data: requestData,
         dataType: "jsonp",
         success: function(data) {
             var results = [],
@@ -356,15 +420,26 @@ function performSearch() {
                 resultsByOnt = "",
                 resultsOntCount = "",
                 resultsOntDiv = "";
-            if (categories.length > 0) {
+                
+            // For class search, filter by categories if needed
+            if (resourceType === 'class' && categories.length > 0) {
                 data.collection = filterCategories(data.collection, categories);
             }
+            
             if (!jQuery.isEmptyObject(data)) {
-                groupedResults = aggregateResults(data.collection);
+                if (resourceType === 'form') {
+                    // Format form results (OntoLex)
+                    groupedResults = aggregateLexicalResults(data.collection);
+                } else {
+                    // Format class results as usual
+                    groupedResults = aggregateResults(data.collection);
+                }
+                
                 jQuery(groupedResults).each(function() {
-                    results.push(formatSearchResults(this));
+                    results.push(resourceType === 'form' ? formatFormSearchResults(this) : formatSearchResults(this));
                 });
             }
+            
             // Display error message if no results found
             if (data.collection.length === 0) {
                 result_count.html("");
@@ -921,6 +996,14 @@ function ontologyIdToAcronym(id) {
     return id.split("/").slice(-1)[0];
 }
 
+function ontologyIdToName(id) {
+    var ont = jQuery(document).data().bp.ontologies[id];
+    if (typeof ont === 'undefined') {
+        return "";
+    }
+    return ont.name;
+}
+
 function getOntologyName(cls) {
     var ont = jQuery(document).data().bp.ontologies[cls.links.ontology];
     if (typeof ont === 'undefined') {
@@ -1034,3 +1117,165 @@ function toggleAdvancedSearchOptions() {
 }
 
 
+
+// Aggregate lexical search results by ontology
+function aggregateLexicalResults(results) {
+    var ontologies = {};
+    
+    jQuery.each(results, function(index, result) {
+        var ontology = result.links.ontology;
+        if (!ontologies.hasOwnProperty(ontology)) {
+            ontologies[ontology] = {
+                ontology: ontology,
+                same_ont: []
+            };
+        }
+        ontologies[ontology].same_ont.push(result);
+    });
+    
+    // Convert to array
+    var ontologiesArray = [];
+    for (var ont in ontologies) {
+        if (ontologies.hasOwnProperty(ont)) {
+            ontologiesArray.push(ontologies[ont]);
+        }
+    }
+    return ontologiesArray;
+}
+
+// Format lexical search results for display (flat list, no grouping)
+function formatFormSearchResults(aggOntologyResults) {
+    var ontResults = aggOntologyResults.same_ont,
+        allResults = [];
+    
+    // Process all results from this ontology (not just the first one)
+    jQuery(ontResults).each(function() {
+        var res = this,
+            ontAcronym = ontologyIdToAcronym(res.links.ontology),
+            ontName = ontologyIdToName(res.links.ontology),
+            formID = res["@id"],
+            displayText = "",
+            languageBadge = "",
+            posBadge = "";
+        
+        // Extract display text from writtenRep
+        if (res.writtenRep && res.writtenRep.length > 0) {
+            displayText = Array.isArray(res.writtenRep) ? res.writtenRep[0] : res.writtenRep;
+        } else if (res.lemma) {
+            displayText = res.lemma;
+        } else {
+            displayText = formID.split('/').pop();
+        }
+        
+        // Language badge
+        if (res.language) {
+            languageBadge = ' <span class="badge" style="background-color: #5bc0de; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 3px;">' + res.language + '</span>';
+        }
+        
+        // Part of speech (from enriched data)
+        if (res.partOfSpeech) {
+            posBadge = ' <span style="font-style: italic; color: #666;">(' + res.partOfSpeech + ')</span>';
+        }
+        
+        var searchResultDiv = jQuery("<div>");
+        searchResultDiv.addClass("search_result");
+        searchResultDiv.attr("data-bp_ont_id", res.links.ontology);
+        searchResultDiv.attr("data-bp_ont_name", ontName);
+        
+        // Form label with ontology name - clicking opens form modal
+        var formLink = jQuery("<a>");
+        formLink.attr({
+            "title": displayText,
+            "href": "#",
+            "data-form-id": formID,
+            "data-ont-acronym": ontAcronym
+        });
+        formLink.addClass("lexical_form_link");
+        formLink.html('<span class="prefLabel">' + displayText + '</span>' + languageBadge + posBadge + ' - ' + ontName + ' (' + ontAcronym + ')');
+        
+        var formIdDiv = jQuery("<div>");
+        formIdDiv.addClass("concept_uri");
+        formIdDiv.text(formID);
+        
+        var formLabelDiv = jQuery("<div>").addClass("class_link");
+        formLabelDiv.append(formLink);
+        formLabelDiv.append(formIdDiv);
+        searchResultDiv.append(formLabelDiv);
+        
+        // Subjects/domains section
+        if (res.subject && res.subject.length > 0) {
+            var subjectsDiv = jQuery("<div>").addClass("def_container").css({
+                "margin-top": "5px",
+                "padding": "5px 0",
+                "font-size": "0.95em"
+            });
+            
+            var subjectLabels = [];
+            if (res.subjectLabel && res.subjectLabel.length > 0) {
+                subjectLabels = Array.isArray(res.subjectLabel) ? res.subjectLabel : [res.subjectLabel];
+            } else {
+                subjectLabels = Array.isArray(res.subject) ? res.subject.map(function(s) { return s.split('/').pop(); }) : [res.subject.split('/').pop()];
+            }
+            
+            subjectsDiv.html('<strong style="color: #555;">' + ONTOLEX_I18N.domains + ':</strong> ' + subjectLabels.join(", "));
+            searchResultDiv.append(subjectsDiv);
+        }
+        
+        // Definition (if exists)
+        if (res.definition && res.definition.length > 0) {
+            var defText = Array.isArray(res.definition) ? res.definition[0] : res.definition;
+            if (typeof defText === 'object' && defText['@value']) {
+                defText = defText['@value'];
+            }
+            searchResultDiv.append(jQuery("<div>").addClass("def_container").text(shortenDefinition(defText)));
+        }
+        
+        // Additional written representations
+        if (res.writtenRep && res.writtenRep.length > 1) {
+            var writtenRepsDiv = jQuery("<div>").addClass("def_container").css({
+                "margin-top": "5px",
+                "font-size": "0.9em",
+                "color": "#666"
+            });
+            var otherForms = Array.isArray(res.writtenRep) ? res.writtenRep.slice(1) : [];
+            if (otherForms.length > 0) {
+                writtenRepsDiv.html('<em>' + ONTOLEX_I18N.otherForms + ':</em> ' + otherForms.join(", "));
+                searchResultDiv.append(writtenRepsDiv);
+            }
+        }
+        
+        // Links to associated lexical entries
+        var searchResultLinks = jQuery("<div>");
+        searchResultLinks.addClass("search_result_links");
+        searchResultLinks.append(formLinksSpan(res, ontAcronym));
+        searchResultDiv.append(searchResultLinks);
+        
+        allResults.push(searchResultDiv.prop("outerHTML"));
+    });
+    
+    return allResults.join("");
+}
+
+// Create links for forms (showing associated lexical entries)
+function formLinksSpan(form, ontAcronym) {
+    var formID = form["@id"];
+    var resLinks = jQuery("<span>");
+    resLinks.addClass("additional");
+    
+    // Show links to associated lexical entries if present
+    if (form.lexicalEntries && form.lexicalEntries.length > 0) {
+        var entriesText = form.lexicalEntries.length === 1 ? ONTOLEX_I18N.viewEntry : ONTOLEX_I18N.viewEntries + " (" + form.lexicalEntries.length + ")";
+        var entriesAnchor = jQuery("<a>");
+        entriesAnchor.attr({
+            "href": "#",
+            "data-entry-id": form.lexicalEntries[0], // Link to first entry
+            "data-ont-acronym": ontAcronym
+        });
+        entriesAnchor.addClass("lexical_entry_link");
+        entriesAnchor.addClass("search_result_link");
+        entriesAnchor.text(entriesText);
+        resLinks.append(entriesAnchor);
+    }
+    
+    return resLinks;
+}

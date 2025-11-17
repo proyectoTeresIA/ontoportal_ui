@@ -316,6 +316,13 @@ es:
       obsolete_definition: >
         Una clase que los autores de la ontología han marcado como obsoleta y que recomiendan no usar. Estas clases 
         a menudo se mantienen en las ontologías (en lugar de eliminarlas por completo) para que los sistemas existentes que dependen de ellas sigan funcionando.
+    ontolex:
+      forms_label: "Formas (OntoLex)"
+      domains: "Dominios"
+      other_forms: "Otras formas"
+      view_entry: "ver entrada"
+      view_entries: "ver entradas"
+      lexical_filters: "Filtros Léxicos"
 
   ontology_details:
     sections:

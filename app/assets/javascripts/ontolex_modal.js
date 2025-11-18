@@ -24,6 +24,18 @@ window.OntolexModal = (function () {
         var title = $(this).text();
         loadEntity(type, id, title);
       });
+
+    // Show remaining (previously hidden) items in lists when the "... and X more" link is clicked
+    $(document)
+      .off('click', '.ontolex-show-more')
+      .on('click', '.ontolex-show-more', function (e) {
+        e.preventDefault();
+        var $linkLi = $(this).closest('li');
+        // Reveal any hidden sibling items (they may be rendered before or after the link)
+        $linkLi.siblings('.ontolex-hidden-item').removeClass('d-none');
+        // Remove the "show more" link list item
+        $linkLi.remove();
+      });
   }
 
   function loadEntity(type, id, title) {
@@ -220,8 +232,21 @@ window.OntolexModal = (function () {
             entryId.split('/').pop() +
             '</a></li>';
         });
-        if (data.isEvokedBy.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.isEvokedBy.length - 10) + ' more</li>';
+        // Render remaining items hidden and add a show-more link
+        var _remainingEvoked = data.isEvokedBy.slice(10);
+        _remainingEvoked.forEach(function (entryId) {
+          html +=
+            '<li class="mb-1 ontolex-hidden-item d-none"><a href="#" class="entity-link text-decoration-none" data-type="lexical_entries" data-id="' +
+            entryId +
+            '"><i class="fas fa-link me-1"></i>' +
+            entryId.split('/').pop() +
+            '</a></li>';
+        });
+        if (_remainingEvoked.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingEvoked.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }
@@ -258,8 +283,39 @@ window.OntolexModal = (function () {
             html += '<li class="mb-1 small">' + n + '</li>';
           }
         });
-        if (data.note.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.note.length - 10) + ' more</li>';
+        var _remainingNotes = data.note.slice(10);
+        _remainingNotes.forEach(function (n) {
+          if (typeof n === 'object') {
+            var text = n.value || n.label || 'Note';
+            html += '<li class="mb-2 small ontolex-hidden-item d-none">' + text;
+            if (n.language) {
+              html += ' <span class="ontolex-badge badge-language ms-2">' + n.language + '</span>';
+            }
+            if (n.wasDerivedFrom) {
+              var refs = Array.isArray(n.wasDerivedFrom) ? n.wasDerivedFrom : [n.wasDerivedFrom];
+              html += '<div class="text-muted small ms-3 mt-1">References: ';
+              refs.forEach(function (ref, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof ref === 'object') {
+                  var refText =
+                    ref.label || ref.value || (ref['@id'] ? ref['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += refText;
+                } else {
+                  html += ref;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small ontolex-hidden-item d-none">' + n + '</li>';
+          }
+        });
+        if (_remainingNotes.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingNotes.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }
@@ -273,8 +329,15 @@ window.OntolexModal = (function () {
           data[prop].slice(0, 10).forEach(function (mId) {
             html += '<li class="mb-1"><code>' + mId + '</code></li>';
           });
-          if (data[prop].length > 10) {
-            html += '<li class="text-muted small">... and ' + (data[prop].length - 10) + ' more</li>';
+          var _remainingMap = data[prop].slice(10);
+          _remainingMap.forEach(function (mId) {
+            html += '<li class="mb-1 ontolex-hidden-item d-none"><code>' + mId + '</code></li>';
+          });
+          if (_remainingMap.length > 0) {
+            html +=
+              '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+              _remainingMap.length +
+              ' more</a></li>';
           }
           html += '</ul></div>';
         }
@@ -294,8 +357,20 @@ window.OntolexModal = (function () {
             senseId.split('/').pop() +
             '</a></li>';
         });
-        if (data.lexicalizedSense.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.lexicalizedSense.length - 10) + ' more</li>';
+        var _remainingLexSenses = data.lexicalizedSense.slice(10);
+        _remainingLexSenses.forEach(function (senseId) {
+          html +=
+            '<li class="mb-1 ontolex-hidden-item d-none"><a href="#" class="entity-link text-decoration-none" data-type="lexical_senses" data-id="' +
+            senseId +
+            '"><i class="fas fa-link me-1"></i>' +
+            senseId.split('/').pop() +
+            '</a></li>';
+        });
+        if (_remainingLexSenses.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingLexSenses.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }
@@ -592,8 +667,20 @@ window.OntolexModal = (function () {
             synId.split('/').pop() +
             '</a></li>';
         });
-        if (data.synonym.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.synonym.length - 10) + ' more</li>';
+        var _remainingSyn = data.synonym.slice(10);
+        _remainingSyn.forEach(function (synId) {
+          html +=
+            '<li class="mb-1 ontolex-hidden-item d-none"><a href="#" class="entity-link text-decoration-none" data-type="lexical_senses" data-id="' +
+            synId +
+            '"><i class="fas fa-link me-1"></i>' +
+            synId.split('/').pop() +
+            '</a></li>';
+        });
+        if (_remainingSyn.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingSyn.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }
@@ -610,8 +697,20 @@ window.OntolexModal = (function () {
             transId.split('/').pop() +
             '</a></li>';
         });
-        if (data.translation.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.translation.length - 10) + ' more</li>';
+        var _remainingTrans = data.translation.slice(10);
+        _remainingTrans.forEach(function (transId) {
+          html +=
+            '<li class="mb-1 ontolex-hidden-item d-none"><a href="#" class="entity-link text-decoration-none" data-type="lexical_senses" data-id="' +
+            transId +
+            '"><i class="fas fa-link me-1"></i>' +
+            transId.split('/').pop() +
+            '</a></li>';
+        });
+        if (_remainingTrans.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingTrans.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }
@@ -651,8 +750,41 @@ window.OntolexModal = (function () {
             html += '<li class="mb-1 small">' + JSON.stringify(u) + '</li>';
           }
         });
-        if (data.usageExample.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.usageExample.length - 10) + ' more</li>';
+        var _remainingUsageEx = data.usageExample.slice(10);
+        _remainingUsageEx.forEach(function (u) {
+          if (typeof u === 'string') {
+            html += '<li class="mb-2 small ontolex-hidden-item d-none"><em>' + u + '</em></li>';
+          } else if (typeof u === 'object') {
+            var text = u.value || u.label || (u['@id'] ? u['@id'].split('/').pop().split('#').pop() : 'Example');
+            html += '<li class="mb-2 ontolex-hidden-item d-none"><em class="small">' + text + '</em>';
+            if (u.language) {
+              html += ' <span class="ontolex-badge badge-language ms-2">' + u.language + '</span>';
+            }
+            if (u.source) {
+              var sources = Array.isArray(u.source) ? u.source : [u.source];
+              html += '<div class="text-muted small ms-3 mt-1">Source: ';
+              sources.forEach(function (src, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof src === 'object') {
+                  var sourceText =
+                    src.label || src.value || (src['@id'] ? src['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += sourceText;
+                } else {
+                  html += src;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html += '<li class="mb-1 small ontolex-hidden-item d-none">' + JSON.stringify(u) + '</li>';
+          }
+        });
+        if (_remainingUsageEx.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingUsageEx.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }
@@ -688,8 +820,40 @@ window.OntolexModal = (function () {
             html += '<li class="mb-1 small">' + (u.label || u || JSON.stringify(u)) + '</li>';
           }
         });
-        if (data.usage.length > 10) {
-          html += '<li class="text-muted small">... and ' + (data.usage.length - 10) + ' more</li>';
+        var _remainingUsage = data.usage.slice(10);
+        _remainingUsage.forEach(function (u) {
+          if (typeof u === 'object') {
+            var text = u.value || u.label || (u['@id'] ? u['@id'].split('/').pop().split('#').pop() : 'Usage note');
+            html += '<li class="mb-2 small ontolex-hidden-item d-none">' + text;
+            if (u.language) {
+              html += ' <span class="ontolex-badge badge-language ms-2">' + u.language + '</span>';
+            }
+            if (u.source) {
+              var sources = Array.isArray(u.source) ? u.source : [u.source];
+              html += '<div class="text-muted small ms-3 mt-1">Source: ';
+              sources.forEach(function (src, idx) {
+                if (idx > 0) html += ', ';
+                if (typeof src === 'object') {
+                  var sourceText =
+                    src.label || src.value || (src['@id'] ? src['@id'].split('/').pop().split('#').pop() : 'Reference');
+                  html += sourceText;
+                } else {
+                  html += src;
+                }
+              });
+              html += '</div>';
+            }
+            html += '</li>';
+          } else {
+            html +=
+              '<li class="mb-1 small ontolex-hidden-item d-none">' + (u.label || u || JSON.stringify(u)) + '</li>';
+          }
+        });
+        if (_remainingUsage.length > 0) {
+          html +=
+            '<li><a href="#" class="ontolex-show-more text-muted small">... and ' +
+            _remainingUsage.length +
+            ' more</a></li>';
         }
         html += '</ul></div>';
       }

@@ -51,7 +51,7 @@
         %div.col-sm-10
           %div.mb-2
             = label(:search, :language, t('search.index.language_filter', default: 'Language'), class: "form-label")
-            = select(:search, :language, options_for_select([['All languages', ''], ['Spanish (es)', 'es'], ['English (en)', 'en'], ['French (fr)', 'fr'], ['German (de)', 'de'], ['Italian (it)', 'it'], ['Portuguese (pt)', 'pt']]), {}, class: "form-select")
+            = select(:search, :language, options_for_select([['All languages', ''], ['Spanish (spa)', 'spa'], ['English (eng)', 'eng'], ['French (fre)', 'fre'], ['Catalan (cat)', 'cat'], ['Italian (ita)', 'ita'], ['Portuguese (por)', 'por']]), {}, class: "form-select")
           %div.mb-2
             = label(:search, :part_of_speech, t('search.index.part_of_speech', default: 'Part of Speech'), class: "form-label")
             = text_field(:search, :part_of_speech, class: "form-control", placeholder: t('search.index.pos_placeholder', default: 'e.g., noun, verb, adjective'))

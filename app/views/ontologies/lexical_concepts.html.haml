@@ -121,4 +121,17 @@
 
       // Initial load
       loadLexicalConcepts(currentPage);
+      
+      // Check if there's a conceptid parameter in the URL to open the modal automatically
+      var urlParams = new URLSearchParams(window.location.search);
+      var conceptId = urlParams.get('conceptid');
+      if (conceptId) {
+        // Decode the concept ID if it's URL encoded
+        conceptId = decodeURIComponent(conceptId);
+        var shortId = conceptId.split('/').pop();
+        // Open the modal after a brief delay to ensure everything is initialized
+        setTimeout(function() {
+          OntolexModal.loadEntity('lexical_concepts', conceptId, shortId);
+        }, 500);
+      }
     });

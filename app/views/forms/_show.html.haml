@@ -1,0 +1,6 @@
+= render TurboFrameComponent.new(id: 'form_show') do
+  %div{'data-controller': 'forms-json'}
+    %div#form-details-container.p-2
+      .text-center.py-5
+        %span.spinner-border.spinner-border-sm{role: "status"}
+        %span.ms-2 Loading...

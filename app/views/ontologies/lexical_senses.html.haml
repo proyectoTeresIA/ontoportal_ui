@@ -1,22 +1,24 @@
 = render TurboFrameComponent.new(id: 'lexical_senses', data: {"turbo-frame-target": "frame"}) do
-  %div.ont-ontolex-lexical-senses.ontolex-container
-    %div#lexical-senses-container.container-fluid
-      %div.row
-        %div.col-12
-          %h4= t('ontology_details.sections.lexical_senses')
-          %p.text-muted Loading lexical senses...
-          %div#lexical-senses-pagination.ontolex-pagination.mt-3
+  %div.tooltip
+  %div#bd_content.bd_content.explore.py-3{data:{controller: 'container-splitter'}}
+    %div.sidebar.d-flex.flex-column.p-1.mx-2{data:{'container-splitter-target': 'container'}}
+      %h5.px-2.mb-3= t('ontology_details.sections.lexical_senses')
+      %div#lexical-senses-list.ontolex-list-sidebar
+        .text-center.py-3
+          %span.spinner-border.spinner-border-sm{role: "status"}
+          %span.ms-2 Loading...
+    %div#lexical_sense_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
+      = render partial: 'lexical_senses/show'
 
+  = javascript_include_tag 'ontolex_renderer', defer: true
   :javascript
     $(document).ready(function(){
       var currentPage = 1;
-      var pageSize = 15;
+      var pageSize = 50;
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
-      
-      // Initialize the modal
-      OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
+      var selectedSenseId = null;
       
       function loadLexicalSenses(page) {
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_senses?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
@@ -27,115 +29,131 @@
           dataType: 'json',
           success: function(data) {
             var items = data.collection || [];
-            var html = '<div class="ontolex-list-group">';
+            var html = '';
             
             if (items.length === 0) {
-              html = '<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No lexical senses found.</p></div>';
+              html = '<div class="text-center text-muted p-3"><i class="fas fa-inbox"></i><p class="mt-2">No lexical senses found.</p></div>';
             } else {
+              html = '<ul class="ontolex-sidebar-list list-unstyled">';
               items.forEach(function(item) {
-                var definition = item.definition || '';
-                var reference = item.reference || '';
-                var example = item.example || '';
-                
-                // Count synonyms and translations
-                var synonymCount = item.synonym ? (Array.isArray(item.synonym) ? item.synonym.length : 1) : 0;
-                var translationCount = item.translation ? (Array.isArray(item.translation) ? item.translation.length : 1) : 0;
-                var usageExampleCount = item.usageExample ? (Array.isArray(item.usageExample) ? item.usageExample.length : 1) : 0;
-                var usageCount = item.usage ? (Array.isArray(item.usage) ? item.usage.length : 1) : 0;
-                
                 var itemId = item['@id'] || item.id || 'Unknown';
                 var shortId = itemId.split('/').pop();
-                var displayText = definition || reference || shortId;
+                var definition = item.definition || item.reference || '';
                 
-                html += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'lexical_senses\', \'' + itemId + '\', \'' + shortId + '\'); return false;" style="cursor: pointer;">';
-                html += '<div class="entity-id">' + itemId + '</div>';
-                html += '<div class="entity-main-text">' + shortId + '</div>';
+                if (definition.length > 60) {
+                  definition = definition.substring(0, 60) + '...';
+                }
                 
+                var activeClass = (selectedSenseId === itemId) ? ' active' : '';
+                html += '<li class="ontolex-sidebar-item' + activeClass + '" data-id="' + itemId + '">';
+                html += '<div class="fw-bold">' + shortId + '</div>';
                 if (definition) {
-                  html += '<p class="mb-2 text-muted small">' + definition + '</p>';
-                } else if (example) {
-                  html += '<p class="mb-2 text-muted small fst-italic">' + example + '</p>';
+                  html += '<div class="text-muted small">' + definition + '</div>';
+                }
+                html += '</li>';
+              });
+              html += '</ul>';
+              
+              // Pagination
+              if (data.pageCount && data.pageCount > 1) {
+                html += '<div class="ontolex-sidebar-pagination p-2">';
+                html += '<nav aria-label="Pagination"><ul class="pagination pagination-sm justify-content-center mb-0">';
+                
+                if (data.page > 1) {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">‹</a></li>';
+                } else {
+                  html += '<li class="page-item disabled"><span class="page-link">‹</span></li>';
                 }
                 
-                html += '<div class="entity-metadata">';
-                if (synonymCount > 0) {
-                  html += '<span class="ontolex-badge badge-count">Synonyms: ' + synonymCount + '</span>';
-                }
-                if (translationCount > 0) {
-                  html += '<span class="ontolex-badge badge-count">Translations: ' + translationCount + '</span>';
-                }
-                if (usageExampleCount > 0) { html += '<span class="ontolex-badge badge-count">Examples: ' + usageExampleCount + '</span>'; }
-                if (usageCount > 0) { html += '<span class="ontolex-badge badge-count">Usages: ' + usageCount + '</span>'; }
-                if (item.termType) { 
-                  var termType = item.termType.split('#').pop() || item.termType.split('/').pop();
-                  html += '<span class="ontolex-badge badge-termtype">' + termType + '</span>'; 
-                }
-                if (item.normativeAuthorization) {
-                  var normAuth = item.normativeAuthorization.split('#').pop() || item.normativeAuthorization.split('/').pop();
-                  html += '<span class="ontolex-badge badge-auth">' + normAuth + '</span>';
-                }
-                if (item.reliabilityCode) {
-                  var relCode = item.reliabilityCode.split('#').pop() || item.reliabilityCode.split('/').pop();
-                  html += '<span class="ontolex-badge badge-reliability">' + relCode + '</span>';
-                }
-                html += '</div>';
-                html += '</div>';
-              });
-            }
-            
-            html += '</div>';
-            
-            // Pagination controls
-            if (data.pageCount && data.pageCount > 1) {
-              html += '<nav aria-label="Pagination" class="mt-3">';
-              html += '<ul class="pagination justify-content-center">';
-              
-              // Previous button
-              if (data.page > 1) {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">Previous</a></li>';
-              } else {
-                html += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
-              }
-              
-              // Page numbers (show max 5 pages)
-              var startPage = Math.max(1, data.page - 2);
-              var endPage = Math.min(data.pageCount, startPage + 4);
-              startPage = Math.max(1, endPage - 4);
-              
-              for (var i = startPage; i <= endPage; i++) {
-                if (i === data.page) {
-                  html += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
+                html += '<li class="page-item disabled"><span class="page-link">' + data.page + ' / ' + data.pageCount + '</span></li>';
+                
+                if (data.page < data.pageCount) {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">›</a></li>';
                 } else {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                  html += '<li class="page-item disabled"><span class="page-link">›</span></li>';
                 }
+                
+                html += '</ul></nav></div>';
               }
-              
-              // Next button
-              if (data.page < data.pageCount) {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">Next</a></li>';
-              } else {
-                html += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
-              }
-              
-              html += '</ul>';
-              html += '<p class="text-center text-muted">Page ' + data.page + ' of ' + data.pageCount + '</p>';
-              html += '</nav>';
             }
             
-            $('#lexical-senses-container').html(html);
+            $('#lexical-senses-list').html(html);
             
-            // Attach click handlers to pagination links
-            $('#lexical-senses-container .pagination a').on('click', function(e) {
+            // Attach click handlers
+            $('.ontolex-sidebar-item').on('click', function() {
+              var itemId = $(this).data('id');
+              loadLexicalSenseDetails(itemId);
+              $('.ontolex-sidebar-item').removeClass('active');
+              $(this).addClass('active');
+              selectedSenseId = itemId;
+            });
+            
+            $('#lexical-senses-list .pagination a').on('click', function(e) {
               e.preventDefault();
               var page = $(this).data('page');
               loadLexicalSenses(page);
             });
+            
+            // Auto-select first item
+            if (!selectedSenseId && items.length > 0) {
+              var firstId = items[0]['@id'] || items[0].id;
+              loadLexicalSenseDetails(firstId);
+              $('.ontolex-sidebar-item').first().addClass('active');
+              selectedSenseId = firstId;
+            }
           },
           error: function(xhr, status, error) {
-            $('#lexical-senses-container').html('<div class="alert alert-danger">Error loading lexical senses: ' + error + '</div>');
+            $('#lexical-senses-list').html('<div class="alert alert-danger m-2">Error: ' + error + '</div>');
           }
         });
       }
       
+      function loadLexicalSenseDetails(senseId) {
+        $('#lexical-sense-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span><span class="ms-2">Loading...</span></div>');
+        
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_senses/" + encodeURIComponent(senseId) + "?apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var html = renderLexicalSenseDetails(data);
+            $('#lexical-sense-details-container').html(html);
+          },
+          error: function(xhr, status, error) {
+            $('#lexical-sense-details-container').html('<div class="alert alert-danger m-3">Error: ' + error + '</div>');
+          }
+        });
+      }
+      
+      function renderLexicalSenseDetails(data) {
+        var html = '<div class="ontolex-details p-3">';
+        var itemId = data['@id'] || data.id || 'Unknown';
+        
+        html += '<h5 class="mb-3">Lexical Sense Details</h5>';
+        html += '<div class="mb-3"><strong>ID:</strong> <div class="mt-1"><code class="small text-break">' + itemId + '</code></div></div>';
+        
+        // Auto-render all fields using shared renderer
+        if (window.OntolexRenderer) {
+          html += OntolexRenderer.renderAllFields(data, ontologyAcronym);
+        }
+        
+        html += '</div>';
+        return html;
+      }
+      
+      // Initial load
       loadLexicalSenses(currentPage);
+      
+      // Check if there's an id parameter in the URL
+      var urlParams = new URLSearchParams(window.location.search);
+      var senseId = urlParams.get('id');
+      if (senseId) {
+        senseId = decodeURIComponent(senseId);
+        selectedSenseId = senseId;
+        setTimeout(function() {
+          loadLexicalSenseDetails(senseId);
+        }, 500);
+      }
     });

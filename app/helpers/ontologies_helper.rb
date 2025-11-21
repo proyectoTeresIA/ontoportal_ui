@@ -466,4 +466,123 @@ module OntologiesHelper
   def submission_languages(submission = @submission)
     Array(submission&.naturalLanguage).map { |natural_language| natural_language.split('/').last }.compact
   end
+
+  # OntoLex link helpers
+  def get_link_for_ontolex_entity(entity_id, ont_acronym, entity_type, target = nil, style_as_badge = false)
+    if entity_id.start_with?('http://') || entity_id.start_with?('https://')
+      link = bp_ontolex_link(entity_id, ont_acronym, entity_type)
+      ajax_url = "/ajax/ontolex/#{entity_type}/label?language=#{request_lang}"
+      entity_url = "/ontologies/#{ont_acronym}?p=#{entity_type}&id=#{CGI.escape(entity_id)}"
+      label_ajax_link(link, entity_id, ont_acronym, ajax_url, entity_url, target)
+    else
+      if style_as_badge
+        render ChipButtonComponent.new(text: entity_id)
+      else
+        content_tag(:div, entity_id)
+      end
+    end
+  end
+
+  def bp_ontolex_link(entity_id, ont_acronym, entity_type)
+    "/ontologies/#{ont_acronym}?p=#{entity_type}&id=#{CGI.escape(entity_id)}"
+  end
+
+  def ontolex_ontology?
+    @ontology && @submission_latest && @submission_latest.hasOntologyLanguage == 'ONTOLEX'
+  end
+
+  # Render all fields of an OntoLex entity automatically
+  def render_ontolex_entity_fields(entity, ont_acronym)
+    return '' unless entity.is_a?(Hash)
+
+    # Fields to skip (internal or already displayed)
+    skip_fields = ['@id', '@type', '@context', 'links', 'submission']
+    
+    # Map of field names to entity types for creating links
+    entity_type_map = {
+      'lexicalForm' => 'forms',
+      'form' => 'forms',
+      'sense' => 'lexical_senses',
+      'lexicalSense' => 'lexical_senses',
+      'isLexicalizedSenseOf' => 'lexical_concepts',
+      'isSenseOf' => 'lexical_entries',
+      'evokes' => 'lexical_concepts',
+      'isEvokedBy' => 'lexical_entries',
+      'signedForm' => 'signed_forms',
+      'signedRep' => 'videos',
+      'wasDerivedFrom' => 'references',
+      'wasInfluencedBy' => 'activities',
+      'hasDerivation' => 'agents',
+      'definition' => 'definitions',
+      'note' => 'notes',
+      'usageExample' => 'usage_examples',
+      'usage' => 'usages',
+      'translation' => 'lexical_senses',
+      'synonym' => 'lexical_senses'
+    }
+
+    html = []
+    entity.each do |key, value|
+      next if skip_fields.include?(key)
+      next if value.nil? || (value.respond_to?(:empty?) && value.empty?)
+
+      # Format the field label
+      label = key.gsub(/([a-z])([A-Z])/, '\1 \2').capitalize
+      
+      # Render the value
+      rendered_value = render_ontolex_field_value(value, key, entity_type_map[key], ont_acronym)
+      
+      html << content_tag(:div, class: 'ontolex-field') do
+        content_tag(:strong, "#{label}: ", class: 'field-label') +
+        content_tag(:span, rendered_value.html_safe, class: 'field-value')
+      end
+    end
+
+    html.join("\n").html_safe
+  end
+
+  private
+
+  def render_ontolex_field_value(value, field_name, entity_type, ont_acronym)
+    if value.is_a?(Array)
+      # Array of values
+      value.map { |v| render_single_ontolex_value(v, field_name, entity_type, ont_acronym) }.join(', ')
+    else
+      render_single_ontolex_value(value, field_name, entity_type, ont_acronym)
+    end
+  end
+
+  def render_single_ontolex_value(value, field_name, entity_type, ont_acronym)
+    if value.is_a?(Hash) && value['@id']
+      # It's a reference to another entity
+      label = value['label'] || value['prefLabel'] || value['writtenRep'] || extract_id_fragment(value['@id'])
+      if entity_type
+        link_to(label, bp_ontolex_link(value['@id'], ont_acronym, entity_type), 
+                class: 'ontolex-entity-link btn btn-sm btn-outline-primary', 
+                data: { turbo: 'false' })
+      else
+        content_tag(:span, label, class: 'ontolex-value')
+      end
+    elsif value.is_a?(String) && value.start_with?('http://', 'https://')
+      # It's a URI
+      if entity_type
+        # It's a reference that should be linkable
+        label = extract_id_fragment(value)
+        link_to(label, bp_ontolex_link(value, ont_acronym, entity_type), 
+                class: 'ontolex-entity-link btn btn-sm btn-outline-primary', 
+                data: { turbo: 'false' })
+      else
+        # It's just a URI value
+        link_to(value, value, target: '_blank', class: 'external-link')
+      end
+    else
+      # Simple value
+      h(value.to_s)
+    end
+  end
+
+  def extract_id_fragment(uri)
+    # Extract the last part of the URI as a label
+    uri.to_s.split(/[#\/]/).last || uri.to_s
+  end
 end

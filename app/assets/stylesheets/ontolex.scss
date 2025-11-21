@@ -6,7 +6,110 @@
   padding: 1rem 0;
 }
 
-// Entity cards - cleaner, more compact design
+// Sidebar list for OntoLex entities
+.ontolex-list-sidebar {
+  overflow-y: auto;
+  flex: 1;
+  border-right: 1px solid #e0e0e0;
+
+  .ontolex-sidebar-list {
+    margin: 0;
+    padding: 0;
+  }
+
+  .ontolex-sidebar-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &.active {
+      background-color: #e3f2fd;
+      border-left: 3px solid #4a90e2;
+      padding-left: calc(1rem - 3px);
+    }
+
+    .fw-bold {
+      color: #333;
+      margin-bottom: 0.25rem;
+    }
+
+    .text-muted {
+      font-size: 0.85rem;
+      color: #666;
+    }
+  }
+
+  .ontolex-sidebar-pagination {
+    border-top: 1px solid #e0e0e0;
+    background-color: #f9f9f9;
+    position: sticky;
+    bottom: 0;
+  }
+}
+
+// Details panel for OntoLex entities
+.ontolex-details {
+  h5 {
+    color: #4a90e2;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  strong {
+    color: #555;
+  }
+
+  code {
+    background-color: #f4f4f4;
+    color: #c7254e;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    word-break: break-word;
+  }
+
+  a {
+    color: #4a90e2;
+
+    &:hover {
+      color: #357abd;
+      text-decoration: underline;
+    }
+
+    code {
+      color: #4a90e2;
+      background-color: #e3f2fd;
+      border: 1px solid #90caf9;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #bbdefb;
+        border-color: #64b5f6;
+      }
+    }
+  }
+
+  .badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+
+  .list-unstyled li {
+    padding: 0.25rem 0;
+  }
+
+  .text-muted {
+    font-size: 0.85rem;
+  }
+}
+
+// Entity cards - cleaner, more compact design (legacy, kept for compatibility)
 .entity-card {
   background: #fff;
   border: 1px solid #e0e0e0;
@@ -226,5 +329,11 @@
   .ontolex-badge {
     font-size: 0.7rem;
     padding: 0.2rem 0.4rem;
+  }
+
+  .ontolex-list-sidebar {
+    .ontolex-sidebar-item {
+      padding: 0.5rem 0.75rem;
+    }
   }
 }

@@ -1,22 +1,24 @@
 = render TurboFrameComponent.new(id: 'forms', data: {"turbo-frame-target": "frame"}) do
-  %div.ont-ontolex-forms.ontolex-container
-    %div#forms-container.container-fluid
-      %div.row
-        %div.col-12
-          %h4= t('ontology_details.sections.forms')
-          %p.text-muted Loading forms...
-          %div#forms-pagination.ontolex-pagination.mt-3
+  %div.tooltip
+  %div#bd_content.bd_content.explore.py-3{data:{controller: 'container-splitter'}}
+    %div.sidebar.d-flex.flex-column.p-1.mx-2{data:{'container-splitter-target': 'container'}}
+      %h5.px-2.mb-3= t('ontology_details.sections.forms')
+      %div#forms-list.ontolex-list-sidebar
+        .text-center.py-3
+          %span.spinner-border.spinner-border-sm{role: "status"}
+          %span.ms-2 Loading...
+    %div#form_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
+      = render partial: 'forms/show'
 
+  = javascript_include_tag 'ontolex_renderer', defer: true
   :javascript
     $(document).ready(function(){
       var currentPage = 1;
-      var pageSize = 15;
+      var pageSize = 50;
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
-      
-      // Initialize the modal
-      OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
+      var selectedFormId = null;
       
       function loadForms(page) {
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/forms?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
@@ -27,98 +29,136 @@
           dataType: 'json',
           success: function(data) {
             var items = data.collection || [];
-            var html = '<div class="ontolex-list-group">';
+            var html = '';
             
             if (items.length === 0) {
-              html = '<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No forms found.</p></div>';
+              html = '<div class="text-center text-muted p-3"><i class="fas fa-inbox"></i><p class="mt-2">No forms found.</p></div>';
             } else {
+              html = '<ul class="ontolex-sidebar-list list-unstyled">';
               items.forEach(function(item) {
-                var writtenRep = item.writtenRep || 'Unnamed';
-                
-                // Extract gender
-                var genderBadge = '';
-                if (item.gender) {
-                  var genderValue = item.gender.split('#').pop() || item.gender.split('/').pop();
-                  genderBadge = '<span class="ontolex-badge badge-gender">' + genderValue + '</span>';
-                }
-                
-                // Extract number
-                var numberBadge = '';
-                if (item.number) {
-                  var numberValue = item.number.split('#').pop() || item.number.split('/').pop();
-                  numberBadge = '<span class="ontolex-badge badge-number">' + numberValue + '</span>';
-                }
-                
                 var itemId = item['@id'] || item.id || 'Unknown';
-                var signedCount = item.signedForm && Array.isArray(item.signedForm) ? item.signedForm.length : (item.signedForm ? 1 : 0);
-                var videoCount = item.video && Array.isArray(item.video) ? item.video.length : (item.video ? 1 : 0);
+                var writtenRep = item.writtenRep || itemId.split('/').pop();
                 
-                html += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'forms\', \'' + itemId + '\', \'' + writtenRep + '\'); return false;" style="cursor: pointer;">';
-                html += '<div class="entity-id">' + itemId + '</div>';
-                html += '<div class="entity-main-text">' + writtenRep + '</div>';
-                html += '<div class="entity-metadata">';
-                if (genderBadge) html += genderBadge;
-                if (numberBadge) html += numberBadge;
-                if (signedCount > 0) { html += '<span class="ontolex-badge badge-count">Signed: ' + signedCount + '</span>'; }
-                if (videoCount > 0) { html += '<span class="ontolex-badge badge-count">Video: ' + videoCount + '</span>'; }
-                html += '</div>';
-                html += '</div>';
-              });
-            }
-            
-            html += '</div>';
-            
-            // Pagination controls
-            if (data.pageCount && data.pageCount > 1) {
-              html += '<nav aria-label="Pagination" class="mt-3">';
-              html += '<ul class="pagination justify-content-center">';
-              
-              // Previous button
-              if (data.page > 1) {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">Previous</a></li>';
-              } else {
-                html += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
-              }
-              
-              // Page numbers (show max 5 pages)
-              var startPage = Math.max(1, data.page - 2);
-              var endPage = Math.min(data.pageCount, startPage + 4);
-              startPage = Math.max(1, endPage - 4);
-              
-              for (var i = startPage; i <= endPage; i++) {
-                if (i === data.page) {
-                  html += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
-                } else {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                var metadata = '';
+                if (item.gender) {
+                  var gender = item.gender.split('#').pop() || item.gender.split('/').pop();
+                  metadata += gender + ' ';
                 }
-              }
-              
-              // Next button
-              if (data.page < data.pageCount) {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">Next</a></li>';
-              } else {
-                html += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
-              }
-              
+                if (item.number) {
+                  var number = item.number.split('#').pop() || item.number.split('/').pop();
+                  metadata += number;
+                }
+                
+                var activeClass = (selectedFormId === itemId) ? ' active' : '';
+                html += '<li class="ontolex-sidebar-item' + activeClass + '" data-id="' + itemId + '">';
+                html += '<div class="fw-bold">' + writtenRep + '</div>';
+                if (metadata.trim()) {
+                  html += '<div class="text-muted small">' + metadata.trim() + '</div>';
+                }
+                html += '</li>';
+              });
               html += '</ul>';
-              html += '<p class="text-center text-muted">Page ' + data.page + ' of ' + data.pageCount + '</p>';
-              html += '</nav>';
+              
+              // Pagination
+              if (data.pageCount && data.pageCount > 1) {
+                html += '<div class="ontolex-sidebar-pagination p-2">';
+                html += '<nav aria-label="Pagination"><ul class="pagination pagination-sm justify-content-center mb-0">';
+                
+                if (data.page > 1) {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">‹</a></li>';
+                } else {
+                  html += '<li class="page-item disabled"><span class="page-link">‹</span></li>';
+                }
+                
+                html += '<li class="page-item disabled"><span class="page-link">' + data.page + ' / ' + data.pageCount + '</span></li>';
+                
+                if (data.page < data.pageCount) {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">›</a></li>';
+                } else {
+                  html += '<li class="page-item disabled"><span class="page-link">›</span></li>';
+                }
+                
+                html += '</ul></nav></div>';
+              }
             }
             
-            $('#forms-container').html(html);
+            $('#forms-list').html(html);
             
-            // Attach click handlers to pagination links
-            $('#forms-container .pagination a').on('click', function(e) {
+            // Attach click handlers
+            $('.ontolex-sidebar-item').on('click', function() {
+              var itemId = $(this).data('id');
+              loadFormDetails(itemId);
+              $('.ontolex-sidebar-item').removeClass('active');
+              $(this).addClass('active');
+              selectedFormId = itemId;
+            });
+            
+            $('#forms-list .pagination a').on('click', function(e) {
               e.preventDefault();
               var page = $(this).data('page');
               loadForms(page);
             });
+            
+            // Auto-select first item
+            if (!selectedFormId && items.length > 0) {
+              var firstId = items[0]['@id'] || items[0].id;
+              loadFormDetails(firstId);
+              $('.ontolex-sidebar-item').first().addClass('active');
+              selectedFormId = firstId;
+            }
           },
           error: function(xhr, status, error) {
-            $('#forms-container').html('<div class="alert alert-danger">Error loading forms: ' + error + '</div>');
+            $('#forms-list').html('<div class="alert alert-danger m-2">Error: ' + error + '</div>');
           }
         });
       }
       
+      function loadFormDetails(formId) {
+        $('#form-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span><span class="ms-2">Loading...</span></div>');
+        
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/forms/" + encodeURIComponent(formId) + "?apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var html = renderFormDetails(data);
+            $('#form-details-container').html(html);
+          },
+          error: function(xhr, status, error) {
+            $('#form-details-container').html('<div class="alert alert-danger m-3">Error: ' + error + '</div>');
+          }
+        });
+      }
+      
+      function renderFormDetails(data) {
+        var html = '<div class="ontolex-details p-3">';
+        var itemId = data['@id'] || data.id || 'Unknown';
+        
+        html += '<h5 class="mb-3">Form Details</h5>';
+        html += '<div class="mb-3"><strong>ID:</strong> <div class="mt-1"><code class="small text-break">' + itemId + '</code></div></div>';
+        
+        // Auto-render all fields using shared renderer
+        if (window.OntolexRenderer) {
+          html += OntolexRenderer.renderAllFields(data, ontologyAcronym);
+        }
+        
+        html += '</div>';
+        return html;
+      }
+      
+      // Initial load
       loadForms(currentPage);
+      
+      // Check if there's an id parameter in the URL
+      var urlParams = new URLSearchParams(window.location.search);
+      var formId = urlParams.get('id');
+      if (formId) {
+        formId = decodeURIComponent(formId);
+        selectedFormId = formId;
+        setTimeout(function() {
+          loadFormDetails(formId);
+        }, 500);
+      }
     });

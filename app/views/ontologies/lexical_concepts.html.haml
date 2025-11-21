@@ -1,22 +1,24 @@
 = render TurboFrameComponent.new(id: 'lexical_concepts', data: {"turbo-frame-target": "frame"}) do
-  %div.ont-ontolex-lexical-concepts.ontolex-container
-    %div#lexical-concepts-container.container-fluid
-      %div.row
-        %div.col-12
-          %h4= t('ontology_details.sections.lexical_concepts')
-          %p.text-muted Loading lexical concepts...
-          %div#lexical-concepts-pagination.ontolex-pagination.mt-3
-  
+  %div.tooltip
+  %div#bd_content.bd_content.explore.py-3{data:{controller: 'container-splitter'}}
+    %div.sidebar.d-flex.flex-column.p-1.mx-2{data:{'container-splitter-target': 'container'}}
+      %h5.px-2.mb-3= t('ontology_details.sections.lexical_concepts')
+      %div#lexical-concepts-list.ontolex-list-sidebar
+        .text-center.py-3
+          %span.spinner-border.spinner-border-sm{role: "status"}
+          %span.ms-2 Loading...
+    %div#lexical_concept_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
+      = render partial: 'lexical_concepts/show'
+
+  = javascript_include_tag 'ontolex_renderer', defer: true
   :javascript
     $(document).ready(function() {
       var currentPage = 1;
-      var pageSize = 15;
+      var pageSize = 50;
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
       var ontologyAcronym = "#{@ontology.acronym}";
-      
-      // Initialize the modal
-      OntolexModal.init(ontologyAcronym, externalRestUrl, apikey);
+      var selectedConceptId = null;
 
       function loadLexicalConcepts(page) {
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
@@ -27,16 +29,19 @@
           dataType: 'json',
           success: function(data) {
             var items = data.collection || [];
-            var html = '<div class="ontolex-list-group">';
+            var html = '';
             
             if (items.length === 0) {
-              html += '<div class="ontolex-empty-state"><i class="fas fa-inbox"></i><p>No lexical concepts found.</p></div>';
+              html = '<div class="text-center text-muted p-3"><i class="fas fa-inbox"></i><p class="mt-2">No lexical concepts found.</p></div>';
             } else {
+              html = '<ul class="ontolex-sidebar-list list-unstyled">';
               items.forEach(function(item) {
                 var itemId = item['@id'] || item.id || 'Unknown';
-                var definition = 'No definition available';
+                var shortId = itemId.split('/').pop();
+                var definition = 'No definition';
                 
                 if (item.definition && Array.isArray(item.definition) && item.definition.length > 0) {
+                  console.log(item.definition)
                   if (item.definition[0].value) {
                     definition = item.definition[0].value;
                   } else if (item.definition[0].label) {
@@ -46,92 +51,123 @@
                   }
                 }
                 
-                var subject = item.subject && item.subject.prefLabel ? item.subject.prefLabel : null;
-                var notesCount = item.note && Array.isArray(item.note) ? item.note.length : (item.note ? 1 : 0);
-                var evokedCount = item.isEvokedBy && Array.isArray(item.isEvokedBy) ? item.isEvokedBy.length : (item.isEvokedBy ? 1 : 0);
-                var sensesCount = item.lexicalizedSense && Array.isArray(item.lexicalizedSense) ? item.lexicalizedSense.length : (item.lexicalizedSense ? 1 : 0);
-                var shortId = itemId.split('/').pop();
-                
-                html += '<div class="entity-card" onclick="OntolexModal.loadEntity(\'lexical_concepts\', \'' + itemId + '\', \'' + shortId + '\'); return false;" style="cursor: pointer;">';
-                html += '<div class="entity-id">' + itemId + '</div>';
-                html += '<div class="entity-main-text">' + shortId + '</div>';
-                html += '<p class="mb-2 text-muted small">' + definition + '</p>';
-                html += '<div class="entity-metadata">';
-                if (subject) { html += '<span class="ontolex-badge badge-subject">' + subject + '</span>'; }
-                if (notesCount > 0) { html += '<span class="ontolex-badge badge-count">Notes: ' + notesCount + '</span>'; }
-                if (evokedCount > 0) { html += '<span class="ontolex-badge badge-count">Evoked: ' + evokedCount + '</span>'; }
-                if (sensesCount > 0) { html += '<span class="ontolex-badge badge-count">Senses: ' + sensesCount + '</span>'; }
-                html += '</div>';
-                html += '</div>';
-              });
-              html += '</div>';
-            }
-            
-            // Pagination controls
-            if (data.pageCount && data.pageCount > 1) {
-              html += '<nav aria-label="Pagination" class="mt-3">';
-              html += '<ul class="pagination justify-content-center">';
-              
-              // Previous button
-              if (data.page > 1) {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">Previous</a></li>';
-              } else {
-                html += '<li class="page-item disabled"><span class="page-link">Previous</span></li>';
-              }
-              
-              // Page numbers (show max 5 pages)
-              var startPage = Math.max(1, data.page - 2);
-              var endPage = Math.min(data.pageCount, startPage + 4);
-              startPage = Math.max(1, endPage - 4);
-              
-              for (var i = startPage; i <= endPage; i++) {
-                if (i === data.page) {
-                  html += '<li class="page-item active"><span class="page-link">' + i + '</span></li>';
-                } else {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + i + '">' + i + '</a></li>';
+                // Truncate definition
+                if (definition.length > 60) {
+                  definition = definition.substring(0, 60) + '...';
                 }
-              }
-              
-              // Next button
-              if (data.page < data.pageCount) {
-                html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">Next</a></li>';
-              } else {
-                html += '<li class="page-item disabled"><span class="page-link">Next</span></li>';
-              }
-              
+                
+                var activeClass = (selectedConceptId === itemId) ? ' active' : '';
+                html += '<li class="ontolex-sidebar-item' + activeClass + '" data-id="' + itemId + '">';
+                html += '<div class="fw-bold">' + shortId + '</div>';
+                html += '<div class="text-muted small">' + definition + '</div>';
+                html += '</li>';
+              });
               html += '</ul>';
-              html += '<p class="text-center text-muted">Page ' + data.page + ' of ' + data.pageCount + '</p>';
-              html += '</nav>';
+              
+              // Pagination
+              if (data.pageCount && data.pageCount > 1) {
+                html += '<div class="ontolex-sidebar-pagination p-2">';
+                html += '<nav aria-label="Pagination"><ul class="pagination pagination-sm justify-content-center mb-0">';
+                
+                if (data.page > 1) {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">‹</a></li>';
+                } else {
+                  html += '<li class="page-item disabled"><span class="page-link">‹</span></li>';
+                }
+                
+                html += '<li class="page-item disabled"><span class="page-link">' + data.page + ' / ' + data.pageCount + '</span></li>';
+                
+                if (data.page < data.pageCount) {
+                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">›</a></li>';
+                } else {
+                  html += '<li class="page-item disabled"><span class="page-link">›</span></li>';
+                }
+                
+                html += '</ul></nav></div>';
+              }
             }
             
-            $('#lexical-concepts-container').html(html);
+            $('#lexical-concepts-list').html(html);
             
-            // Attach click handlers to pagination links
-            $('#lexical-concepts-container .pagination a').on('click', function(e) {
+            // Attach click handlers
+            $('.ontolex-sidebar-item').on('click', function() {
+              var itemId = $(this).data('id');
+              loadLexicalConceptDetails(itemId);
+              $('.ontolex-sidebar-item').removeClass('active');
+              $(this).addClass('active');
+              selectedConceptId = itemId;
+            });
+            
+            $('#lexical-concepts-list .pagination a').on('click', function(e) {
               e.preventDefault();
               var page = $(this).data('page');
               loadLexicalConcepts(page);
             });
+            
+            // Auto-select first item if nothing selected
+            if (!selectedConceptId && items.length > 0) {
+              var firstItem = items[0];
+              var firstId = firstItem['@id'] || firstItem.id;
+              loadLexicalConceptDetails(firstId);
+              $('.ontolex-sidebar-item').first().addClass('active');
+              selectedConceptId = firstId;
+            } else if (selectedConceptId) {
+              // Highlight the selected item in the list if it exists
+              $('.ontolex-sidebar-item[data-id="' + selectedConceptId + '"]').addClass('active');
+            }
           },
           error: function(xhr, status, error) {
-            $('#lexical-concepts-container').html('<div class="alert alert-danger">Error loading lexical concepts: ' + error + '</div>');
+            $('#lexical-concepts-list').html('<div class="alert alert-danger m-2">Error loading lexical concepts: ' + error + '</div>');
           }
         });
+      }
+
+      function loadLexicalConceptDetails(conceptId) {
+        $('#lexical-concept-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span><span class="ms-2">Loading details...</span></div>');
+        
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts/" + encodeURIComponent(conceptId) + "?apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            var html = renderLexicalConceptDetails(data);
+            $('#lexical-concept-details-container').html(html);
+          },
+          error: function(xhr, status, error) {
+            $('#lexical-concept-details-container').html('<div class="alert alert-danger m-3">Error loading details: ' + error + '</div>');
+          }
+        });
+      }
+
+      function renderLexicalConceptDetails(data) {
+        var html = '<div class="ontolex-details p-3">';
+        var itemId = data['@id'] || data.id || 'Unknown';
+        
+        html += '<h5 class="mb-3">Lexical Concept Details</h5>';
+        html += '<div class="mb-3"><strong>ID:</strong> <div class="mt-1"><code class="small text-break">' + itemId + '</code></div></div>';
+        
+        // Auto-render all fields using shared renderer
+        if (window.OntolexRenderer) {
+          html += OntolexRenderer.renderAllFields(data, ontologyAcronym);
+        }
+        
+        html += '</div>';
+        return html;
       }
 
       // Initial load
       loadLexicalConcepts(currentPage);
       
-      // Check if there's a conceptid parameter in the URL to open the modal automatically
+      // Check if there's an id parameter in the URL
       var urlParams = new URLSearchParams(window.location.search);
-      var conceptId = urlParams.get('conceptid');
+      var conceptId = urlParams.get('id');
       if (conceptId) {
-        // Decode the concept ID if it's URL encoded
         conceptId = decodeURIComponent(conceptId);
-        var shortId = conceptId.split('/').pop();
-        // Open the modal after a brief delay to ensure everything is initialized
+        selectedConceptId = conceptId;
         setTimeout(function() {
-          OntolexModal.loadEntity('lexical_concepts', conceptId, shortId);
+          loadLexicalConceptDetails(conceptId);
         }, 500);
       }
     });

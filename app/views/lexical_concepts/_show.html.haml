@@ -1,0 +1,6 @@
+= render TurboFrameComponent.new(id: 'lexical_concept_show') do
+  %div{'data-controller': 'lexical-concepts-json'}
+    %div#lexical-concept-details-container.p-2
+      .text-center.py-5
+        %span.spinner-border.spinner-border-sm{role: "status"}
+        %span.ms-2 Loading...

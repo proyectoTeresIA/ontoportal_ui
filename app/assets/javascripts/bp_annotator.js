@@ -1,6 +1,70 @@
 var bp_last_params = null,
   annotationsTable = null,
   annotator_ontologies = null;
+// Cache of ontology language checks (ontology_acronym -> true/false)
+var annotator_ontology_languages = {};
+
+// Fetch latest_submission for an ontology (using external API URL from BP_CONFIG)
+// and cache whether it declares an OntoLex / lexical language via `hasOntologyLanguage`.
+function fetchOntologyLanguageFor(ont_acronym) {
+  // If already requested or cached, skip
+  if (annotator_ontology_languages[ont_acronym] !== undefined) return;
+  // mark as pending
+  annotator_ontology_languages[ont_acronym] = null;
+  var external_api =
+    BP_CONFIG && BP_CONFIG.external_api_url
+      ? BP_CONFIG.external_api_url
+      : BP_CONFIG && BP_CONFIG.rest_url
+        ? BP_CONFIG.rest_url
+        : '';
+  if (!external_api) {
+    annotator_ontology_languages[ont_acronym] = false;
+    return;
+  }
+  var endpoint = external_api.replace(/\/$/, '') + '/ontologies/' + ont_acronym + '/latest_submission';
+  jQuery
+    .getJSON(endpoint)
+    .done(function (data) {
+      var hasLang = data && data.hasOntologyLanguage;
+      var isOntoLex = false;
+      if (hasLang) {
+        if (Array.isArray(hasLang)) {
+          isOntoLex =
+            hasLang.join(' ').toLowerCase().indexOf('ontolex') !== -1 ||
+            hasLang.join(' ').toLowerCase().indexOf('lemon') !== -1;
+        } else {
+          isOntoLex =
+            ('' + hasLang).toLowerCase().indexOf('ontolex') !== -1 ||
+            ('' + hasLang).toLowerCase().indexOf('lemon') !== -1;
+        }
+      }
+      annotator_ontology_languages[ont_acronym] = isOntoLex;
+      if (isOntoLex) updateLinksForOnt(ont_acronym);
+    })
+    .fail(function () {
+      annotator_ontology_languages[ont_acronym] = false;
+    });
+}
+
+// Update any anchors that point to ontology pages for this acronym to use the
+// lexical concepts page instead of classes when OntoLex is detected.
+function updateLinksForOnt(ont_acronym) {
+  try {
+    // Update ontology summary links like /ontologies/ES?p=summary (no change)
+    // Update class listing links that include p=classes -> p=lexical_concepts
+    var selector = "a[href*='/ontologies/" + ont_acronym + "'][href*='p=classes']";
+    jQuery(selector).each(function () {
+      var href = jQuery(this).attr('href');
+      if (href && href.indexOf('p=classes') !== -1) {
+        var newhref = href.replace('p=classes', 'p=lexical_concepts');
+        jQuery(this).attr('href', newhref);
+      }
+    });
+  } catch (e) {
+    // don't block UI on errors
+    console.log('updateLinksForOnt error', e);
+  }
+}
 
 // Note: the configuration is in config/bioportal_config.rb.
 var BP_CONFIG = jQuery(document).data().bp.config;
@@ -546,10 +610,17 @@ function get_class_details_from_raw(cls) {
   } else {
     ont_link = get_link(ont_rel_ui, ont_name); // no ajax required!
   }
-
-  // Check if this is an OntoLex concept (LexicalConcept)
-  var isOntoLex =
-    cls['@id'].includes('terminologia_dels_') || (cls['@type'] && cls['@type'].includes('LexicalConcept'));
+  // Determine whether this ontology uses an OntoLex-like language.
+  var isOntoLex = false;
+  var cached = annotator_ontology_languages[ont_acronym];
+  if (cached === true) {
+    isOntoLex = true;
+  } else if (cached === false) {
+    isOntoLex = false;
+  } else {
+    // Trigger async fetch to get `hasOntologyLanguage` from the API and update links once known
+    fetchOntologyLanguageFor(ont_acronym);
+  }
   var cls_page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
 
   var cls_rel_ui = cls.links.ui.replace(/^.*\/\/[^\/]+/, '').replace(/p=classes/, cls_page_param),

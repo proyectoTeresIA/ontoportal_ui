@@ -6,7 +6,8 @@ function bp_ont_link(ont_acronym) {
 }
 function bp_cls_link(cls_id, ont_acronym, isOntoLex) {
   var page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
-  return bp_ont_link(ont_acronym) + '?' + page_param + '&conceptid=' + encodeURIComponent(cls_id);
+  var id_param = isOntoLex ? 'id' : 'conceptid';
+  return bp_ont_link(ont_acronym) + '?' + page_param + '&' + id_param + '=' + encodeURIComponent(cls_id);
 }
 function get_link_for_cls_ajax(cls_id, ont_acronym, isOntoLex) {
   // ajax call will replace the class label using data attributes (triggered by class='cls4ajax')

@@ -622,8 +622,12 @@ function get_class_details_from_raw(cls) {
     fetchOntologyLanguageFor(ont_acronym);
   }
   var cls_page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
+  var cls_id_param = isOntoLex ? 'id' : 'conceptid';
 
-  var cls_rel_ui = cls.links.ui.replace(/^.*\/\/[^\/]+/, '').replace(/p=classes/, cls_page_param),
+  var cls_rel_ui = cls.links.ui
+      .replace(/^.*\/\/[^\/]+/, '')
+      .replace(/p=classes/, cls_page_param)
+      .replace(/conceptid=/, cls_id_param + '='),
     cls_label = cls.prefLabel,
     cls_link = null;
   if (cls_label === undefined) {

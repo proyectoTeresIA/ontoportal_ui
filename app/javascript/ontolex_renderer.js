@@ -53,13 +53,31 @@ var embeddedObjects = [
 ];
 
 // Fields to skip rendering
-var skipFields = ['@id', '@type', '@context', 'links', 'submission'];
+var skipFields = ['@type', '@context', 'links', 'submission'];
 
 window.OntolexRenderer = {
-  // Generic function to render all fields of an entity
-  renderAllFields: function (data, ontAcronym) {
-    var html = '';
+  // Translate a property key - tries to fetch from window.ONTOLEX_TRANSLATIONS first
+  translateProperty: function (key) {
+    // Try to get translation from global translations object
+    if (window.ONTOLEX_TRANSLATIONS && window.ONTOLEX_TRANSLATIONS[key]) {
+      return window.ONTOLEX_TRANSLATIONS[key];
+    }
 
+    // Fallback: format key as human-readable label
+    if (key === '@id') {
+      return 'ID';
+    }
+    return key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, function (str) {
+      return str.toUpperCase();
+    });
+  },
+
+  // Generic function to render all fields of an entity as a Bootstrap striped table
+  renderAllFields: function (data, ontAcronym) {
+    var html = '<table class="table table-striped ontolex-properties-table">';
+    html += '<tbody>';
+
+    var rowIndex = 0;
     for (var key in data) {
       if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
       if (skipFields.indexOf(key) !== -1) continue;
@@ -73,38 +91,101 @@ window.OntolexRenderer = {
       var isNavigable = Object.prototype.hasOwnProperty.call(navigableEntities, key);
       var isEmbedded = embeddedObjects.indexOf(key) !== -1;
 
-      // Format field label
-      var label = key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, function (str) {
-        return str.toUpperCase();
-      });
+      // Format field label using translation
+      var label = this.translateProperty(key);
 
-      html += '<div class="mb-3 ontolex-field">';
-      html += '<strong class="field-label">' + label + ':</strong> ';
+      html += '<tr>';
+      html += '<th scope="row" class="property-label" style="width: 30%;">' + label + '</th>';
       html +=
-        '<div class="field-value ps-3">' +
-        this.renderFieldValue(value, key, isNavigable ? navigableEntities[key] : null, ontAcronym, isEmbedded) +
-        '</div>';
-      html += '</div>';
+        '<td class="property-value">' +
+        this.renderFieldValue(
+          value,
+          key,
+          isNavigable ? navigableEntities[key] : null,
+          ontAcronym,
+          isEmbedded,
+          rowIndex,
+        ) +
+        '</td>';
+      html += '</tr>';
+
+      rowIndex++;
     }
 
+    html += '</tbody>';
+    html += '</table>';
     return html;
   },
 
   renderFieldValue: function (value, fieldName, entityType, ontAcronym, isEmbedded) {
     if (Array.isArray(value)) {
       if (value.length === 0) return '<span class="text-muted">-</span>';
-      var html = '<ul class="list-unstyled mb-0">';
-      for (var i = 0; i < value.length; i++) {
-        html +=
-          '<li class="mb-2">' +
-          this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded) +
-          '</li>';
+
+      // Check if all items are embedded objects
+      var hasEmbeddedObjects =
+        isEmbedded &&
+        value.some(function (item) {
+          return typeof item === 'object' && item !== null;
+        });
+
+      if (hasEmbeddedObjects) {
+        // Create collapsible sections for each embedded object
+        var html = '<div class="embedded-objects-list">';
+        for (var i = 0; i < value.length; i++) {
+          var collapseId = 'collapse-' + fieldName + '-' + i + '-' + Math.random().toString(36).substr(2, 9);
+          var itemLabel = this.getEmbeddedObjectLabel(value[i], i);
+
+          html += '<div class="embedded-item mb-2">';
+          html +=
+            '<button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex align-items-center justify-content-between collapsed" ';
+          html +=
+            'type="button" data-bs-toggle="collapse" data-bs-target="#' +
+            collapseId +
+            '" aria-expanded="false" aria-controls="' +
+            collapseId +
+            '">';
+          html += '<span><i class="fas fa-chevron-right me-2 collapse-icon"></i>' + itemLabel + '</span>';
+          html += '</button>';
+          html += '<div class="collapse" id="' + collapseId + '">';
+          html += '<div class="card card-body mt-1">';
+          html += this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded);
+          html += '</div>';
+          html += '</div>';
+          html += '</div>';
+        }
+        html += '</div>';
+        return html;
+      } else {
+        // Regular list for simple values
+        var listHtml = '<ul class="list-unstyled mb-0">';
+        for (var j = 0; j < value.length; j++) {
+          listHtml +=
+            '<li class="mb-1">' +
+            this.renderSingleValue(value[j], fieldName, entityType, ontAcronym, isEmbedded) +
+            '</li>';
+        }
+        listHtml += '</ul>';
+        return listHtml;
       }
-      html += '</ul>';
-      return html;
     } else {
       return this.renderSingleValue(value, fieldName, entityType, ontAcronym, isEmbedded);
     }
+  },
+
+  // Helper to get a label for an embedded object
+  getEmbeddedObjectLabel: function (obj, index) {
+    if (typeof obj !== 'object' || obj === null) {
+      return 'Item ' + (index + 1);
+    }
+
+    // Try to find a meaningful label
+    if (obj.label) return this.escapeHtml(obj.label);
+    if (obj.prefLabel) return this.escapeHtml(obj.prefLabel);
+    if (obj.value) return this.escapeHtml(obj.value);
+    if (obj.writtenRep) return this.escapeHtml(obj.writtenRep);
+    if (obj['@type']) return this.extractIdFragment(obj['@type']) + ' ' + (index + 1);
+
+    return 'Item ' + (index + 1);
   },
 
   renderSingleValue: function (value, fieldName, entityType, ontAcronym, isEmbedded) {
@@ -122,7 +203,7 @@ window.OntolexRenderer = {
         return (
           '<a href="' +
           objLinkUrl +
-          '" class="entity-link text-decoration-none" data-turbo="false">' +
+          '" class="entity-link text-decoration-none" data-turbo-frame="_top" data-entity-link="true">' +
           '<i class="fas fa-link me-1"></i>' +
           this.escapeHtml(objLabel) +
           '</a>'
@@ -138,7 +219,7 @@ window.OntolexRenderer = {
         return (
           '<a href="' +
           uriLinkUrl +
-          '" class="entity-link text-decoration-none" data-turbo="false">' +
+          '" class="entity-link text-decoration-none" data-turbo-frame="_top" data-entity-link="true">' +
           '<i class="fas fa-link me-1"></i>' +
           this.escapeHtml(uriLabel) +
           '</a>'
@@ -146,11 +227,11 @@ window.OntolexRenderer = {
       } else {
         // Extract vocabulary term or show full URI
         return (
-          '<a href="' +
+          '<span class="ontolex-badge" title="' +
           value +
-          '" target="_blank" class="external-link text-decoration-none"><code class="small">' +
+          '">' +
           this.escapeHtml(this.extractIdIfVocabularyTerm(value)) +
-          '</code></a>'
+          '</span>'
         );
       }
     } else {
@@ -159,14 +240,20 @@ window.OntolexRenderer = {
     }
   },
 
-  // Renderizar un objeto embebido mostrando todos sus campos
+  // Renderizar un objeto embebido mostrando todos sus campos en una tabla anidada
   renderEmbeddedObject: function (obj, ontAcronym) {
-    var html = '<div class="embedded-object border rounded p-2 bg-light">';
-    var embeddedFieldsToSkip = skipFields + ['hasDerivation', 'wasAssociatedFor', 'influenced'];
+    var html = '<div class="embedded-object-table">';
+    html += '<table class="table table-sm table-striped mb-0">';
+    html += '<tbody>';
+
+    var embeddedFieldsToSkip = skipFields.concat(['hasDerivation', 'wasAssociatedFor', 'influenced']);
 
     // Primero mostrar el @id si existe
     if (obj['@id']) {
-      html += '<div class="mb-2 small"><strong>ID:</strong> <code class="ms-1">' + obj['@id'] + '</code></div>';
+      html += '<tr>';
+      html += '<th scope="row" style="width: 35%;">ID</th>';
+      html += '<td><span class="ontolex-badge">' + this.escapeHtml(obj['@id']) + '</span></td>';
+      html += '</tr>';
     }
 
     // Luego mostrar el resto de campos
@@ -184,16 +271,16 @@ window.OntolexRenderer = {
       if (Array.isArray(val) && val.length === 0) continue;
       if (typeof val === 'string' && val.trim() === '') continue;
 
-      var fieldLabel = key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, function (str) {
-        return str.toUpperCase();
-      });
+      var fieldLabel = this.translateProperty(key);
 
-      html += '<div class="mb-1 small">';
-      html += '<strong>' + fieldLabel + ':</strong> ';
-      html += this.renderEmbeddedFieldValue(val, key, ontAcronym);
-      html += '</div>';
+      html += '<tr>';
+      html += '<th scope="row" style="width: 35%;">' + fieldLabel + '</th>';
+      html += '<td>' + this.renderEmbeddedFieldValue(val, key, ontAcronym) + '</td>';
+      html += '</tr>';
     }
 
+    html += '</tbody>';
+    html += '</table>';
     html += '</div>';
     return html;
   },
@@ -241,7 +328,7 @@ window.OntolexRenderer = {
         return (
           '<a href="' +
           embLinkUrl +
-          '" class="entity-link text-decoration-none" data-turbo="false">' +
+          '" class="entity-link text-decoration-none" data-turbo-frame="_top" data-entity-link="true">' +
           '<i class="fas fa-link me-1"></i>' +
           this.escapeHtml(embLabel) +
           '</a>'
@@ -256,18 +343,18 @@ window.OntolexRenderer = {
         return (
           '<a href="' +
           embUriLinkUrl +
-          '" class="entity-link text-decoration-none" data-turbo="false">' +
+          '" class="entity-link text-decoration-none" data-turbo-frame="_top" data-entity-link="true">' +
           '<i class="fas fa-link me-1"></i>' +
           this.escapeHtml(embUriLabel) +
           '</a>'
         );
       } else {
         return (
-          '<a href="' +
+          '<span class="ontolex-badge" title="' +
           value +
-          '" target="_blank" class="external-link text-decoration-none"><code class="small">' +
+          '">' +
           this.escapeHtml(this.extractIdIfVocabularyTerm(value)) +
-          '</code></a>'
+          '</span>'
         );
       }
     } else {

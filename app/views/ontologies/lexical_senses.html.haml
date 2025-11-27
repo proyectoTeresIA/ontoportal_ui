@@ -6,110 +6,44 @@
       %div#lexical-senses-list.ontolex-list-sidebar
         .text-center.py-3
           %span.spinner-border.spinner-border-sm{role: "status"}
-          %span.ms-2 Loading...
     %div#lexical_sense_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
       = render partial: 'lexical_senses/show'
 
   = javascript_include_tag 'ontolex_renderer', defer: true
+  = javascript_include_tag 'ontolex_sidebar', defer: true
   :javascript
-    $(document).ready(function(){
-      var currentPage = 1;
-      var pageSize = 50;
+    (function() {
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
-      var selectedSenseId = null;
+      var isInitialized = false;
+      var sidebar = null;
+
+      // Set global translations object (persists across Turbo Frame loads)
+      if (!window.ONTOLEX_TRANSLATIONS) {
+        window.ONTOLEX_TRANSLATIONS = #{ontolex_translations_json};
+      }
       
-      function loadLexicalSenses(page) {
-        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_senses?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
+      // Custom item renderer for lexical senses
+      function renderLexicalSenseItem(item) {
+        var itemId = item['@id'] || item.id || 'Unknown';
+        var shortId = itemId.split('/').pop();
+        var definition = item.definition || item.reference || '';
         
-        $.ajax({
-          url: apiUrl,
-          method: 'GET',
-          dataType: 'json',
-          success: function(data) {
-            var items = data.collection || [];
-            var html = '';
-            
-            if (items.length === 0) {
-              html = '<div class="text-center text-muted p-3"><i class="fas fa-inbox"></i><p class="mt-2">No lexical senses found.</p></div>';
-            } else {
-              html = '<ul class="ontolex-sidebar-list list-unstyled">';
-              items.forEach(function(item) {
-                var itemId = item['@id'] || item.id || 'Unknown';
-                var shortId = itemId.split('/').pop();
-                var definition = item.definition || item.reference || '';
-                
-                if (definition.length > 60) {
-                  definition = definition.substring(0, 60) + '...';
-                }
-                
-                var activeClass = (selectedSenseId === itemId) ? ' active' : '';
-                html += '<li class="ontolex-sidebar-item' + activeClass + '" data-id="' + itemId + '">';
-                html += '<div class="fw-bold">' + shortId + '</div>';
-                if (definition) {
-                  html += '<div class="text-muted small">' + definition + '</div>';
-                }
-                html += '</li>';
-              });
-              html += '</ul>';
-              
-              // Pagination
-              if (data.pageCount && data.pageCount > 1) {
-                html += '<div class="ontolex-sidebar-pagination p-2">';
-                html += '<nav aria-label="Pagination"><ul class="pagination pagination-sm justify-content-center mb-0">';
-                
-                if (data.page > 1) {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">‹</a></li>';
-                } else {
-                  html += '<li class="page-item disabled"><span class="page-link">‹</span></li>';
-                }
-                
-                html += '<li class="page-item disabled"><span class="page-link">' + data.page + ' / ' + data.pageCount + '</span></li>';
-                
-                if (data.page < data.pageCount) {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">›</a></li>';
-                } else {
-                  html += '<li class="page-item disabled"><span class="page-link">›</span></li>';
-                }
-                
-                html += '</ul></nav></div>';
-              }
-            }
-            
-            $('#lexical-senses-list').html(html);
-            
-            // Attach click handlers
-            $('.ontolex-sidebar-item').on('click', function() {
-              var itemId = $(this).data('id');
-              loadLexicalSenseDetails(itemId);
-              $('.ontolex-sidebar-item').removeClass('active');
-              $(this).addClass('active');
-              selectedSenseId = itemId;
-            });
-            
-            $('#lexical-senses-list .pagination a').on('click', function(e) {
-              e.preventDefault();
-              var page = $(this).data('page');
-              loadLexicalSenses(page);
-            });
-            
-            // Auto-select first item
-            if (!selectedSenseId && items.length > 0) {
-              var firstId = items[0]['@id'] || items[0].id;
-              loadLexicalSenseDetails(firstId);
-              $('.ontolex-sidebar-item').first().addClass('active');
-              selectedSenseId = firstId;
-            }
-          },
-          error: function(xhr, status, error) {
-            $('#lexical-senses-list').html('<div class="alert alert-danger m-2">Error: ' + error + '</div>');
-          }
-        });
+        if (definition.length > 60) {
+          definition = definition.substring(0, 60) + '...';
+        }
+        
+        var html = '<div>' + shortId + '</div>';
+        if (definition) {
+          html += '<div class="text-muted small">' + definition + '</div>';
+        }
+        
+        return html;
       }
       
       function loadLexicalSenseDetails(senseId) {
-        $('#lexical-sense-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span><span class="ms-2">Loading...</span></div>');
+        $('#lexical-sense-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span></div>');
         
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_senses/" + encodeURIComponent(senseId) + "?apikey=" + apikey;
         
@@ -129,10 +63,7 @@
       
       function renderLexicalSenseDetails(data) {
         var html = '<div class="ontolex-details p-3">';
-        var itemId = data['@id'] || data.id || 'Unknown';
-        
-        html += '<h5 class="mb-3">Lexical Sense Details</h5>';
-        html += '<div class="mb-3"><strong>ID:</strong> <div class="mt-1"><code class="small text-break">' + itemId + '</code></div></div>';
+        html += '<h5 class="mb-3">' + "#{t('ontology_details.sections.details')}" + '</h5>';
         
         // Auto-render all fields using shared renderer
         if (window.OntolexRenderer) {
@@ -144,16 +75,54 @@
       }
       
       // Initial load
-      loadLexicalSenses(currentPage);
-      
-      // Check if there's an id parameter in the URL
-      var urlParams = new URLSearchParams(window.location.search);
-      var senseId = urlParams.get('id');
-      if (senseId) {
-        senseId = decodeURIComponent(senseId);
-        selectedSenseId = senseId;
-        setTimeout(function() {
-          loadLexicalSenseDetails(senseId);
-        }, 500);
+      function initialize() {
+        if (isInitialized) return;
+        isInitialized = true;
+        
+        // Create sidebar instance
+        sidebar = window.OntolexSidebar.create({
+          containerId: 'lexical-senses-list',
+          entityType: 'lexical_senses',
+          ontologyAcronym: ontologyAcronym,
+          externalRestUrl: externalRestUrl,
+          apikey: apikey,
+          pageSize: 50,
+          renderItem: renderLexicalSenseItem,
+          onItemSelect: loadLexicalSenseDetails,
+          noItemsMessage: "#{t('ontology_details.ontolex.no_items_found')}"
+        });
+        
+        // Load first page
+        sidebar.loadPage(1);
+        
+        // Check if there's an id parameter in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentSection = urlParams.get('p');
+        var senseId = urlParams.get('id');
+        
+        if (senseId && currentSection === 'lexical_senses') {
+          senseId = decodeURIComponent(senseId);
+          setTimeout(function() {
+            sidebar.selectItem(senseId);
+          }, 500);
+        }
       }
-    });
+      
+      // Initialize when the document is ready
+      $(document).ready(function() {
+        initialize();
+      });
+      
+      // Re-initialize when this frame becomes visible (Turbo Frame load event)
+      document.addEventListener('turbo:frame-load', function(event) {
+        if (event.target.id === 'lexical_senses') {
+          var urlParams = new URLSearchParams(window.location.search);
+          var currentSection = urlParams.get('p');
+          
+          // Only initialize if we're on the lexical_senses section
+          if (currentSection === 'lexical_senses') {
+            initialize();
+          }
+        }
+      });
+    })();

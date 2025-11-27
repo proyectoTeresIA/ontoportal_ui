@@ -11,7 +11,7 @@ class OntologiesController < ApplicationController
 
   before_action :authorize_and_redirect, :only=>[:edit,:update,:create,:new]
 
-  KNOWN_PAGES = Set.new(["terms", "classes", "mappings", "notes", "widgets", "summary", "properties", "lexical_concepts", "lexical_entries", "forms", "lexical_senses"])
+  KNOWN_PAGES = Set.new(["terms", "classes", "mappings", "notes", "widgets", "summary", "properties", "lexical_concepts", "lexical_entries", "forms", "lexical_senses", "terminological_entries"])
 
 
   include ActionView::Helpers::NumberHelper
@@ -174,6 +174,14 @@ class OntologiesController < ApplicationController
       return render 'lexical_senses', :layout => false
     else
       return render 'lexical_senses', :layout => "ontology_viewer"
+    end
+  end
+
+  def terminological_entries
+    if request.xhr?
+      return render 'terminological_entries', :layout => false
+    else
+      return render 'terminological_entries', :layout => "ontology_viewer"
     end
   end
 
@@ -355,6 +363,9 @@ class OntologiesController < ApplicationController
         return
       when "lexical_senses"
         self.lexical_senses
+        return
+      when "terminological_entries"
+        self.terminological_entries
         return
       when "summary"
         self.summary

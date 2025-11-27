@@ -1,0 +1,457 @@
+= render TurboFrameComponent.new(id: 'terminological_entries', data: {"turbo-frame-target": "frame"}) do
+  %div.tooltip
+  %div#bd_content.bd_content.explore.py-3{data:{controller: 'container-splitter'}}
+    %div.sidebar.d-flex.flex-column.p-1.mx-2{data:{'container-splitter-target': 'container'}}
+      %h5.px-2.mb-3= t('ontology_details.sections.terminological_entries')
+      %div#terminological-entries-list.ontolex-list-sidebar
+        .text-center.py-3
+          %span.spinner-border.spinner-border-sm{role: "status"}
+    %div#terminological_entry_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
+      = render partial: 'terminological_entries/show'
+
+  = javascript_include_tag 'ontolex_renderer', defer: true
+  = javascript_include_tag 'ontolex_sidebar', defer: true
+  :javascript
+    (function() {
+      var ontologyAcronym = "#{@ontology.acronym}";
+      var externalRestUrl = "#{external_rest_url}";
+      var apikey = "#{get_apikey}";
+      var isInitialized = false;
+      var sidebar = null;
+      
+      // Translations
+      var translations = {
+        loading: "#{t('ontology_details.ontolex.loading')}",
+        no_entries_found: "#{t('ontology_details.ontolex.no_entries_found')}",
+        lexical_entry_properties: "#{t('ontology_details.ontolex.headings.lexical_entry_properties')}",
+        forms: "#{t('ontology_details.ontolex.headings.forms')}",
+        signed_forms: "#{t('ontology_details.ontolex.headings.signed_forms')}",
+        evoked_concept: "#{t('ontology_details.ontolex.headings.evoked_concept')}",
+        lexical_senses: "#{t('ontology_details.ontolex.headings.lexical_senses')}",
+        lexicalized_concept: "#{t('ontology_details.ontolex.headings.lexicalized_concept')}",
+        usage_examples: "#{t('ontology_details.ontolex.headings.usage_examples')}",
+        translations: "#{t('ontology_details.ontolex.headings.translations')}",
+        synonyms: "#{t('ontology_details.ontolex.headings.synonyms')}",
+        sources_references: "#{t('ontology_details.ontolex.headings.sources_references')}",
+        change_history: "#{t('ontology_details.ontolex.headings.change_history')}",
+        agent: "#{t('ontology_details.ontolex.headings.agent')}",
+        view_video: "#{t('ontology_details.ontolex.headings.view_video')}",
+        view_complete_form: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.form'))}",
+        view_complete_entry: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.lexical_entry'))}",
+        view_complete_sense: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.lexical_sense'))}",
+        view_complete_concept: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.lexical_concept'))}",
+        definition: "#{t('ontology_details.ontolex.properties.definition')}"
+      };
+      
+      // Custom item renderer for terminological entries
+      function renderTerminologicalEntryItem(item) {
+        var itemId = item['@id'] || item.id || 'Unknown';
+        var shortId = itemId.split('/').pop();
+        
+        // Check if writtenReps are available (from optimized endpoint)
+        var writtenReps = item.writtenReps || [];
+        
+        var html = '<div>';
+        
+        if (writtenReps.length > 0) {
+          // Display writtenReps
+          html += '<span>' + writtenReps.join(', ') + '</span>';
+        } else {
+          // No forms available
+          html += '<span>' + shortId + '</span>';
+        }
+        
+        html += '</div>';
+        
+        if (item.language) {
+          var langCode = item.language.split('/').pop();
+          html += '<div class="mt-1"><span class="ontolex-badge badge-language" title="' + 
+                  item.language + '">' + langCode + '</span></div>';
+        }
+        
+        return html;
+      }
+      
+      function loadTerminologicalEntryDetails(entryId) {
+        $('#terminological-entry-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span></div>');
+        
+        // Use optimized terminological_entries endpoint that includes all related data
+        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/terminological_entries/" + encodeURIComponent(entryId) + "?apikey=" + apikey;
+        
+        $.ajax({
+          url: apiUrl,
+          method: 'GET',
+          dataType: 'json',
+          success: function(data) {
+            // Data already includes loadedForms, loadedSenses (with writtenReps), loadedConcept
+            renderDetails(data);
+          },
+          error: function(xhr, status, error) {
+            $('#terminological-entry-details-container').html('<div class="alert alert-danger m-3">Error: ' + error + '</div>');
+          }
+        });
+      }
+      
+      function renderDetails(data) {
+        var html = renderTerminologicalEntryDetails(data);
+        $('#terminological-entry-details-container').html(html);
+        loadSensesLinks();
+      }
+      
+      function renderTerminologicalEntryDetails(data) {
+        var html = '<div class="ontolex-details p-3">';
+        var itemId = (data['@id'] || data.id).uri;
+        
+        // LexicalEntry properties
+        html += '<div class="mb-4">';
+        html += '<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">';
+        html += '<h6 class="mb-0">' + translations.lexical_entry_properties + '</h6>';
+        html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_entries&id=' + encodeURIComponent(itemId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_entry + '" data-turbo-frame="_top">';
+        html += '<i class="fas fa-external-link-alt"></i>';
+        html += '</a>';
+        html += '</div>';
+        html += '<div class="d-flex flex-wrap gap-2 mb-3">';
+        if (data.language) {
+          var lang = data.language.uri.split('/').pop();
+          html += "<span class=\"ontolex-badge badge-language\" title=\"" + data.language.uri + "\">" + lang + "</span>";
+        }
+        if (data.partOfSpeech) {
+          var pos = data.partOfSpeech.uri.split('#').pop() || data.partOfSpeech.uri.split('/').pop();
+          html += "<span class=\"ontolex-badge badge-pos\" title=\"" + data.partOfSpeech.uri + "\">" + pos + "</span>";
+        }
+        if (data.termType) {
+          var termType = data.termType.uri.split('#').pop() || data.termType.uri.split('/').pop();
+          html += "<span class=\"ontolex-badge badge-termtype\" title=\"" + data.termType.uri + "\">" + termType + "</span>";
+        }
+        
+        html += '</div>';
+        if (data.hasValency && Array.isArray(data.hasValency) && data.hasValency.length > 0) {
+          html += '<div class="d-flex gap-2 flex-wrap">';
+          data.hasValency.forEach(function(val) {
+            var valency = val.split('#').pop() || val.split('/').pop();
+            html += "<span class=\"ontolex-badge badge-count\" title=\"" + val + "\">" + valency + "</span>";
+          });
+          html += '</div>';
+        }
+        html += '</div>';
+        
+        // Forms section
+        if (data.loadedForms && data.loadedForms.length > 0) {
+          html += '<div class="mb-4">';
+          html += '<h6 class="border-bottom pb-2 mb-3">' + translations.forms + '</h6>';
+          
+          data.loadedForms.forEach(function(form) {
+            var formId = (form['@id'] || form.id).uri;
+            html += '<div class="card mb-2 border-start border-2">';
+            html += '<div class="card-body p-3 position-relative">';
+            
+            // Add navigation link in top-right corner
+            html += '<a href="/ontologies/' + ontologyAcronym + '?p=forms&id=' + encodeURIComponent(formId) + '" class="position-absolute top-0 end-0 mt-2 me-2 text-muted text-decoration-none" style="font-size: 0.75rem;" title="' + translations.view_complete_form + '" data-turbo-frame="_top">';
+            html += '<i class="fas fa-external-link-alt"></i>';
+            html += '</a>';
+            
+            if (form.writtenRep) {
+              html += '<div class="mb-2 d-flex align-items-center">';
+              html += '<span class="fs-6 fw-semibold">' + form.writtenRep + '</span>';
+              html += '</div>';
+            }
+            
+            var badges = [];
+            if (form.gender) {
+              var gender = form.gender.uri.split('#').pop() || form.gender.uri.split('/').pop();
+              badges.push("<span class=\"ontolex-badge badge-gender\" title=\"" + form.gender.uri + "\">" + gender + "</span>");
+            }
+            if (form.number) {
+              var number = form.number.uri.split('#').pop() || form.number.uri.split('/').pop();
+              badges.push("<span class=\"ontolex-badge badge-number\" title=\"" + form.number.uri + "\">" + number + "</span>");
+            }
+            
+            if (badges.length > 0) {
+              html += '<div class="d-flex gap-2 flex-wrap">' + badges.join('') + '</div>';
+            }
+            
+            html += '</div></div>';
+          });
+          html += '</div>';
+        }
+        
+        // SignedForm
+        if (data.signedForm && Array.isArray(data.signedForm) && data.signedForm.length > 0) {
+          html += '<div class="mb-4">';
+          html += '<h6 class="border-bottom pb-2 mb-3">' + translations.signed_forms + '</h6>';
+          data.signedForm.forEach(function(sf) {
+            html += '<div class="card mb-2 border-start border-2">';
+            html += '<div class="card-body p-3">';
+            if (sf.signedRep && typeof sf.signedRep === 'object' && sf.signedRep.url) {
+              html += '<div class="mb-1">';
+              html += '<btn class="btn btn-sm btn-outline-primary" onclick="window.open(\'' + sf.signedRep.url + '\', \'_blank\')">' + translations.view_video + '</btn>';
+              html += '</div>';
+            }
+            html += '</div></div>';
+          });
+          html += '</div>';
+        }
+        
+
+        // evokes
+        if (data.loadedConcept) {
+          var conceptId = (data.loadedConcept['@id'] || data.loadedConcept.id).uri;
+          html += '<div class="mb-4">';
+          html += '<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">';
+          html += '<h6 class="mb-0">' + translations.evoked_concept + '</h6>';
+          html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_concepts&id=' + encodeURIComponent(conceptId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_concept + '" data-turbo-frame="_top">';
+          html += '<i class="fas fa-external-link-alt"></i>';
+          html += '</a>';
+          html += '</div>';
+          html += '<div class="card border-start border-2">';
+          html += '<div class="card-body p-3">';
+          html += renderConceptDetails(data.loadedConcept);
+          html += '</div></div></div>';
+        }
+        
+        // Senses
+        if (data.loadedSenses && data.loadedSenses.length > 0) {
+          html += '<div class="mb-4">';
+          html += '<h6 class="border-bottom pb-2 mb-3">' + translations.lexical_senses + '</h6>';
+          
+          data.loadedSenses.forEach(function(sense, idx) {
+            var senseId = (sense['@id'] || sense.id).uri;
+            html += '<div class="card mb-3 border-start border-2">';
+            html += '<div class="card-body p-3 position-relative">';
+            
+            // Add navigation link in top-right corner
+            html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_senses&id=' + encodeURIComponent(senseId) + '" class="position-absolute top-0 end-0 mt-2 me-2 text-muted text-decoration-none" style="font-size: 0.75rem;" title="' + translations.view_complete_sense + '" data-turbo-frame="_top">';
+            html += '<i class="fas fa-external-link-alt"></i>';
+            html += '</a>';
+            
+            // Definition
+            if (sense.isLexicalizedSenseOf || sense.reference) {
+              var conceptRef = sense.isLexicalizedSenseOf || sense.reference;
+              html += '<div class="mb-3">';
+              html += '<div class="d-flex align-items-center mb-2">';
+              html += '<strong>' + translations.lexicalized_concept + '</strong>';
+              html += '</div></div>';
+            }
+            
+            // UsageExample
+            if (sense.usageExample) {
+              var examples = Array.isArray(sense.usageExample) ? sense.usageExample : [sense.usageExample];
+              if (examples.length > 0) {
+                html += '<div class="mb-3">';
+                html += '<div class="d-flex align-items-center mb-2">';
+                html += '<strong>' + translations.usage_examples + '</strong>';
+                html += '</div>';
+                examples.forEach(function(ex) {
+                  var exValue = (typeof ex === 'object' && ex.value) ? ex.value : ex;
+                  html += '<div class="alert alert-secondary py-2 px-3 mb-2"><em>"' + exValue + '"</em></div>';
+                });
+                html += '</div>';
+              }
+            }
+            
+            // Translation - using preloaded data from optimized endpoint
+            if (sense.loaded_translation && Array.isArray(sense.loaded_translation) && sense.loaded_translation.length > 0) {
+              html += '<div class="mb-3">';
+              html += '<div class="d-flex align-items-center mb-2">';
+              html += '<strong>' + translations.translations + '</strong>';
+              html += '</div>';
+              sense.loaded_translation.forEach(function(trans, transIdx) {
+                var transId = trans['@id'];
+                var writtenReps = trans.writtenReps || [];
+                var displayText = writtenReps.length > 0 ? writtenReps.join(', ') : transId.split(/[#/]/).pop();
+                var entryId = trans.entryId;
+                
+                html += '<div class="mb-2">';
+                html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '" data-turbo-frame="_top">';
+                html += '<i class="fas fa-link me-1"></i><span>' + displayText + '</span>';
+                html += '</a>';
+                html += '</div>';
+              });
+              html += '</div>';
+            }
+            
+            // Synonym - using preloaded data from optimized endpoint
+            if (sense.loaded_synonym && Array.isArray(sense.loaded_synonym) && sense.loaded_synonym.length > 0) {
+              html += '<div class="mb-3">';
+              html += '<div class="d-flex align-items-center mb-2">';
+              html += '<strong>' + translations.synonyms + '</strong>';
+              html += '</div>';
+              sense.loaded_synonym.forEach(function(syn, synIdx) {
+                var synId = syn['@id'];
+                var writtenReps = syn.writtenReps || [];
+                var displayText = writtenReps.length > 0 ? writtenReps.join(', ') : synId.split(/[#/]/).pop();
+                var entryId = syn.entryId;
+                
+                html += '<div class="mb-2">';
+                html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '" data-turbo-frame="_top">';
+                html += '<i class="fas fa-link me-1"></i><span>' + displayText + '</span>';
+                html += '</a>';
+                html += '</div>';
+              });
+              html += '</div>';
+            }
+            
+            html += '</div></div>';
+          });
+          
+          html += '</div>';
+        }
+
+        // wasDerivedFrom
+        if (data.wasDerivedFrom && Array.isArray(data.wasDerivedFrom) && data.wasDerivedFrom.length > 0) {
+          html += '<div class="mb-4">';
+          html += '<h6 class="border-bottom pb-2 mb-3">' + translations.sources_references + '</h6>';
+          html += '<div class="d-flex flex-row gap-2 mb-3">';
+          data.wasDerivedFrom.forEach(function(ref) {
+            html += '<div class="card mb-2 border-start border-2">';
+            html += '<div class="card-body p-3">';
+            if (ref.label) html += '<div class="mb-1 text-muted">' + ref.label + '</div>';
+            html += '</div></div>';
+          });
+          html += '</div></div>';
+        }
+        
+        // wasInfluencedBy
+        if (data.wasInfluencedBy && Array.isArray(data.wasInfluencedBy) && data.wasInfluencedBy.length > 0) {
+          html += '<div class="mb-4">';
+          html += '<h6 class="border-bottom pb-2 mb-3">' + translations.change_history + '</h6>';
+          data.wasInfluencedBy.forEach(function(activity) {
+            html += '<div class="card mb-2 border-start border-2">';
+            html += '<div class="card-body p-3">';
+            
+            if (activity.label) {
+              var activityType = activity.label.charAt(0).toUpperCase() + activity.label.slice(1);
+              html += "<div class=\"mb-2\"><span class=\"badge bg-light text-muted border\" title=\"" + activity.label + "\">" + activityType + "</span></div>";
+            }
+            
+            if (activity.endedAtTime) {
+              html += '<div class="mb-2 small text-muted">' + new Date(activity.endedAtTime).toLocaleString() + '</div>';
+            }
+            
+            if (activity.hasDerivation && typeof activity.hasDerivation === 'object') {
+              var agent = activity.hasDerivation;
+              html += '<div class="small border-top pt-2">';
+              html += '<div class="fw-bold mb-1">' + translations.agent + '</div>';
+              html += '<div class="ps-3">';
+              if (agent.name) html += '<div class="text-muted">' + agent.name + '</div>';
+              if (agent.mbox) html += '<div class="text-muted"><a href="mailto:' + agent.mbox + '">' + agent.mbox + '</a></div>';
+              html += '</div></div>';
+            }
+            
+            html += '</div></div>';
+          });
+          html += '</div>';
+        }
+        
+        
+        html += '</div>';
+        return html;
+      }
+      
+      function renderConceptDetails(concept) {
+        var html = '';
+        
+        if (concept.definition) {
+          var defs = Array.isArray(concept.definition) ? concept.definition : [concept.definition];
+          html += '<div class="mb-2"><strong>' + translations.definition + ':</strong></div>';
+          defs.forEach(function(def) {
+            var defValue = extractValue(def);
+            var defLang = (typeof def === 'object' && def.language) ? def.language : '';
+            
+            var langBadge = '';
+            if (defLang) {
+              var langCode = defLang.split('/').pop();
+              langBadge = "<span class=\"ontolex-badge badge-language me-2\" title=\"" + defLang + "\">" + langCode + "</span>";
+            }
+            
+            if (defValue) {
+              html += '<div class="alert alert-light mb-2 py-2">' + langBadge + defValue + '</div>';
+            }
+          });
+        }
+        
+        return html;
+      }
+      
+      function extractValue(obj) {
+        if (typeof obj === 'string') {
+          return obj;
+        } else if (typeof obj === 'object') {
+          return obj.value || obj.label || obj['@value'];
+        }
+        return '';
+      }
+      
+      function loadSensesLinks() {
+        // Set up click handlers for translation/synonym links to load the referenced entry
+        // The writtenReps are already preloaded by the optimized API endpoint
+        $('#detail-column').find('.entity-link').each(function() {
+          var $link = $(this);
+          var entryId = $link.data('entry-id');
+          
+          if (entryId) {
+            $link.off('click').on('click', function(e) {
+              e.preventDefault();
+              var encodedId = encodeURIComponent(entryId);
+              $.get('/ontologies/' + encodeURIComponent(ontologyAcronym) + '/terminological_entries/' + encodedId, function(data) {
+                if (data) {
+                  loadTerminologicalEntryDetails(data);
+                }
+              }).fail(function(xhr) {
+                console.error('Error loading entry:', xhr);
+              });
+            });
+          }
+        });
+      }
+
+      // Initial load
+      function initialize() {
+        if (isInitialized) return;
+        isInitialized = true;
+        
+        // Create sidebar instance with optimized terminological_entries endpoint
+        sidebar = window.OntolexSidebar.create({
+          containerId: 'terminological-entries-list',
+          entityType: 'terminological_entries',  // Use optimized endpoint
+          ontologyAcronym: ontologyAcronym,
+          externalRestUrl: externalRestUrl,
+          apikey: apikey,
+          pageSize: 50,
+          renderItem: renderTerminologicalEntryItem,
+          onItemSelect: loadTerminologicalEntryDetails,
+          noItemsMessage: translations.no_entries_found,
+          preloadData: null  // No preload needed with optimized endpoint
+        });
+        
+        // Load first page
+        sidebar.loadPage(1);
+        
+        // Check if there's an id parameter in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentSection = urlParams.get('p');
+        var entryId = urlParams.get('id');
+        
+        if (entryId && currentSection === 'terminological_entries') {
+          entryId = decodeURIComponent(entryId);
+          setTimeout(function() {
+            sidebar.selectItem(entryId);
+          }, 500);
+        }
+      }
+      
+      $(document).ready(function() {
+        initialize();
+      });
+      
+      document.addEventListener('turbo:frame-load', function(event) {
+        if (event.target.id === 'terminological_entries') {
+          var urlParams = new URLSearchParams(window.location.search);
+          var currentSection = urlParams.get('p');
+          
+          if (currentSection === 'terminological_entries') {
+            initialize();
+          }
+        }
+      });
+    })();

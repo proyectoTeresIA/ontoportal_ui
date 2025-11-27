@@ -6,110 +6,41 @@
       %div#lexical-entries-list.ontolex-list-sidebar
         .text-center.py-3
           %span.spinner-border.spinner-border-sm{role: "status"}
-          %span.ms-2 Loading...
     %div#lexical_entry_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
       = render partial: 'lexical_entries/show'
 
   = javascript_include_tag 'ontolex_renderer', defer: true
+  = javascript_include_tag 'ontolex_sidebar', defer: true
   :javascript
-    $(document).ready(function(){
-      var currentPage = 1;
-      var pageSize = 50;
+    (function() {
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
-      var selectedEntryId = null;
+      var isInitialized = false;
+      var sidebar = null;
+
+      // Set global translations object (persists across Turbo Frame loads)
+      if (!window.ONTOLEX_TRANSLATIONS) {
+        window.ONTOLEX_TRANSLATIONS = #{ontolex_translations_json};
+      }
       
-      function loadLexicalEntries(page) {
-        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_entries?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
+      // Custom item renderer for lexical entries
+      function renderLexicalEntryItem(item) {
+        var itemId = item['@id'] || item.id || 'Unknown';
+        var lemma = item.lemma || itemId.split('/').pop();
         
-        $.ajax({
-          url: apiUrl,
-          method: 'GET',
-          dataType: 'json',
-          success: function(data) {
-            var items = data.collection || [];
-            var html = '';
-            
-            if (items.length === 0) {
-              html = '<div class="text-center text-muted p-3"><i class="fas fa-inbox"></i><p class="mt-2">No lexical entries found.</p></div>';
-            } else {
-              html = '<ul class="ontolex-sidebar-list list-unstyled">';
-              items.forEach(function(item) {
-                var itemId = item['@id'] || item.id || 'Unknown';
-                var lemma = item.lemma || itemId.split('/').pop();
-                
-                var langCode = '';
-                if (item.language) {
-                  langCode = item.language.split('/').pop();
-                }
-                
-                var activeClass = (selectedEntryId === itemId) ? ' active' : '';
-                html += '<li class="ontolex-sidebar-item' + activeClass + '" data-id="' + itemId + '">';
-                html += '<div class="fw-bold">' + lemma + '</div>';
-                if (langCode) {
-                  html += '<div class="text-muted small">' + langCode + '</div>';
-                }
-                html += '</li>';
-              });
-              html += '</ul>';
-              
-              // Pagination
-              if (data.pageCount && data.pageCount > 1) {
-                html += '<div class="ontolex-sidebar-pagination p-2">';
-                html += '<nav aria-label="Pagination"><ul class="pagination pagination-sm justify-content-center mb-0">';
-                
-                if (data.page > 1) {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">‹</a></li>';
-                } else {
-                  html += '<li class="page-item disabled"><span class="page-link">‹</span></li>';
-                }
-                
-                html += '<li class="page-item disabled"><span class="page-link">' + data.page + ' / ' + data.pageCount + '</span></li>';
-                
-                if (data.page < data.pageCount) {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">›</a></li>';
-                } else {
-                  html += '<li class="page-item disabled"><span class="page-link">›</span></li>';
-                }
-                
-                html += '</ul></nav></div>';
-              }
-            }
-            
-            $('#lexical-entries-list').html(html);
-            
-            // Attach click handlers
-            $('.ontolex-sidebar-item').on('click', function() {
-              var itemId = $(this).data('id');
-              loadLexicalEntryDetails(itemId);
-              $('.ontolex-sidebar-item').removeClass('active');
-              $(this).addClass('active');
-              selectedEntryId = itemId;
-            });
-            
-            $('#lexical-entries-list .pagination a').on('click', function(e) {
-              e.preventDefault();
-              var page = $(this).data('page');
-              loadLexicalEntries(page);
-            });
-            
-            // Auto-select first item
-            if (!selectedEntryId && items.length > 0) {
-              var firstId = items[0]['@id'] || items[0].id;
-              loadLexicalEntryDetails(firstId);
-              $('.ontolex-sidebar-item').first().addClass('active');
-              selectedEntryId = firstId;
-            }
-          },
-          error: function(xhr, status, error) {
-            $('#lexical-entries-list').html('<div class="alert alert-danger m-2">Error: ' + error + '</div>');
-          }
-        });
+        var html = '<div>' + lemma + '</div>';
+        
+        if (item.language) {
+          var langCode = item.language.split('/').pop();
+          html += '<span class="ontolex-badge badge-language">' + langCode + '</span>';
+        }
+        
+        return html;
       }
       
       function loadLexicalEntryDetails(entryId) {
-        $('#lexical-entry-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span><span class="ms-2">Loading...</span></div>');
+        $('#lexical-entry-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span></div>');
         
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_entries/" + encodeURIComponent(entryId) + "?apikey=" + apikey;
         
@@ -129,10 +60,7 @@
       
       function renderLexicalEntryDetails(data) {
         var html = '<div class="ontolex-details p-3">';
-        var itemId = data['@id'] || data.id || 'Unknown';
-        
-        html += '<h5 class="mb-3">Lexical Entry Details</h5>';
-        html += '<div class="mb-3"><strong>ID:</strong> <div class="mt-1"><code class="small text-break">' + itemId + '</code></div></div>';
+        html += '<h5 class="mb-3">' + "#{t('ontology_details.sections.details')}" + '</h5>';
         
         // Auto-render all fields using shared renderer
         if (window.OntolexRenderer) {
@@ -144,16 +72,54 @@
       }
       
       // Initial load
-      loadLexicalEntries(currentPage);
-      
-      // Check if there's an id parameter in the URL
-      var urlParams = new URLSearchParams(window.location.search);
-      var entryId = urlParams.get('id');
-      if (entryId) {
-        entryId = decodeURIComponent(entryId);
-        selectedEntryId = entryId;
-        setTimeout(function() {
-          loadLexicalEntryDetails(entryId);
-        }, 500);
+      function initialize() {
+        if (isInitialized) return;
+        isInitialized = true;
+        
+        // Create sidebar instance
+        sidebar = window.OntolexSidebar.create({
+          containerId: 'lexical-entries-list',
+          entityType: 'lexical_entries',
+          ontologyAcronym: ontologyAcronym,
+          externalRestUrl: externalRestUrl,
+          apikey: apikey,
+          pageSize: 50,
+          renderItem: renderLexicalEntryItem,
+          onItemSelect: loadLexicalEntryDetails,
+          noItemsMessage: "#{t('ontology_details.ontolex.no_items_found')}"
+        });
+        
+        // Load first page
+        sidebar.loadPage(1);
+        
+        // Check if there's an id parameter in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentSection = urlParams.get('p');
+        var entryId = urlParams.get('id');
+        
+        if (entryId && currentSection === 'lexical_entries') {
+          entryId = decodeURIComponent(entryId);
+          setTimeout(function() {
+            sidebar.selectItem(entryId);
+          }, 500);
+        }
       }
-    });
+      
+      // Initialize when the document is ready
+      $(document).ready(function() {
+        initialize();
+      });
+      
+      // Re-initialize when this frame becomes visible (Turbo Frame load event)
+      document.addEventListener('turbo:frame-load', function(event) {
+        if (event.target.id === 'lexical_entries') {
+          var urlParams = new URLSearchParams(window.location.search);
+          var currentSection = urlParams.get('p');
+          
+          // Only initialize if we're on the lexical_entries section
+          if (currentSection === 'lexical_entries') {
+            initialize();
+          }
+        }
+      });
+    })();

@@ -334,6 +334,130 @@ en:
       lexical_entries: Lexical Entries
       forms: Forms
       lexical_senses: Lexical Senses
+      terminological_entries: Terminological Entries
+      details: Details
+
+    ontolex:
+      no_entries_found: No entries found.
+      no_items_found: No items found.
+      loading: Loading...
+      # Property labels
+      properties:
+        language: Language
+        partOfSpeech: Part of Speech
+        termType: Term Type
+        hasValency: Valency
+        writtenRep: Written Representation
+        phoneticRep: Phonetic Representation
+        gender: Gender
+        number: Number
+        person: Person
+        tense: Tense
+        mood: Mood
+        voice: Voice
+        case: Case
+        degree: Degree
+        animacy: Animacy
+        aspect: Aspect
+        definiteness: Definiteness
+        polarity: Polarity
+        verbFormMood: Verb Form Mood
+        signedRep: Signed Representation
+        form: Form
+        canonicalForm: Canonical Form
+        otherForm: Other Form
+        sense: Sense
+        evokes: Evokes
+        isEvokedBy: Is Evoked By
+        lexicalizedSense: Lexicalized Sense
+        isLexicalizedSenseOf: Is Lexicalized Sense Of
+        isSenseOf: Is Sense Of
+        reference: Reference
+        isReferenceOf: Is Reference Of
+        definition: Definition
+        example: Example
+        usageExample: Usage Example
+        usage: Usage
+        note: Note
+        lexicalEntry: Lexical Entry
+        lexicalForm: Lexical Form
+        lexicalSense: Lexical Sense
+        lexicalConcept: Lexical Concept
+        translation: Translation
+        synonym: Synonym
+        antonym: Antonym
+        broader: Broader
+        narrower: Narrower
+        related: Related
+        relatedMatch: Related Match
+        broadMatch: Broad Match
+        narrowMatch: Narrow Match
+        exactMatch: Exact Match
+        closeMatch: Close Match
+        mappingRelation: Mapping Relation
+        isPartOf: Is Part Of
+        hasPart: Has Part
+        differentFrom: Different From
+        wasDerivedFrom: Was Derived From
+        wasInfluencedBy: Was Influenced By
+        hasDerivation: Has Derivation
+        influenced: Influenced
+        activity: Activity
+        agent: Agent
+        endedAtTime: Ended At Time
+        startedAtTime: Started At Time
+        label: Label
+        name: Name
+        mbox: Email
+        prefLabel: Preferred Label
+        altLabel: Alternative Label
+        hiddenLabel: Hidden Label
+        value: Value
+        capital: Capital
+        currency: Currency
+        causedBy: Caused By
+        precedesInTime: Precedes In Time
+        followsInTime: Follows In Time
+        hasLocation: Has Location
+        inScheme: In Scheme
+        topConceptOf: Top Concept Of
+        hasTopConcept: Has Top Concept
+        notation: Notation
+        changeNote: Change Note
+        editorialNote: Editorial Note
+        historyNote: History Note
+        scopeNote: Scope Note
+        member: Member
+        memberList: Member List
+        source: Source
+        normativeAuthorization: Normative Authorization
+        reliabilityCode: Reliability Code
+        code: Code
+        signedForm: Signed Form
+        casNumber: CAS Number
+
+      # Section headings for terminological entries
+      headings:
+        lexical_entry_properties: Lexical Entry Properties
+        forms: Forms
+        signed_forms: Signed Forms
+        evoked_concept: Evoked Concept
+        lexical_senses: Lexical Senses
+        lexicalized_concept: Lexicalized Concept
+        usage_examples: Usage Examples
+        translations: Translations
+        synonyms: Synonyms
+        sources_references: Sources / References
+        change_history: Change History
+        agent: "Agent:"
+        view_complete: "View complete %{type}"
+        view_video: View Video
+
+      types:
+        form: form
+        lexical_entry: lexical entry
+        lexical_sense: lexical sense
+        lexical_concept: lexical concept
 
   concepts:
     error_valid_concept: "Error: You must provide a valid concept id"

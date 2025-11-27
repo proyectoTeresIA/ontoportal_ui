@@ -1,0 +1,5 @@
+= render TurboFrameComponent.new(id: 'terminological_entry_show') do
+  %div{'data-controller': 'terminological-entries-json'}
+    %div#terminological-entry-details-container.p-2
+      .text-center.py-5
+        %span.spinner-border.spinner-border-sm{role: "status"}

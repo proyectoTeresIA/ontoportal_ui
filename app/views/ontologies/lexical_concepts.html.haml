@@ -6,124 +6,53 @@
       %div#lexical-concepts-list.ontolex-list-sidebar
         .text-center.py-3
           %span.spinner-border.spinner-border-sm{role: "status"}
-          %span.ms-2 Loading...
     %div#lexical_concept_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
       = render partial: 'lexical_concepts/show'
 
   = javascript_include_tag 'ontolex_renderer', defer: true
+  = javascript_include_tag 'ontolex_sidebar', defer: true
   :javascript
-    $(document).ready(function() {
-      var currentPage = 1;
-      var pageSize = 50;
+    (function() {
       var externalRestUrl = "#{external_rest_url}";
       var apikey = "#{get_apikey}";
       var ontologyAcronym = "#{@ontology.acronym}";
-      var selectedConceptId = null;
+      var isInitialized = false;
+      var sidebar = null;
 
-      function loadLexicalConcepts(page) {
-        var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts?page=" + page + "&pagesize=" + pageSize + "&apikey=" + apikey;
+      // Set global translations object (persists across Turbo Frame loads)
+      if (!window.ONTOLEX_TRANSLATIONS) {
+        window.ONTOLEX_TRANSLATIONS = #{ontolex_translations_json};
+      }
+      
+      // Custom item renderer for lexical concepts
+      function renderLexicalConceptItem(item) {
+        var itemId = item['@id'] || item.id || 'Unknown';
+        var shortId = itemId.split('/').pop();
+        var definition = 'No definition';
         
-        $.ajax({
-          url: apiUrl,
-          method: 'GET',
-          dataType: 'json',
-          success: function(data) {
-            var items = data.collection || [];
-            var html = '';
-            
-            if (items.length === 0) {
-              html = '<div class="text-center text-muted p-3"><i class="fas fa-inbox"></i><p class="mt-2">No lexical concepts found.</p></div>';
-            } else {
-              html = '<ul class="ontolex-sidebar-list list-unstyled">';
-              items.forEach(function(item) {
-                var itemId = item['@id'] || item.id || 'Unknown';
-                var shortId = itemId.split('/').pop();
-                var definition = 'No definition';
-                
-                if (item.definition && Array.isArray(item.definition) && item.definition.length > 0) {
-                  console.log(item.definition)
-                  if (item.definition[0].value) {
-                    definition = item.definition[0].value;
-                  } else if (item.definition[0].label) {
-                    definition = item.definition[0].label;
-                  } else if (typeof item.definition[0] === 'string') {
-                    definition = item.definition[0];
-                  }
-                }
-                
-                // Truncate definition
-                if (definition.length > 60) {
-                  definition = definition.substring(0, 60) + '...';
-                }
-                
-                var activeClass = (selectedConceptId === itemId) ? ' active' : '';
-                html += '<li class="ontolex-sidebar-item' + activeClass + '" data-id="' + itemId + '">';
-                html += '<div class="fw-bold">' + shortId + '</div>';
-                html += '<div class="text-muted small">' + definition + '</div>';
-                html += '</li>';
-              });
-              html += '</ul>';
-              
-              // Pagination
-              if (data.pageCount && data.pageCount > 1) {
-                html += '<div class="ontolex-sidebar-pagination p-2">';
-                html += '<nav aria-label="Pagination"><ul class="pagination pagination-sm justify-content-center mb-0">';
-                
-                if (data.page > 1) {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page - 1) + '">‹</a></li>';
-                } else {
-                  html += '<li class="page-item disabled"><span class="page-link">‹</span></li>';
-                }
-                
-                html += '<li class="page-item disabled"><span class="page-link">' + data.page + ' / ' + data.pageCount + '</span></li>';
-                
-                if (data.page < data.pageCount) {
-                  html += '<li class="page-item"><a class="page-link" href="#" data-page="' + (data.page + 1) + '">›</a></li>';
-                } else {
-                  html += '<li class="page-item disabled"><span class="page-link">›</span></li>';
-                }
-                
-                html += '</ul></nav></div>';
-              }
-            }
-            
-            $('#lexical-concepts-list').html(html);
-            
-            // Attach click handlers
-            $('.ontolex-sidebar-item').on('click', function() {
-              var itemId = $(this).data('id');
-              loadLexicalConceptDetails(itemId);
-              $('.ontolex-sidebar-item').removeClass('active');
-              $(this).addClass('active');
-              selectedConceptId = itemId;
-            });
-            
-            $('#lexical-concepts-list .pagination a').on('click', function(e) {
-              e.preventDefault();
-              var page = $(this).data('page');
-              loadLexicalConcepts(page);
-            });
-            
-            // Auto-select first item if nothing selected
-            if (!selectedConceptId && items.length > 0) {
-              var firstItem = items[0];
-              var firstId = firstItem['@id'] || firstItem.id;
-              loadLexicalConceptDetails(firstId);
-              $('.ontolex-sidebar-item').first().addClass('active');
-              selectedConceptId = firstId;
-            } else if (selectedConceptId) {
-              // Highlight the selected item in the list if it exists
-              $('.ontolex-sidebar-item[data-id="' + selectedConceptId + '"]').addClass('active');
-            }
-          },
-          error: function(xhr, status, error) {
-            $('#lexical-concepts-list').html('<div class="alert alert-danger m-2">Error loading lexical concepts: ' + error + '</div>');
+        if (item.definition && Array.isArray(item.definition) && item.definition.length > 0) {
+          if (item.definition[0].value) {
+            definition = item.definition[0].value;
+          } else if (item.definition[0].label) {
+            definition = item.definition[0].label;
+          } else if (typeof item.definition[0] === 'string') {
+            definition = item.definition[0];
           }
-        });
+        }
+        
+        // Truncate definition
+        if (definition.length > 60) {
+          definition = definition.substring(0, 60) + '...';
+        }
+        
+        var html = '<div>' + shortId + '</div>';
+        html += '<div class="text-muted small">' + definition + '</div>';
+        
+        return html;
       }
 
       function loadLexicalConceptDetails(conceptId) {
-        $('#lexical-concept-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span><span class="ms-2">Loading details...</span></div>');
+        $('#lexical-concept-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span></div>');
         
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts/" + encodeURIComponent(conceptId) + "?apikey=" + apikey;
         
@@ -143,10 +72,7 @@
 
       function renderLexicalConceptDetails(data) {
         var html = '<div class="ontolex-details p-3">';
-        var itemId = data['@id'] || data.id || 'Unknown';
-        
-        html += '<h5 class="mb-3">Lexical Concept Details</h5>';
-        html += '<div class="mb-3"><strong>ID:</strong> <div class="mt-1"><code class="small text-break">' + itemId + '</code></div></div>';
+        html += '<h5 class="mb-3">' + "#{t('ontology_details.sections.details')}" + '</h5>';
         
         // Auto-render all fields using shared renderer
         if (window.OntolexRenderer) {
@@ -158,16 +84,54 @@
       }
 
       // Initial load
-      loadLexicalConcepts(currentPage);
-      
-      // Check if there's an id parameter in the URL
-      var urlParams = new URLSearchParams(window.location.search);
-      var conceptId = urlParams.get('id');
-      if (conceptId) {
-        conceptId = decodeURIComponent(conceptId);
-        selectedConceptId = conceptId;
-        setTimeout(function() {
-          loadLexicalConceptDetails(conceptId);
-        }, 500);
+      function initialize() {
+        if (isInitialized) return;
+        isInitialized = true;
+        
+        // Create sidebar instance
+        sidebar = window.OntolexSidebar.create({
+          containerId: 'lexical-concepts-list',
+          entityType: 'lexical_concepts',
+          ontologyAcronym: ontologyAcronym,
+          externalRestUrl: externalRestUrl,
+          apikey: apikey,
+          pageSize: 50,
+          renderItem: renderLexicalConceptItem,
+          onItemSelect: loadLexicalConceptDetails,
+          noItemsMessage: "#{t('ontology_details.ontolex.no_items_found')}"
+        });
+        
+        // Load first page
+        sidebar.loadPage(1);
+        
+        // Check if there's an id parameter in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentSection = urlParams.get('p');
+        var conceptId = urlParams.get('id');
+        
+        if (conceptId && currentSection === 'lexical_concepts') {
+          conceptId = decodeURIComponent(conceptId);
+          setTimeout(function() {
+            sidebar.selectItem(conceptId);
+          }, 500);
+        }
       }
-    });
+      
+      // Initialize when the document is ready
+      $(document).ready(function() {
+        initialize();
+      });
+      
+      // Re-initialize when this frame becomes visible (Turbo Frame load event)
+      document.addEventListener('turbo:frame-load', function(event) {
+        if (event.target.id === 'lexical_concepts') {
+          var urlParams = new URLSearchParams(window.location.search);
+          var currentSection = urlParams.get('p');
+          
+          // Only initialize if we're on the lexical_concepts section
+          if (currentSection === 'lexical_concepts') {
+            initialize();
+          }
+        }
+      });
+    })();

@@ -339,6 +339,130 @@ es:
       lexical_entries: Entradas Léxicas
       forms: Formas
       lexical_senses: Sentidos Léxicos
+      terminological_entries: Entradas Terminológicas
+      details: Detalles
+
+    ontolex:
+      no_entries_found: No se encontraron entradas.
+      no_items_found: No se encontraron elementos.
+      loading: Cargando...
+      # Property labels
+      properties:
+        language: Idioma
+        partOfSpeech: Categoría Gramatical
+        termType: Tipo de Término
+        hasValency: Valencia
+        writtenRep: Representación Escrita
+        phoneticRep: Representación Fonética
+        gender: Género
+        number: Número
+        person: Persona
+        tense: Tiempo
+        mood: Modo
+        voice: Voz
+        case: Caso
+        degree: Grado
+        animacy: Animacidad
+        aspect: Aspecto
+        definiteness: Definitud
+        polarity: Polaridad
+        verbFormMood: Forma Verbal/Modo
+        signedRep: Representación Signada
+        form: Forma
+        canonicalForm: Forma Canónica
+        otherForm: Otra Forma
+        sense: Sentido
+        evokes: Evoca
+        isEvokedBy: Es Evocado Por
+        lexicalizedSense: Sentido Lexicalizado
+        isLexicalizedSenseOf: Es Sentido Lexicalizado De
+        isSenseOf: Es Sentido De
+        reference: Referencia
+        isReferenceOf: Es Referencia De
+        definition: Definición
+        example: Ejemplo
+        usageExample: Ejemplo de Uso
+        usage: Uso
+        note: Nota
+        lexicalEntry: Entrada Léxica
+        lexicalForm: Forma Léxica
+        lexicalSense: Sentido Léxico
+        lexicalConcept: Concepto Léxico
+        translation: Traducción
+        synonym: Sinónimo
+        antonym: Antónimo
+        broader: Más Amplio
+        narrower: Más Específico
+        related: Relacionado
+        relatedMatch: Coincidencia Relacionada
+        broadMatch: Coincidencia Amplia
+        narrowMatch: Coincidencia Específica
+        exactMatch: Coincidencia Exacta
+        closeMatch: Coincidencia Cercana
+        mappingRelation: Relación de Mapeo
+        isPartOf: Es Parte De
+        hasPart: Tiene Parte
+        differentFrom: Diferente De
+        wasDerivedFrom: Se Derivó De
+        wasInfluencedBy: Fue Influenciado Por
+        hasDerivation: Tiene Derivación
+        influenced: Influenciado
+        activity: Actividad
+        agent: Agente
+        endedAtTime: Terminó En
+        startedAtTime: Comenzó En
+        label: Etiqueta
+        name: Nombre
+        mbox: Correo Electrónico
+        prefLabel: Etiqueta Preferida
+        altLabel: Etiqueta Alternativa
+        hiddenLabel: Etiqueta Oculta
+        value: Valor
+        capital: Capital
+        currency: Moneda
+        causedBy: Causado Por
+        precedesInTime: Precede En El Tiempo
+        followsInTime: Sigue En El Tiempo
+        hasLocation: Tiene Ubicación
+        inScheme: En Esquema
+        topConceptOf: Concepto Superior De
+        hasTopConcept: Tiene Concepto Superior
+        notation: Notación
+        changeNote: Nota de Cambio
+        editorialNote: Nota Editorial
+        historyNote: Nota Histórica
+        scopeNote: Nota de Alcance
+        member: Miembro
+        memberList: Lista de Miembros
+        source: Fuente
+        normativeAuthorization: Autorización Normativa
+        reliabilityCode: Código de Fiabilidad
+        code: Código
+        signedForm: Forma Signada
+        casNumber: Número CAS
+
+      # Section headings for terminological entries
+      headings:
+        lexical_entry_properties: Propiedades de la Entrada Léxica
+        forms: Formas
+        signed_forms: Formas Signadas
+        evoked_concept: Concepto Evocado
+        lexical_senses: Sentidos Léxicos
+        lexicalized_concept: Concepto Lexicalizado
+        usage_examples: Ejemplos de Uso
+        translations: Traducciones
+        synonyms: Sinónimos
+        sources_references: Fuentes / Referencias
+        change_history: Historial de Cambios
+        agent: "Agente:"
+        view_complete: "Ver %{type} completo"
+        view_video: Ver Vídeo
+
+      types:
+        form: forma
+        lexical_entry: entrada léxica
+        lexical_sense: sentido léxico
+        lexical_concept: concepto léxico
 
   concepts:
     error_valid_concept: "Error: debes proporcionar un identificador de concepto válido"

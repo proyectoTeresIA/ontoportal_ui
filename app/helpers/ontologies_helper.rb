@@ -384,7 +384,7 @@ module OntologiesHelper
     sections = ['summary']
     if !@ontology.summaryOnly && (submission_ready?(@submission_latest) || @old_submission_ready)
       if ontolex_ontology?
-        sections += ['lexical_concepts', 'lexical_entries', 'forms', 'lexical_senses']
+        sections += ['terminological_entries', 'forms', 'lexical_entries', 'lexical_senses', 'lexical_concepts']
       else
         sections += ['classes']
         sections += %w[properties]
@@ -489,6 +489,28 @@ module OntologiesHelper
 
   def ontolex_ontology?
     @ontology && @submission_latest && @submission_latest.hasOntologyLanguage == 'ONTOLEX'
+  end
+
+  # Generate OntoLex property translations as a JSON string for JavaScript
+  # Dynamically extracts all available property translations from the locale file
+  def ontolex_translations_json
+    # Get all available property translations from the locale file
+    begin
+      properties_hash = I18n.t('ontology_details.ontolex.properties', raise: true)
+      
+      # If it's a hash, use the keys directly
+      if properties_hash.is_a?(Hash)
+        translations = properties_hash.transform_keys(&:to_s)
+      else
+        # Fallback to empty hash if something goes wrong
+        translations = {}
+      end
+    rescue I18n::MissingTranslationData
+      # Fallback: if translation keys are not found, return empty hash
+      translations = {}
+    end
+    
+    translations.to_json.html_safe
   end
 
   # Render all fields of an OntoLex entity automatically

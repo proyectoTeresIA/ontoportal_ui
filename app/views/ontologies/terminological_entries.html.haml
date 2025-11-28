@@ -101,40 +101,7 @@
       function renderTerminologicalEntryDetails(data) {
         var html = '<div class="ontolex-details p-3">';
         var itemId = (data['@id'] || data.id).uri;
-        
-        // LexicalEntry properties
-        html += '<div class="mb-4">';
-        html += '<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">';
-        html += '<h6 class="mb-0">' + translations.lexical_entry_properties + '</h6>';
-        html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_entries&id=' + encodeURIComponent(itemId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_entry + '" data-turbo-frame="_top">';
-        html += '<i class="fas fa-external-link-alt"></i>';
-        html += '</a>';
-        html += '</div>';
-        html += '<div class="d-flex flex-wrap gap-2 mb-3">';
-        if (data.language) {
-          var lang = data.language.uri.split('/').pop();
-          html += "<span class=\"ontolex-badge badge-language\" title=\"" + data.language.uri + "\">" + lang + "</span>";
-        }
-        if (data.partOfSpeech) {
-          var pos = data.partOfSpeech.uri.split('#').pop() || data.partOfSpeech.uri.split('/').pop();
-          html += "<span class=\"ontolex-badge badge-pos\" title=\"" + data.partOfSpeech.uri + "\">" + pos + "</span>";
-        }
-        if (data.termType) {
-          var termType = data.termType.uri.split('#').pop() || data.termType.uri.split('/').pop();
-          html += "<span class=\"ontolex-badge badge-termtype\" title=\"" + data.termType.uri + "\">" + termType + "</span>";
-        }
-        
-        html += '</div>';
-        if (data.hasValency && Array.isArray(data.hasValency) && data.hasValency.length > 0) {
-          html += '<div class="d-flex gap-2 flex-wrap">';
-          data.hasValency.forEach(function(val) {
-            var valency = val.split('#').pop() || val.split('/').pop();
-            html += "<span class=\"ontolex-badge badge-count\" title=\"" + val + "\">" + valency + "</span>";
-          });
-          html += '</div>';
-        }
-        html += '</div>';
-        
+
         // Forms section
         if (data.loadedForms && data.loadedForms.length > 0) {
           html += '<div class="mb-4">';
@@ -191,6 +158,39 @@
           });
           html += '</div>';
         }
+        
+        // LexicalEntry properties
+        html += '<div class="mb-4">';
+        html += '<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">';
+        html += '<h6 class="mb-0">' + translations.lexical_entry_properties + '</h6>';
+        html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_entries&id=' + encodeURIComponent(itemId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_entry + '" data-turbo-frame="_top">';
+        html += '<i class="fas fa-external-link-alt"></i>';
+        html += '</a>';
+        html += '</div>';
+        html += '<div class="d-flex flex-wrap gap-2 mb-3">';
+        if (data.language) {
+          var lang = data.language.uri.split('/').pop();
+          html += "<span class=\"ontolex-badge badge-language\" title=\"" + data.language.uri + "\">" + lang + "</span>";
+        }
+        if (data.partOfSpeech) {
+          var pos = data.partOfSpeech.uri.split('#').pop() || data.partOfSpeech.uri.split('/').pop();
+          html += "<span class=\"ontolex-badge badge-pos\" title=\"" + data.partOfSpeech.uri + "\">" + pos + "</span>";
+        }
+        if (data.termType) {
+          var termType = data.termType.uri.split('#').pop() || data.termType.uri.split('/').pop();
+          html += "<span class=\"ontolex-badge badge-termtype\" title=\"" + data.termType.uri + "\">" + termType + "</span>";
+        }
+        
+        html += '</div>';
+        if (data.hasValency && Array.isArray(data.hasValency) && data.hasValency.length > 0) {
+          html += '<div class="d-flex gap-2 flex-wrap">';
+          data.hasValency.forEach(function(val) {
+            var valency = val.uri.split('#').pop() || val.uri.split('/').pop();
+            html += "<span class=\"ontolex-badge badge-count\" title=\"" + val + "\">" + valency + "</span>";
+          });
+          html += '</div>';
+        }
+        html += '</div>';
         
 
         // evokes
@@ -262,7 +262,7 @@
                 var entryId = trans.entryId;
                 
                 html += '<div class="mb-2">';
-                html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '" data-turbo-frame="_top">';
+                html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '">';
                 html += '<i class="fas fa-link me-1"></i><span>' + displayText + '</span>';
                 html += '</a>';
                 html += '</div>';
@@ -283,7 +283,7 @@
                 var entryId = syn.entryId;
                 
                 html += '<div class="mb-2">';
-                html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '" data-turbo-frame="_top">';
+                html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '">';
                 html += '<i class="fas fa-link me-1"></i><span>' + displayText + '</span>';
                 html += '</a>';
                 html += '</div>';
@@ -385,30 +385,65 @@
       function loadSensesLinks() {
         // Set up click handlers for translation/synonym links to load the referenced entry
         // The writtenReps are already preloaded by the optimized API endpoint
-        $('#detail-column').find('.entity-link').each(function() {
+        $('#terminological-entry-details-container').find('.entity-link').each(function() {
           var $link = $(this);
           var entryId = $link.data('entry-id');
+          var displayName = $link.find('span').text() || null;
           
           if (entryId) {
             $link.off('click').on('click', function(e) {
               e.preventDefault();
-              var encodedId = encodeURIComponent(entryId);
-              $.get('/ontologies/' + encodeURIComponent(ontologyAcronym) + '/terminological_entries/' + encodedId, function(data) {
-                if (data) {
-                  loadTerminologicalEntryDetails(data);
-                }
-              }).fail(function(xhr) {
-                console.error('Error loading entry:', xhr);
-              });
+              
+              // Update sidebar selection visually (if item exists in current page)
+              if (sidebar) {
+                sidebar.highlightItem(entryId);
+              }
+              
+              // Load the entry details directly via AJAX
+              loadTerminologicalEntryDetails(entryId);
             });
           }
         });
+      }
+
+      // Wait for OntolexSidebar library to be available
+      function waitForOntolexSidebar(callback, maxAttempts) {
+        maxAttempts = maxAttempts || 50; // ~5 seconds max wait
+        var attempts = 0;
+        
+        function check() {
+          if (window.OntolexSidebar && window.OntolexSidebar.create) {
+            callback();
+          } else if (attempts < maxAttempts) {
+            attempts++;
+            setTimeout(check, 100);
+          } else {
+            console.error('OntolexSidebar library failed to load after ' + maxAttempts + ' attempts.');
+          }
+        }
+        
+        check();
       }
 
       // Initial load
       function initialize() {
         if (isInitialized) return;
         isInitialized = true;
+
+        if (!window.OntolexSidebar || !window.OntolexSidebar.create) {
+          // Library not ready yet, wait for it
+          waitForOntolexSidebar(function() {
+            isInitialized = false; // Reset so the actual initialization runs
+            initialize();
+          });
+          return;
+        }
+        
+        // Check if there's an id parameter in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentSection = urlParams.get('p');
+        var entryId = urlParams.get('id');
+        var hasIdParam = entryId && currentSection === 'terminological_entries';
         
         // Create sidebar instance with optimized terminological_entries endpoint
         sidebar = window.OntolexSidebar.create({
@@ -421,18 +456,15 @@
           renderItem: renderTerminologicalEntryItem,
           onItemSelect: loadTerminologicalEntryDetails,
           noItemsMessage: translations.no_entries_found,
-          preloadData: null  // No preload needed with optimized endpoint
+          preloadData: null,  // No preload needed with optimized endpoint
+          skipAutoSelect: hasIdParam  // Skip auto-select if we have an id in URL
         });
         
         // Load first page
         sidebar.loadPage(1);
         
-        // Check if there's an id parameter in the URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var currentSection = urlParams.get('p');
-        var entryId = urlParams.get('id');
-        
-        if (entryId && currentSection === 'terminological_entries') {
+        // If there's an id parameter, select that item after page loads
+        if (hasIdParam) {
           entryId = decodeURIComponent(entryId);
           setTimeout(function() {
             sidebar.selectItem(entryId);

@@ -165,7 +165,8 @@ var ajax_process_cls = function () {
   var isOntoLex = linkA.attr('data-ontolex') === 'true';
   var ont_uri = '/ontologies/' + ont_acronym;
   var page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
-  var cls_uri = ont_uri + '?' + page_param + '&conceptid=' + encodeURIComponent(cls_id);
+  var id_param = isOntoLex ? 'id' : 'conceptid';
+  var cls_uri = ont_uri + '?' + page_param + '&' + id_param + '=' + encodeURIComponent(cls_id);
   var ajax_uri = '/ajax/classes/label?ontology=' + ont_acronym + '&concept=' + encodeURIComponent(cls_id);
   jQuery.ajax({
     url: ajax_uri,

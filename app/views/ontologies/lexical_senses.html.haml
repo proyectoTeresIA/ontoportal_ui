@@ -63,7 +63,9 @@
       
       function renderLexicalSenseDetails(data) {
         var html = '<div class="ontolex-details p-3">';
-        html += '<h5 class="mb-3">' + "#{t('ontology_details.sections.details')}" + '</h5>';
+        html += '<h6 class="border-bottom pb-2 mb-3">' + 
+        data['@id'].split('/').pop() +
+        '</h6>';
         
         // Auto-render all fields using shared renderer
         if (window.OntolexRenderer) {
@@ -79,6 +81,12 @@
         if (isInitialized) return;
         isInitialized = true;
         
+        // Check if there's an id parameter in the URL
+        var urlParams = new URLSearchParams(window.location.search);
+        var currentSection = urlParams.get('p');
+        var senseId = urlParams.get('id');
+        var hasIdParam = senseId && currentSection === 'lexical_senses';
+        
         // Create sidebar instance
         sidebar = window.OntolexSidebar.create({
           containerId: 'lexical-senses-list',
@@ -89,18 +97,15 @@
           pageSize: 50,
           renderItem: renderLexicalSenseItem,
           onItemSelect: loadLexicalSenseDetails,
-          noItemsMessage: "#{t('ontology_details.ontolex.no_items_found')}"
+          noItemsMessage: "#{t('ontology_details.ontolex.no_items_found')}",
+          skipAutoSelect: hasIdParam  // Skip auto-select if we have an id in URL
         });
         
         // Load first page
         sidebar.loadPage(1);
         
-        // Check if there's an id parameter in the URL
-        var urlParams = new URLSearchParams(window.location.search);
-        var currentSection = urlParams.get('p');
-        var senseId = urlParams.get('id');
-        
-        if (senseId && currentSection === 'lexical_senses') {
+        // If there's an id parameter, select that item after page loads
+        if (hasIdParam) {
           senseId = decodeURIComponent(senseId);
           setTimeout(function() {
             sidebar.selectItem(senseId);

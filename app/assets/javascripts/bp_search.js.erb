@@ -1167,9 +1167,10 @@ function formatFormSearchResults(aggOntologyResults) {
             displayText = formID.split('/').pop();
         }
         
-        // Language badge
+        // Language badge (using ontolex-badge styling)
         if (res.language) {
-            languageBadge = ' <span class="badge" style="background-color: #5bc0de; color: white; font-size: 0.8em; padding: 2px 6px; border-radius: 3px;">' + res.language + '</span>';
+            var langCode = res.language.split('/').pop();
+            languageBadge = ' <span class="ontolex-badge badge-language badge-small" title="' + res.language + '">' + langCode + '</span>';
         }
         
         var searchResultDiv = jQuery("<div>");

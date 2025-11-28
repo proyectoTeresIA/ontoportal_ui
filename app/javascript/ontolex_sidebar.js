@@ -34,6 +34,7 @@ window.OntolexSidebar = {
       getBadgeProperty: config.getBadgeProperty || null,
       noItemsMessage: config.noItemsMessage || 'No items found',
       preloadData: config.preloadData || null, // Function to preload additional data
+      skipAutoSelect: config.skipAutoSelect || false, // Skip auto-selecting first item
     };
 
     var api = {
@@ -175,8 +176,8 @@ window.OntolexSidebar = {
             self.loadPage(page);
           });
 
-        // Auto-select first item if none selected
-        if (!state.selectedItemId && items.length > 0) {
+        // Auto-select first item if none selected (unless skipAutoSelect is true)
+        if (!state.skipAutoSelect && !state.selectedItemId && items.length > 0) {
           var firstId = items[0]['@id'] || items[0].id;
           state.selectedItemId = firstId;
           $('#' + state.containerId + ' .ontolex-sidebar-item')
@@ -191,8 +192,33 @@ window.OntolexSidebar = {
 
       selectItem: function (itemId) {
         state.selectedItemId = itemId;
+
+        // Update visual selection in sidebar
+        $('#' + state.containerId + ' .ontolex-sidebar-item').removeClass('active');
+        var $item = $('#' + state.containerId + ' .ontolex-sidebar-item[data-id="' + itemId + '"]');
+
+        if ($item.length > 0) {
+          // Item is on current page, highlight it
+          $item.addClass('active');
+          // Remove any "not on page" indicator
+          $('#' + state.containerId + ' .ontolex-not-on-page-indicator').remove();
+        }
+
         if (state.onItemSelect) {
           state.onItemSelect(itemId);
+        }
+      },
+
+      // Method to update sidebar selection without triggering onItemSelect
+      highlightItem: function (itemId) {
+        state.selectedItemId = itemId;
+        $('#' + state.containerId + ' .ontolex-sidebar-item').removeClass('active');
+        var $item = $('#' + state.containerId + ' .ontolex-sidebar-item[data-id="' + itemId + '"]');
+
+        if ($item.length > 0) {
+          $item.addClass('active');
+          // Remove any "not on page" indicator since item is now visible
+          $('#' + state.containerId + ' .ontolex-not-on-page-indicator').remove();
         }
       },
 

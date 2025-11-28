@@ -52,11 +52,13 @@ function updateLinksForOnt(ont_acronym) {
   try {
     // Update ontology summary links like /ontologies/ES?p=summary (no change)
     // Update class listing links that include p=classes -> p=lexical_concepts
+    // and &conceptid -> &id=
     var selector = "a[href*='/ontologies/" + ont_acronym + "'][href*='p=classes']";
     jQuery(selector).each(function () {
       var href = jQuery(this).attr('href');
       if (href && href.indexOf('p=classes') !== -1) {
         var newhref = href.replace('p=classes', 'p=lexical_concepts');
+        newhref = newhref.replace('&conceptid=', '&id=');
         jQuery(this).attr('href', newhref);
       }
     });

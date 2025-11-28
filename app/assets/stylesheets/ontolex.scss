@@ -163,6 +163,11 @@
   border: 1px solid #ccc;
   color: #555;
 
+  &.badge-small {
+    padding: 0.15rem 0.4rem;
+    font-size: 0.65rem;
+  }
+
   &.badge-language {
     background-color: #e3f2fd;
     color: #1976d2;

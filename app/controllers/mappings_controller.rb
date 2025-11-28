@@ -81,7 +81,7 @@ class MappingsController < ApplicationController
 
    def get_concept_table
     @ontology = LinkedData::Client::Models::Ontology.find_by_acronym(params[:ontologyid]).first
-    @concept = @ontology.explore.single_class({ full: true }, params[:conceptid])
+    @concept = get_concept_or_entry(@ontology, params[:conceptid])
 
     @mappings = get_concept_mappings(@concept)
     @type = params[:type]
@@ -92,8 +92,8 @@ class MappingsController < ApplicationController
   def new
     @ontology_from = LinkedData::Client::Models::Ontology.find(params[:ontology_from])
     @ontology_to = LinkedData::Client::Models::Ontology.find(params[:ontology_to])
-    @concept_from = @ontology_from.explore.single_class({ full: true }, params[:conceptid_from]) if @ontology_from
-    @concept_to = @ontology_to.explore.single_class({ full: true }, params[:conceptid_to]) if @ontology_to
+    @concept_from = get_concept_or_entry(@ontology_from, params[:conceptid_from]) if @ontology_from
+    @concept_to = get_concept_or_entry(@ontology_to, params[:conceptid_to]) if @ontology_to
 
     # Defaults just in case nothing gets provided
     @ontology_from ||= LinkedData::Client::Models::Ontology.new
@@ -156,5 +156,42 @@ class MappingsController < ApplicationController
       end
     end
     render json: { success: successes, error: errors }
+  end
+  
+  private
+  
+  # Get a concept (class) or lexical entry depending on the ontology format
+  def get_concept_or_entry(ontology, concept_id)
+    return nil unless ontology
+    
+    # Check if this is an OntoLex ontology
+    if is_ontolex_format?(ontology)
+      # For OntoLex, try to get as lexical entry first
+      get_lexical_entry(ontology, concept_id)
+    else
+      # Regular ontology - use single_class
+      ontology.explore.single_class({ full: true }, concept_id)
+    end
+  end
+  
+  def is_ontolex_format?(ontology)
+    return false unless ontology
+    
+    submission = ontology.explore.latest_submission rescue nil
+    return false unless submission
+    
+    ont_language = submission.hasOntologyLanguage rescue nil
+    return false unless ont_language
+    
+    ont_language_id = ont_language.respond_to?(:id) ? ont_language.id.to_s : ont_language.to_s
+    ont_language_id.include?('ONTOLEX') || ont_language_id == 'ONTOLEX'
+  end
+  
+  def get_lexical_entry(ontology, entry_id)
+    # Use the lexical_entries endpoint directly via HTTP
+    acronym = ontology.acronym
+    encoded_id = CGI.escape(entry_id)
+    result = LinkedData::Client::HTTP.get("/ontologies/#{acronym}/lexical_entries/#{encoded_id}")
+    result
   end
 end

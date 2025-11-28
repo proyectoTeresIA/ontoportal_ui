@@ -406,6 +406,38 @@ module ApplicationHelper
     end
   end
 
+  # Get link for OntoLex lexical entry with ajax label loading
+  # Navigates to terminological_entries page instead of classes
+  def get_link_for_entry_ajax(entry_id, ont_acronym, target = nil)
+    if entry_id.start_with?('http://') || entry_id.start_with?('https://')
+      # For OntoLex, link to terminological_entries page with id= parameter
+      cls_url = "/ontologies/#{ont_acronym}?p=terminological_entries&id=#{CGI.escape(entry_id)}"
+      ajax_url = "/ajax/classes/label?language=#{request_lang}"
+      
+      data = label_ajax_data_h(entry_id, ont_acronym, ajax_url, cls_url)
+      options = { 'data-controller': 'label-ajax' }.merge(data)
+      options = options.merge({ target: target }) if target
+      
+      content_tag(:span, class: 'mx-1') do
+        render ChipButtonComponent.new(url: cls_url, text: entry_id, type: 'clickable', **options)
+      end
+    else
+      render ChipButtonComponent.new(text: entry_id)
+    end
+  end
+
+  # Get mapping link with ajax label - handles both regular classes and OntoLex entries
+  def get_mapping_link_ajax(cls, is_ontolex: false, target: nil)
+    cls_id = cls.id.to_s
+    ont_acronym = cls.links['ontology'].to_s.split('/').last
+    
+    if is_ontolex
+      get_link_for_entry_ajax(cls_id, ont_acronym, target)
+    else
+      get_link_for_cls_ajax(cls_id, ont_acronym, target, true)
+    end
+  end
+
   def get_link_for_ont_ajax(ont_acronym)
     # Ajax call will replace the acronym with an ontology name (triggered by class='ont4ajax')
     href_ont = " href='#{bp_ont_link(ont_acronym)}' "

@@ -11,6 +11,9 @@
 -# check_box_tag(name, value = "1", checked = false, options = {})
 = check_box_tag "delete_mappings_permission", @delete_mapping_permission, @delete_mapping_permission, style: "display: none;"
 
+-# Helper to check if a class in a mapping is OntoLex LexicalEntry
+- is_ontolex_class = ->(cls) { cls.respond_to?(:type) && cls.type.to_s.include?('LexicalEntry') rescue false }
+
 %table#concept_mappings_table.zebra
   %thead
     %tr
@@ -28,13 +31,14 @@
     - cls = map.classes[0]
     - ont_acronym = cls.links['ontology'].split("/").last
     - map_id = map.id.to_s.split("/").last
+    - cls_is_ontolex = is_ontolex_class.call(cls)
     %tr.human{id: map_id}
       - if session[:user]
         %td.delete_mappings_column
           - if map.id && !map.id.empty? && (session[:user].id.to_i == map.creator || session[:user].admin?)
             = check_box_tag :delete_mapping_checkbox, map.id
       %td
-        = link_to cls.id, ontology_path(id: ont_acronym, p: 'classes', conceptid: cls.id)
+        = get_mapping_link_ajax(cls, is_ontolex: cls_is_ontolex, target: '_blank')
       %td
         = link_to ont_acronym, ontology_path(ont_acronym)
       %td

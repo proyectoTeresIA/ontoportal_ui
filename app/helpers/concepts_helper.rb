@@ -2,17 +2,63 @@
 
 module ConceptsHelper
   include MultiLanguagesHelper
+  
+  # Check if an ontology uses OntoLex format (for use with an ontology parameter)
+  # Note: This is different from OntologiesHelper#ontolex_ontology? which uses instance variables
+  def is_ontolex_format?(ontology)
+    return false unless ontology
+    
+    # Get the submission to check hasOntologyLanguage
+    submission = ontology.explore.latest_submission rescue nil
+    return false unless submission
+    
+    ont_language = submission.hasOntologyLanguage rescue nil
+    return false unless ont_language
+    
+    # Check if it's OntoLex format
+    ont_language_id = ont_language.respond_to?(:id) ? ont_language.id.to_s : ont_language.to_s
+    ont_language_id.include?('ONTOLEX') || ont_language_id == 'ONTOLEX'
+  end
+  
+  # Get label for a concept - handles both regular classes and OntoLex entries
   def concept_label(ont_id, cls_id)
     @ontology = LinkedData::Client::Models::Ontology.find(ont_id)
     @ontology ||= LinkedData::Client::Models::Ontology.find_by_acronym(ont_id).first
     ontology_not_found(ont_id) unless @ontology
-    # Retrieve a class prefLabel or return the class ID (URI)
+    
+    # Check if this is an OntoLex ontology
+    if is_ontolex_format?(@ontology)
+      return lexical_entry_label(@ontology, cls_id)
+    end
+    
+    # Regular class label retrieval
     # - mappings may contain class URIs that are not in bioportal (e.g. obo-xrefs)
     cls = @ontology.explore.single_class({language: request_lang, include: 'prefLabel'}, cls_id)
     # TODO: log any cls.errors
     # TODO: NCBO-402 might be implemented here, but it throws off a lot of ajax result rendering.
     #cls_label = cls.prefLabel({:use_html => true}) || cls_id
     cls.prefLabel || cls_id
+  end
+  
+  # Get label for a LexicalEntry
+  def lexical_entry_label(ontology, entry_id)
+    # Fetch the label from the lexical_entries label endpoint
+    acronym = ontology.acronym
+    encoded_id = CGI.escape(entry_id)
+    
+    begin
+      # Use the lexical_entries label endpoint
+      result = LinkedData::Client::HTTP.get("/ontologies/#{acronym}/lexical_entries/#{encoded_id}/label")
+      
+      if result && result.respond_to?(:label) && result.label.present?
+        return result.label
+      end
+    rescue => e
+      Rails.logger.warn("Failed to fetch lexical entry label for #{entry_id}: #{e.message}")
+    end
+    
+    # Final fallback: return the ID
+    entry_id
   end
 
   def exclude_relation?(relation_to_check, ontology = nil)

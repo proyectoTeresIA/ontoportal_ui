@@ -11,7 +11,7 @@
 .chip-button-component-container {
   display: inline-block;
 }
-.chip-button-component-container svg path{
+.chip-button-component-container svg path {
   //fill: var(--primary-color);
 }
 
@@ -31,6 +31,71 @@
   font-size: 15px;
   display: inline;
 }
-.chip_button_container_clickable a{
+.chip_button_container_clickable a {
   color: var(--primary-color);
+}
+
+// Chip-button styled pagination
+.chip-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 0;
+
+  .chip-page-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 0.5rem;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s ease-in-out;
+  }
+
+  .chip-page-link {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+  }
+
+  .chip-page-active {
+    background-color: var(--primary-color);
+    color: white;
+  }
+
+  .chip-page-gap {
+    background-color: transparent;
+    color: #999;
+    min-width: auto;
+    padding: 0 0.25rem;
+  }
+
+  .chip-page-nav {
+    background-color: var(--light-color);
+    color: var(--primary-color);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
+    &.chip-page-disabled {
+      background-color: #f0f0f0;
+      color: #ccc;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+  }
 }

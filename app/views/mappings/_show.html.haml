@@ -1,9 +1,11 @@
 #mappings.paginate_ajax{:style => "overflow: auto; max-height: 600px; width: 800px;"}
   #mapping_results
-    = will_paginate @page_results, :update => 'mappings', :params => { :target => params[:target] }
+    = will_paginate @page_results, :update => 'mappings', :params => { :target => params[:target] }, :renderer => ChipButtonLinkRenderer
     - if @mappings.nil? or @mappings.empty?
       = t('mappings.show.none_found')
     - else
+      -# Helper to check if a class in a mapping is OntoLex LexicalEntry
+      - is_ontolex_class = ->(cls) { cls.respond_to?(:type) && cls.type.to_s.include?('LexicalEntry') rescue false }
       %table.zebra
         %thead
           %th #{@ontology.name}
@@ -12,11 +14,13 @@
         - for map in @mappings
           %tr
             - cls = map.classes.shift
+            - cls_is_ontolex = is_ontolex_class.call(cls)
             %td
-              = link_to("#{cls.id}<span href='/ajax/classes/label?ontology=#{cls.links["ontology"]}&concept=#{CGI.escape(cls.id)}' class='get_via_ajax'></span>".html_safe, ontology_path(cls.explore.ontology.acronym, p: "classes", conceptid: cls.id))
+              = get_mapping_link_ajax(cls, is_ontolex: cls_is_ontolex, target: '_blank')
             - cls = map.classes.shift
+            - cls_is_ontolex = is_ontolex_class.call(cls)
             %td
-              = link_to("#{cls.id}<span href='/ajax/classes/label?ontology=#{cls.links["ontology"]}&concept=#{CGI.escape(cls.id)}' class='get_via_ajax'></span>".html_safe, ontology_path(cls.explore.ontology.acronym, p: "classes", conceptid: cls.id))
+              = get_mapping_link_ajax(cls, is_ontolex: cls_is_ontolex, target: '_blank')
             %td
               #{map.source} #{(map.process || {})[:source_name]}
-    = will_paginate @page_results, :update => 'mappings', :params => { :target => params[:target] }
+    = will_paginate @page_results, :update => 'mappings', :params => { :target => params[:target] }, :renderer => ChipButtonLinkRenderer

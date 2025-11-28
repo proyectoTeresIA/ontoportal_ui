@@ -81,6 +81,13 @@
       // Initial load
       function initialize() {
         if (isInitialized) return;
+        
+        // Wait for OntolexSidebar to be loaded
+        if (typeof window.OntolexSidebar === 'undefined') {
+          setTimeout(initialize, 50);
+          return;
+        }
+        
         isInitialized = true;
         
         // Check if there's an id parameter in the URL

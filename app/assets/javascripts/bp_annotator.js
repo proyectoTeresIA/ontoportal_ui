@@ -6,11 +6,13 @@ var annotator_ontology_languages = {};
 
 // Fetch latest_submission for an ontology (using external API URL from BP_CONFIG)
 // and cache whether it declares an OntoLex / lexical language via `hasOntologyLanguage`.
+// Returns a Promise that resolves to true/false.
 function fetchOntologyLanguageFor(ont_acronym) {
-  // If already requested or cached, skip
-  if (annotator_ontology_languages[ont_acronym] !== undefined) return;
-  // mark as pending
-  annotator_ontology_languages[ont_acronym] = null;
+  // If already cached with a definitive value, return immediately
+  if (annotator_ontology_languages[ont_acronym] === true || annotator_ontology_languages[ont_acronym] === false) {
+    return Promise.resolve(annotator_ontology_languages[ont_acronym]);
+  }
+
   var external_api =
     BP_CONFIG && BP_CONFIG.external_api_url
       ? BP_CONFIG.external_api_url
@@ -19,53 +21,81 @@ function fetchOntologyLanguageFor(ont_acronym) {
         : '';
   if (!external_api) {
     annotator_ontology_languages[ont_acronym] = false;
-    return;
+    return Promise.resolve(false);
   }
+
   var endpoint = external_api.replace(/\/$/, '') + '/ontologies/' + ont_acronym + '/latest_submission';
-  jQuery
-    .getJSON(endpoint)
-    .done(function (data) {
-      var hasLang = data && data.hasOntologyLanguage;
-      var isOntoLex = false;
-      if (hasLang) {
-        if (Array.isArray(hasLang)) {
-          isOntoLex =
-            hasLang.join(' ').toLowerCase().indexOf('ontolex') !== -1 ||
-            hasLang.join(' ').toLowerCase().indexOf('lemon') !== -1;
-        } else {
-          isOntoLex =
-            ('' + hasLang).toLowerCase().indexOf('ontolex') !== -1 ||
-            ('' + hasLang).toLowerCase().indexOf('lemon') !== -1;
+
+  return new Promise(function (resolve) {
+    jQuery
+      .getJSON(endpoint)
+      .done(function (data) {
+        var hasLang = data && data.hasOntologyLanguage;
+        var isOntoLex = false;
+        if (hasLang) {
+          if (Array.isArray(hasLang)) {
+            isOntoLex =
+              hasLang.join(' ').toLowerCase().indexOf('ontolex') !== -1 ||
+              hasLang.join(' ').toLowerCase().indexOf('lemon') !== -1;
+          } else {
+            isOntoLex =
+              ('' + hasLang).toLowerCase().indexOf('ontolex') !== -1 ||
+              ('' + hasLang).toLowerCase().indexOf('lemon') !== -1;
+          }
         }
-      }
-      annotator_ontology_languages[ont_acronym] = isOntoLex;
-      if (isOntoLex) updateLinksForOnt(ont_acronym);
-    })
-    .fail(function () {
-      annotator_ontology_languages[ont_acronym] = false;
-    });
+        annotator_ontology_languages[ont_acronym] = isOntoLex;
+        console.log('Ontology ' + ont_acronym + ' hasOntologyLanguage: ' + hasLang + ' => isOntoLex: ' + isOntoLex);
+        resolve(isOntoLex);
+      })
+      .fail(function () {
+        annotator_ontology_languages[ont_acronym] = false;
+        resolve(false);
+      });
+  });
 }
 
-// Update any anchors that point to ontology pages for this acronym to use the
-// lexical concepts page instead of classes when OntoLex is detected.
-function updateLinksForOnt(ont_acronym) {
-  try {
-    // Update ontology summary links like /ontologies/ES?p=summary (no change)
-    // Update class listing links that include p=classes -> p=lexical_concepts
-    // and &conceptid -> &id=
-    var selector = "a[href*='/ontologies/" + ont_acronym + "'][href*='p=classes']";
-    jQuery(selector).each(function () {
-      var href = jQuery(this).attr('href');
-      if (href && href.indexOf('p=classes') !== -1) {
-        var newhref = href.replace('p=classes', 'p=lexical_concepts');
-        newhref = newhref.replace('&conceptid=', '&id=');
-        jQuery(this).attr('href', newhref);
+// Pre-fetch ontology language info for all ontologies in the annotations
+// Returns a Promise that resolves when all fetches are complete
+function prefetchOntologyLanguages(annotations) {
+  var ontologyAcronyms = {};
+
+  // Collect unique ontology acronyms from annotations
+  for (var i = 0; i < annotations.length; i++) {
+    var annotation = annotations[i];
+    if (annotation.annotatedClass && annotation.annotatedClass.links && annotation.annotatedClass.links.ontology) {
+      var acronym = annotation.annotatedClass.links.ontology.replace(/.*\//, '');
+      ontologyAcronyms[acronym] = true;
+    }
+    // Also check hierarchy and mappings
+    if (annotation.hierarchy) {
+      for (var j = 0; j < annotation.hierarchy.length; j++) {
+        var h = annotation.hierarchy[j];
+        if (h.annotatedClass && h.annotatedClass.links && h.annotatedClass.links.ontology) {
+          var hAcronym = h.annotatedClass.links.ontology.replace(/.*\//, '');
+          ontologyAcronyms[hAcronym] = true;
+        }
       }
-    });
-  } catch (e) {
-    // don't block UI on errors
-    console.log('updateLinksForOnt error', e);
+    }
+    if (annotation.mappings) {
+      for (var k = 0; k < annotation.mappings.length; k++) {
+        var m = annotation.mappings[k];
+        if (m.annotatedClass && m.annotatedClass.links && m.annotatedClass.links.ontology) {
+          var mAcronym = m.annotatedClass.links.ontology.replace(/.*\//, '');
+          ontologyAcronyms[mAcronym] = true;
+        }
+      }
+    }
   }
+
+  // Create promises for all unique ontologies
+  var promises = [];
+  for (var acronym in ontologyAcronyms) {
+    if (ontologyAcronyms.hasOwnProperty(acronym)) {
+      promises.push(fetchOntologyLanguageFor(acronym));
+    }
+  }
+
+  return Promise.all(promises);
 }
 
 // Note: the configuration is in config/bioportal_config.rb.
@@ -612,17 +642,8 @@ function get_class_details_from_raw(cls) {
   } else {
     ont_link = get_link(ont_rel_ui, ont_name); // no ajax required!
   }
-  // Determine whether this ontology uses an OntoLex-like language.
-  var isOntoLex = false;
-  var cached = annotator_ontology_languages[ont_acronym];
-  if (cached === true) {
-    isOntoLex = true;
-  } else if (cached === false) {
-    isOntoLex = false;
-  } else {
-    // Trigger async fetch to get `hasOntologyLanguage` from the API and update links once known
-    fetchOntologyLanguageFor(ont_acronym);
-  }
+  // Determine whether this ontology uses an OntoLex-like language (already pre-fetched)
+  var isOntoLex = annotator_ontology_languages[ont_acronym] === true;
   var cls_page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
   var cls_id_param = isOntoLex ? 'id' : 'conceptid';
 
@@ -848,22 +869,37 @@ function update_annotations_table(rowsArray) {
 function display_annotations(data, params) {
   'use strict';
   var annotations = data.annotations;
-  var all_rows = [];
+
   if (params.raw !== undefined && params.raw === true) {
     // The annotator_controller does not 'massage' the REST data.
     // The class prefLabel and ontology name must be resolved with ajax.
     annotator_ontologies = data.ontologies;
-    for (var i = 0; i < annotations.length; i++) {
-      all_rows = all_rows.concat(get_annotation_rows_from_raw(annotations[i], params));
-    }
+
+    // Pre-fetch ontology language info for all ontologies before generating rows
+    // This ensures we know which ontologies are OntoLex and can generate correct links
+    prefetchOntologyLanguages(annotations).then(function () {
+      var all_rows = [];
+      for (var i = 0; i < annotations.length; i++) {
+        all_rows = all_rows.concat(get_annotation_rows_from_raw(annotations[i], params));
+      }
+      update_annotations_table(all_rows);
+      finalize_annotations_display(params);
+      // Initiate ajax calls to resolve class ID to prefLabel and ontology acronym to name.
+      ajax_process_init(); // see bp_ajax_controller.js
+    });
   } else {
     // The annotator_controller does 'massage' the REST data.
-    // The class prefLabel and ontology name get resoled with a batch all in the controller.
+    // The class prefLabel and ontology name get resolved with a batch call in the controller.
+    var all_rows = [];
     for (var i = 0; i < annotations.length; i++) {
       all_rows = all_rows.concat(get_annotation_rows(annotations[i], params));
     }
+    update_annotations_table(all_rows);
+    finalize_annotations_display(params);
   }
-  update_annotations_table(all_rows);
+}
+
+function finalize_annotations_display(params) {
   // Generate parameters for list at bottom of page
   var param_string = generateParameters(); // uses bp_last_param
   var query = BP_CONFIG.rest_url + '/annotator?' + param_string;
@@ -874,10 +910,6 @@ function display_annotations(data, params) {
   //annotatorFormatLink("tabDelimited");
   annotatorFormatLink(param_string, 'json');
   annotatorFormatLink(param_string, 'xml');
-  if (params.raw !== undefined && params.raw === true) {
-    // Initiate ajax calls to resolve class ID to prefLabel and ontology acronym to name.
-    ajax_process_init(); // see bp_ajax_controller.js
-  }
 }
 
 // Creates an HTML form with a button that will POST to the annotator

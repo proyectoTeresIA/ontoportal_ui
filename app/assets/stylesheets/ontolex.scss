@@ -6,6 +6,31 @@
   padding: 1rem 0;
 }
 
+// Search box for sidebar
+.ontolex-search-box {
+  border-bottom: 1px solid #e0e0e0;
+  background-color: #fafafa;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+
+  input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.875rem;
+
+    &:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.15);
+      outline: none;
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+  }
+}
+
 // Sidebar list for OntoLex entities
 .ontolex-list-sidebar {
   overflow-y: auto;

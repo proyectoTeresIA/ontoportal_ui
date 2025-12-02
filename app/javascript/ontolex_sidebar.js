@@ -1,7 +1,7 @@
 /* eslint-disable no-undef */
 /**
  * Generic OntoLex Sidebar Manager
- * Handles pagination, loading states, and item rendering for OntoLex entity sidebars
+ * Handles pagination, loading states, search, and item rendering for OntoLex entity sidebars
  */
 window.OntolexSidebar = {
   /**
@@ -17,13 +17,16 @@ window.OntolexSidebar = {
    * @param {Function} config.onItemSelect - Callback when an item is selected
    * @param {Function} config.getBadgeProperty - Function to extract badge property from item (optional)
    * @param {string} config.noItemsMessage - Message to show when no items found
+   * @param {string} config.searchPlaceholder - Placeholder text for search box (optional)
    */
   create: function (config) {
     var state = {
       currentPage: 1,
       pageSize: config.pageSize || 50,
       selectedItemId: null,
-      isLoading: false,
+      searchQuery: '',
+      searchDebounceTimer: null,
+      currentXhr: null, // Track current AJAX request for cancellation
       containerId: config.containerId,
       entityType: config.entityType,
       ontologyAcronym: config.ontologyAcronym,
@@ -33,15 +36,20 @@ window.OntolexSidebar = {
       onItemSelect: config.onItemSelect,
       getBadgeProperty: config.getBadgeProperty || null,
       noItemsMessage: config.noItemsMessage || 'No items found',
-      preloadData: config.preloadData || null, // Function to preload additional data
-      skipAutoSelect: config.skipAutoSelect || false, // Skip auto-selecting first item
+      searchPlaceholder: config.searchPlaceholder || 'Search...',
+      preloadData: config.preloadData || null,
+      skipAutoSelect: config.skipAutoSelect || false,
     };
 
     var api = {
       loadPage: function (page) {
-        if (state.isLoading) return;
+        // Cancel any in-flight request
+        if (state.currentXhr) {
+          state.currentXhr.abort();
+          state.currentXhr = null;
+        }
 
-        state.isLoading = true;
+        state.currentPage = page;
         this.showLoading();
 
         var apiUrl =
@@ -57,47 +65,112 @@ window.OntolexSidebar = {
           '&apikey=' +
           state.apikey;
 
+        if (state.searchQuery && state.searchQuery.trim() !== '') {
+          apiUrl += '&q=' + encodeURIComponent(state.searchQuery.trim());
+        }
+
         var self = this;
-        $.ajax({
+        state.currentXhr = $.ajax({
           url: apiUrl,
           method: 'GET',
           dataType: 'json',
           success: function (data) {
+            state.currentXhr = null;
             var items = data.collection || [];
-
-            // Render sidebar immediately
             self.renderSidebar(items, data);
-            state.isLoading = false;
 
-            // If preloadData function exists, load additional data in background
             if (state.preloadData) {
               state.preloadData(items, state, self);
             }
           },
           error: function (xhr, status, error) {
-            $('#' + state.containerId).html('<div class="alert alert-danger m-2">Error: ' + error + '</div>');
-            state.isLoading = false;
+            state.currentXhr = null;
+            // Don't show error for aborted requests
+            if (status === 'abort') return;
+
+            self.renderError(error);
           },
         });
       },
 
       showLoading: function () {
-        var html = '<div class="text-center py-3">';
-        html += '<span class="spinner-border spinner-border-sm" role="status"></span>';
+        // Only update the list area, keep the search box intact
+        var $container = $('#' + state.containerId);
+        var $searchBox = $container.find('.ontolex-search-box');
+
+        if ($searchBox.length === 0) {
+          // First load - render everything
+          var html = this.renderSearchBox();
+          html += '<div class="ontolex-results-area"><div class="text-center py-3">';
+          html += '<span class="spinner-border spinner-border-sm" role="status"></span>';
+          html += '</div></div>';
+          $container.html(html);
+          this.attachSearchHandler();
+        } else {
+          // Subsequent loads - only update results area
+          var $resultsArea = $container.find('.ontolex-results-area');
+          if ($resultsArea.length === 0) {
+            $container.append('<div class="ontolex-results-area"></div>');
+            $resultsArea = $container.find('.ontolex-results-area');
+          }
+          $resultsArea.html(
+            '<div class="text-center py-3"><span class="spinner-border spinner-border-sm" role="status"></span></div>',
+          );
+        }
+      },
+
+      renderError: function (error) {
+        var $container = $('#' + state.containerId);
+        var $resultsArea = $container.find('.ontolex-results-area');
+        if ($resultsArea.length > 0) {
+          $resultsArea.html('<div class="alert alert-danger m-2">Error: ' + error + '</div>');
+        } else {
+          $container.html(
+            this.renderSearchBox() +
+              '<div class="ontolex-results-area"><div class="alert alert-danger m-2">Error: ' +
+              error +
+              '</div></div>',
+          );
+          this.attachSearchHandler();
+        }
+      },
+
+      renderSearchBox: function () {
+        var html = '<div class="ontolex-search-box p-2">';
+        html += '<div class="input-group input-group-sm">';
+        html += '<input type="text" class="form-control" ';
+        html += 'id="' + state.containerId + '-search" ';
+        html += 'placeholder="' + state.searchPlaceholder + '" ';
+        html += 'value="' + this.escapeHtml(state.searchQuery || '') + '">';
+        html +=
+          '<button class="btn btn-outline-secondary" type="button" id="' +
+          state.containerId +
+          '-search-btn" title="Search">';
+        html += '<i class="fas fa-search"></i>';
+        html += '</button>';
         html += '</div>';
-        $('#' + state.containerId).html(html);
+        html += '</div>';
+        return html;
+      },
+
+      escapeHtml: function (text) {
+        var div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
       },
 
       renderSidebar: function (items, data) {
-        var html = '';
+        var $container = $('#' + state.containerId);
+        var $resultsArea = $container.find('.ontolex-results-area');
 
+        var html = '';
         if (items.length === 0) {
-          html = '<div class="text-center text-muted p-3">';
+          html += '<div class="text-center text-muted p-3">';
           html += '<i class="fas fa-inbox"></i>';
           html += '<p class="mt-2">' + state.noItemsMessage + '</p>';
           html += '</div>';
         } else {
-          html = '<ul class="ontolex-sidebar-list list-unstyled">';
+          html += '<ul class="ontolex-sidebar-list list-unstyled">';
 
           for (var i = 0; i < items.length; i++) {
             var item = items[i];
@@ -111,13 +184,18 @@ window.OntolexSidebar = {
 
           html += '</ul>';
 
-          // Pagination
           if (data.pageCount && data.pageCount > 1) {
             html += this.renderPagination(data);
           }
         }
 
-        $('#' + state.containerId).html(html);
+        if ($resultsArea.length > 0) {
+          $resultsArea.html(html);
+        } else {
+          $container.html(this.renderSearchBox() + '<div class="ontolex-results-area">' + html + '</div>');
+          this.attachSearchHandler();
+        }
+
         this.attachEventHandlers(items);
       },
 
@@ -148,6 +226,35 @@ window.OntolexSidebar = {
         return html;
       },
 
+      attachSearchHandler: function () {
+        var self = this;
+        var $searchInput = $('#' + state.containerId + '-search');
+        var $searchBtn = $('#' + state.containerId + '-search-btn');
+
+        // Trigger search function
+        var doSearch = function () {
+          var query = $searchInput.val();
+          // Only search if query changed
+          if (query !== state.searchQuery) {
+            state.searchQuery = query;
+            state.currentPage = 1;
+            self.loadPage(1);
+          }
+        };
+
+        // Handle Enter key
+        $searchInput.off('keypress').on('keypress', function (e) {
+          if (e.which === 13) {
+            e.preventDefault();
+            doSearch();
+          }
+        });
+
+        // Handle search button click
+        $searchBtn.off('click').on('click', function () {
+          doSearch();
+        });
+      },
       attachEventHandlers: function (items) {
         var self = this;
 
@@ -220,6 +327,16 @@ window.OntolexSidebar = {
           // Remove any "not on page" indicator since item is now visible
           $('#' + state.containerId + ' .ontolex-not-on-page-indicator').remove();
         }
+      },
+
+      clearSearch: function () {
+        state.searchQuery = '';
+        state.currentPage = 1;
+        this.loadPage(1);
+      },
+
+      getSearchQuery: function () {
+        return state.searchQuery;
       },
 
       getState: function () {

@@ -54,7 +54,7 @@
 }
 .facet {
   margin: 1em 0;
-  border: thin lightGray solid;
+  /* border: thin lightGray solid; */
   padding: 5px;
   border-radius: 3px;
 }

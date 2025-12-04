@@ -24,7 +24,13 @@ function fetchOntologyLanguageFor(ont_acronym) {
     return Promise.resolve(false);
   }
 
-  var endpoint = external_api.replace(/\/$/, '') + '/ontologies/' + ont_acronym + '/latest_submission';
+  var endpoint =
+    external_api.replace(/\/$/, '') +
+    '/ontologies/' +
+    ont_acronym +
+    '/latest_submission' +
+    '?apikey=' +
+    BP_CONFIG.apikey;
 
   return new Promise(function (resolve) {
     jQuery
@@ -44,7 +50,6 @@ function fetchOntologyLanguageFor(ont_acronym) {
           }
         }
         annotator_ontology_languages[ont_acronym] = isOntoLex;
-        console.log('Ontology ' + ont_acronym + ' hasOntologyLanguage: ' + hasLang + ' => isOntoLex: ' + isOntoLex);
         resolve(isOntoLex);
       })
       .fail(function () {

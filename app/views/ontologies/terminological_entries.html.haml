@@ -255,14 +255,18 @@
               html += '<strong>' + translations.translations + '</strong>';
               html += '</div>';
               sense.loaded_translation.forEach(function(trans, transIdx) {
+                console.log('Translation: ',trans)
                 var transId = trans['@id'];
                 var writtenReps = trans.writtenReps || [];
+                var language = trans.language ? trans.language : null;
                 var displayText = writtenReps.length > 0 ? writtenReps.join(', ') : transId.split(/[#/]/).pop();
                 var entryId = trans.entryId;
                 
                 html += '<div class="mb-2">';
                 html += '<a href="#" class="entity-link text-decoration-none" data-entry-id="' + entryId + '">';
                 html += '<i class="fas fa-link me-1"></i><span>' + displayText + '</span>';
+                html += (language ? '<span class="ontolex-badge badge-language ms-2" title="' + 
+                  language + '">' + language.split('/').pop() + '</span>' : '');
                 html += '</a>';
                 html += '</div>';
               });

@@ -390,9 +390,9 @@ module OntologiesHelper
         sections += %w[properties]
         # sections += %w[schemes collections] if skos?
         # sections += %w[instances] unless skos?
+        # sections += %w[notes mappings widgets sparql]
+        sections += %w[notes mappings widgets]
       end
-      # sections += %w[notes mappings widgets sparql]
-      sections += %w[notes mappings widgets]
     end
     sections
   end

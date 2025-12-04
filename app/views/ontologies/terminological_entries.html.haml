@@ -47,8 +47,8 @@
         var itemId = item['@id'] || item.id || 'Unknown';
         var shortId = itemId.split('/').pop();
         
-        // Check if writtenReps are available (from optimized endpoint)
         var writtenReps = item.writtenReps || [];
+        var language = item.language || null;
         
         var html = '<div>';
         
@@ -59,14 +59,13 @@
           // No forms available
           html += '<span>' + shortId + '</span>';
         }
+        if (language) {
+          var langCode = language.split('/').pop();
+          html += ' <span class="ontolex-badge badge-language ms-2" title="' + 
+                  language + '">' + langCode + '</span>';
+        }
         
         html += '</div>';
-        
-        if (item.language) {
-          var langCode = item.language.split('/').pop();
-          html += '<div class="mt-1"><span class="ontolex-badge badge-language" title="' + 
-                  item.language + '">' + langCode + '</span></div>';
-        }
         
         return html;
       }

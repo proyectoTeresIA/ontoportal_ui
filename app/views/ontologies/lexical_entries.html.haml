@@ -104,15 +104,12 @@
           skipAutoSelect: hasIdParam  // Skip auto-select if we have an id in URL
         });
         
-        // Load first page
-        sidebar.loadPage(1);
-        
-        // If there's an id parameter, select that item after page loads
+        // Load first page (or find specific item if id provided)
         if (hasIdParam) {
           entryId = decodeURIComponent(entryId);
-          setTimeout(function() {
-            sidebar.selectItem(entryId);
-          }, 500);
+          sidebar.findAndSelectItem(entryId);
+        } else {
+          sidebar.loadPage(1);
         }
       }
       

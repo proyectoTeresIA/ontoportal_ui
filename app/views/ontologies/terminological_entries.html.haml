@@ -255,7 +255,6 @@
               html += '<strong>' + translations.translations + '</strong>';
               html += '</div>';
               sense.loaded_translation.forEach(function(trans, transIdx) {
-                console.log('Translation: ',trans)
                 var transId = trans['@id'];
                 var writtenReps = trans.writtenReps || [];
                 var language = trans.language ? trans.language : null;
@@ -397,13 +396,10 @@
             $link.off('click').on('click', function(e) {
               e.preventDefault();
               
-              // Update sidebar selection visually (if item exists in current page)
+              // Load the correct page and select the entry
               if (sidebar) {
-                sidebar.highlightItem(entryId);
+                sidebar.findAndSelectItem(entryId);
               }
-              
-              // Load the entry details directly via AJAX
-              loadTerminologicalEntryDetails(entryId);
             });
           }
         });
@@ -463,15 +459,12 @@
           skipAutoSelect: hasIdParam  // Skip auto-select if we have an id in URL
         });
         
-        // Load first page
-        sidebar.loadPage(1);
-        
-        // If there's an id parameter, select that item after page loads
+        // Load first page (or find specific item if id provided)
         if (hasIdParam) {
           entryId = decodeURIComponent(entryId);
-          setTimeout(function() {
-            sidebar.selectItem(entryId);
-          }, 500);
+          sidebar.findAndSelectItem(entryId);
+        } else {
+          sidebar.loadPage(1);
         }
       }
       

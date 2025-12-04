@@ -39,10 +39,16 @@ window.OntolexSidebar = {
       searchPlaceholder: config.searchPlaceholder || 'Search...',
       preloadData: config.preloadData || null,
       skipAutoSelect: config.skipAutoSelect || false,
+      initialItemId: config.initialItemId || null, // ID to find and select on initial load
     };
 
     var api = {
-      loadPage: function (page) {
+      /**
+       * Load a page, optionally finding the page that contains a specific item
+       * @param {number} page - Page number to load (ignored if findId is provided)
+       * @param {string} findId - Optional: Item ID to find - API will return the page containing this item
+       */
+      loadPage: function (page, findId) {
         // Cancel any in-flight request
         if (state.currentXhr) {
           state.currentXhr.abort();
@@ -69,7 +75,13 @@ window.OntolexSidebar = {
           apiUrl += '&q=' + encodeURIComponent(state.searchQuery.trim());
         }
 
+        // If findId is provided, add it to the API call so the server returns the correct page
+        if (findId) {
+          apiUrl += '&find_id=' + encodeURIComponent(findId);
+        }
+
         var self = this;
+        var findingItem = !!findId;
         state.currentXhr = $.ajax({
           url: apiUrl,
           method: 'GET',
@@ -77,7 +89,23 @@ window.OntolexSidebar = {
           success: function (data) {
             state.currentXhr = null;
             var items = data.collection || [];
+
+            if (data.page) {
+              state.currentPage = data.page;
+            }
+
             self.renderSidebar(items, data);
+
+            // If we were finding a specific item, highlight it now
+            if (findingItem && state.initialItemId) {
+              self.highlightItem(state.initialItemId);
+              // Also trigger the onItemSelect callback to load the item details
+              if (state.onItemSelect) {
+                state.onItemSelect(state.initialItemId);
+              }
+              // Clear initialItemId after first use
+              state.initialItemId = null;
+            }
 
             if (state.preloadData) {
               state.preloadData(items, state, self);
@@ -324,8 +352,8 @@ window.OntolexSidebar = {
 
         if ($item.length > 0) {
           $item.addClass('active');
-          // Remove any "not on page" indicator since item is now visible
           $('#' + state.containerId + ' .ontolex-not-on-page-indicator').remove();
+          $item[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       },
 
@@ -341,6 +369,18 @@ window.OntolexSidebar = {
 
       getState: function () {
         return state;
+      },
+
+      /**
+       * Find the page containing a specific item and load it, then select that item
+       * @param {string} itemId - The ID of the item to find and select
+       */
+      findAndSelectItem: function (itemId) {
+        state.selectedItemId = itemId;
+        state.initialItemId = itemId;
+
+        // Load page 1 with find_id parameter - API will return the page containing the item
+        this.loadPage(1, itemId);
       },
     };
 

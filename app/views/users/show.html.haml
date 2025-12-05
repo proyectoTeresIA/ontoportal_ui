@@ -31,7 +31,7 @@
   = tag.p(t('users.show.api_key_help', site: $SITE), class: 'text-muted')
   = session[:user].apikey
   = content_tag(:span, style: 'display: inline-block;') do
-    = render ClipboardComponent.new(message: session[:user].apikey, title: 'Copy API Key', show_content: false)
+    = render ClipboardComponent.new(message: session[:user].apikey, title: t('users.show.copy_api_key'), show_content: false)
 
   -# User's subscriptions
   - unless @user.subscription.blank?
@@ -106,7 +106,7 @@
         },
         error: function(data) {
           jQuery(".subscribe_spinner").hide();
-          jQuery(".subscribe_error").html("Problem subscribing to emails, please try again");
+          jQuery(".subscribe_error").html("#{t('users.show.subscribe_error')}");
         }
       });
     }
@@ -116,13 +116,13 @@
       jQuery("#custom_ontologies").hide();
     }
 
-  %h4{class: 'pb-2 mt-5 mb-4 border-bottom'} Custom ontology set
+  %h4{class: 'pb-2 mt-5 mb-4 border-bottom'}= t('users.show.custom_ontology_set')
   #custom_ontologies
     - if at_slice?
       = custom_ontology_set_slice_text
     - else
       = custom_ontology_set_intro_text
-      = button_tag('Select ontologies', type: 'button', id: 'edit_custom_ontologies', class: 'btn btn-primary')
+      = button_tag(t('users.show.select_ontologies'), type: 'button', id: 'edit_custom_ontologies', class: 'btn btn-primary')
       - if @user_ontologies.present?
         %ul{class: 'list-unstyled mt-3 mb-5'}
           - @user_ontologies.each do |ont|
@@ -130,11 +130,11 @@
             %li
               #{ont.name} (#{ont.acronym})
       - else
-        = tag.p("You haven't picked any ontologies yet", class: 'mt-3 mb-5')
+        = tag.p(t('users.show.no_ontologies_picked'), class: 'mt-3 mb-5')
 
   #custom_ontologies_picker{style: "left: -9999px; position: absolute;"}
     = form_tag custom_ontologies_path(url_encode(@user.username)) do
       - selected = @user.customOntology.map {|o| LinkedData::Client::Models::Ontology.get(o).acronym}
-      - locals = { custom_ontologies: @all_ontologies, selected_ontologies: selected, sel_text: "Select Custom Ontologies" }
+      - locals = { custom_ontologies: @all_ontologies, selected_ontologies: selected, sel_text: t('users.show.select_custom_ontologies') }
       = render partial: "shared/ontology_picker", locals: locals
-      = submit_tag "Save Custom Ontologies", class: "link_button"
+      = submit_tag t('users.show.save_custom_ontologies'), class: "link_button"

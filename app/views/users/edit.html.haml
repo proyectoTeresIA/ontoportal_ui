@@ -4,7 +4,7 @@
         event.preventDefault()
         let admin_checkbox = jQuery('input[id=user_admin]')
         if(admin_checkbox.attr('checked') && !admin_checkbox.hasClass('admin')){
-          alertify.confirm('Are you sure you want to make this user an admin?', (e) => {
+          alertify.confirm('#{j(t('users.edit.confirm_make_admin'))}', (e) => {
             if(e){
               this.submit()
             }else {
@@ -12,7 +12,7 @@
             }
           })
         } else if (!admin_checkbox.attr('checked') && admin_checkbox.hasClass('admin')){
-          alertify.confirm('Are you sure you want to revoke admin privileges for this user?',  (e) => {
+          alertify.confirm('#{j(t('users.edit.confirm_revoke_admin'))}',  (e) => {
             if(e){
               this.submit()
             }else {
@@ -30,41 +30,41 @@
     = form_with scope: :user, url: user_path(@user.username), method: 'put', id: 'user_info', class: 'my-4' do |f|
       - if @errors.present?
         .enable-lists
-          Errors updating account:
+          = t('users.edit.errors_updating')
           %ul
             - for error in @errors
               %li= error
 
-      %h2.mb-4 Edit account
+      %h2.mb-4= t('users.edit.heading')
       %div.mb-3
-        = f.label :firstName, 'First name', class: 'form-label'
+        = f.label :firstName, t('users.edit.first_name'), class: 'form-label'
         = f.text_field :firstName, class: 'form-control', required: 'true'
       %div.mb-3
-        = f.label :lastName, 'Last name', class: 'form-label'
+        = f.label :lastName, t('users.edit.last_name'), class: 'form-label'
         = f.text_field :lastName, class: 'form-control'
       %div.mb-3
         = f.label :username, class: 'form-label'
         = f.text_field :username, class: 'form-control', disabled: 'true'
       %div.mb-3
-        = f.label :email, 'Email address', class: 'form-label'
+        = f.label :email, t('users.edit.email_address'), class: 'form-label'
         = f.email_field :email, class: 'form-control', required: 'true'
       %div.mb-3
-        = f.label :githubId, 'GitHub username', class: 'form-label'
+        = f.label :githubId, t('users.edit.github_username'), class: 'form-label'
         = f.text_field :githubId, class: 'form-control', 'aria-describedby': 'githubUsernameHelp',
                                   pattern: '[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}',
                                   title: 'Characters: only alphanumeric and single hyphens. Length: 1-39'
         %div.form-text{id: 'githubUsernameHelp'}
-          User handle on GitHub, for example: 'octocat'
+          = t('users.edit.github_help')
       %div.mb-3
-        = f.label :orcidId, 'ORCID iD', class: 'form-label'
+        = f.label :orcidId, t('users.edit.orcid_id'), class: 'form-label'
         = f.text_field :orcidId, class: 'form-control', 'aria-describedby': 'orcidHelp',
                                  pattern: '\d{4}-\d{4}-\d{4}-\d{4}', title: 'Format: XXXX-XXXX-XXXX-XXXX'
         %div.form-text{id: 'orcidHelp'}
-          16-digit ORCID, for example: 0000-1234-5678-9101
+          = t('users.edit.orcid_help')
       - if session[:user].admin?
         %div.form-check.mb-3
           = f.check_box :admin?, class: (@user.admin? ? 'admin form-check-input' : 'form-check-input')
-          = f.label :admin, 'Grant admin privileges', class: 'form-check-label'
+          = f.label :admin, t('users.edit.grant_admin'), class: 'form-check-label'
       %div.mb-5
-        = submit_tag('Update', class: 'btn btn-primary me-1')
+        = submit_tag(t('users.edit.update_button'), class: 'btn btn-primary me-1')
         = link_to t('components.cancel_button'), user_path(@user.username), class: 'btn btn-primary'

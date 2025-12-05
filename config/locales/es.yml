@@ -15,6 +15,30 @@ es:
         success: ¡Licencia renovada correctamente!
     index:
       title: Administración de BioPortal
+      console_title: Consola de Administración
+      tabs:
+        site_admin: Administración del sitio
+        ontology_admin: Administración de ontologías
+        licensing: Licencias
+        users: Usuarios
+      cache_management: GESTIÓN DE CACHÉ
+      version_management: GESTIÓN DE VERSIONES
+      appliance_id_title: ID DEL APPLIANCE
+      report_generated_on: "Informe generado el:"
+      actions:
+        flush_ui_cache: Vaciar caché de UI
+        reset_ui_cache: Reiniciar conexión de caché de UI
+        flush_goo_cache: Vaciar caché de GOO
+        flush_http_cache: Vaciar caché HTTP
+        check_updates: Comprobar actualizaciones
+        copy_appliance_id: Copiar ID del Appliance
+        renew_license: Renovar licencia
+        create_user: Crear nuevo usuario
+      license:
+        licensed_to: Licenciado a
+        appliance_id: ID del Appliance
+        valid_till: Válido hasta
+        days_remaining: Días restantes
     parse_log:
       title: "Registro de parseo para %{acronym}"
 
@@ -145,6 +169,22 @@ es:
       errors: Errores
       problem_detected: Detectamos un problema con el archivo.
       problem_validating: Problema validando el archivo, por favor inténtalo de nuevo
+    feedback:
+      title: Comentarios
+      support_intro: Ofrecemos soporte para preguntas, informes de errores, solicitudes de funcionalidades, envío de ontologías, etc.
+      include_following: "Por favor, incluye lo siguiente:"
+      include_email: Tu correo electrónico, para poder responderte.
+      if_error: "Si describes un error, detalles de cómo ocurrió, incluyendo:"
+      error_url: URL de la página que produce el error
+      error_steps: Pasos exactos para replicar el error
+      error_message: Mensaje de error completo, si lo hay
+      use_form_or_email: Puedes usar el formulario de abajo o enviarnos un correo a
+      form_errors: Errores en el formulario
+      name_label: "Nombre:*"
+      email_label: "Correo electrónico:*"
+      greeting: Hola
+      comment_label: "Comentario:*"
+      submit_button: Enviar comentarios
     user:
       subscribed_feeds: Feeds suscritos
       feed_labels:
@@ -254,6 +294,56 @@ es:
   annotatorplus:
     index:
       title: Annotator Plus
+      heading: Annotator +
+      intro: Obtén anotaciones para terminologías en un texto con clases de las ontologías
+      help_aria: Ver ayuda del anotador
+      placeholders:
+        input_text: Introduce o pega texto para anotar
+        select_umls_semantic_types: Comienza a escribir para seleccionar tipos semánticos UMLS
+        select_umls_semantic_groups: Comienza a escribir para seleccionar grupos semánticos UMLS o déjalo en blanco para usar todos
+        semantic_groups: Comienza a escribir para seleccionar grupos semánticos UMLS o déjalo en blanco para usar todos
+      insert_sample_text: insertar texto de ejemplo
+      longest_only: Coincidir solo la más larga
+      partial_words: Coincidir palabras parciales
+      include_mappings: Incluir mapeos
+      exclude_numbers: Excluir números
+      exclude_synonyms: Excluir sinónimos
+      select_umls_semantic_types: Seleccionar tipos semánticos UMLS
+      select_umls_semantic_groups: Seleccionar grupos semánticos UMLS
+      include_ancestors_up_to_level: Incluir ancestros hasta el nivel
+      include_score: "Incluir puntuación:"
+      score_help: Puntuar anotaciones siguiendo la medida NCBO de 2009 (old) o la medida C-Value (cvalue). Si se usa expansión jerárquica, preferir cvalueh.
+      score_threshold: "Filtrar por umbral de puntuación:"
+      score_threshold_help: Especifica el valor mínimo de puntuación para anotaciones
+      confidence_threshold: "Filtrar umbral de confianza:"
+      confidence_threshold_help: Especifica la posición mínima en la distribución de puntuación (entre 1 y 100)
+      detect_negation: Detectar negación
+      negation_help: Detecta si un concepto ha sido negado (afirmado, negado, posible)
+      detect_experiencer: Detectar experiencia
+      experiencer_help: Detecta quién experimentó cada concepto identificado (paciente, otro)
+      detect_temporality: Detectar temporalidad
+      temporality_help: Detecta cuándo ocurrió el concepto anotado (reciente, histórico, hipotético)
+      entity_recognizer: Reconocedor de entidades
+      get_annotations: Obtener anotaciones
+      annotations: Anotaciones
+      results_filtered_by: "Los resultados están filtrados por:"
+      filter: Filtro
+      headers:
+        class: Clase
+        ontology: Ontología
+        type: Tipo
+        umls_sem_type: Tipo semántico UMLS
+        context: Contexto
+        matched_class: Clase coincidente
+        matched_ontology: Ontología coincidente
+        score: Puntuación
+        negation: Negación
+        experiencer: Experiencia
+        temporality: Temporalidad
+      format_results_as: "Formatear resultados como:"
+      to_reproduce: "Para reproducir estos resultados:"
+      additional_parameters_at: Parámetros adicionales documentados en
+      annotator_web_service: Servicio web del Anotador
 
   recommender:
     intro: Obtén recomendaciones de las ontologías más relevantes basadas en un extracto de texto o una lista de palabras clave
@@ -300,6 +390,9 @@ es:
       view_search_documentation: Ver documentación de búsqueda
       show_advanced: "Mostrar opciones avanzadas >>"
       hide_advanced: "Ocultar opciones avanzadas <<"
+      resource_type: Tipo de búsqueda
+      forms: Formas (OntoLex)
+      classes: Clases
       include_in_search: "Incluir en la búsqueda:"
       property_values: Valores de propiedad
       obsolete_classes: Clases obsoletas
@@ -316,6 +409,8 @@ es:
       obsolete_definition: >
         Una clase que los autores de la ontología han marcado como obsoleta y que recomiendan no usar. Estas clases 
         a menudo se mantienen en las ontologías (en lugar de eliminarlas por completo) para que los sistemas existentes que dependen de ellas sigan funcionando.
+      pos_placeholder: "ej., sustantivo, verbo, adjetivo"
+      subjects_placeholder: "URIs o palabras clave separadas por comas"
     ontolex:
       forms_label: "Formas (OntoLex)"
       domains: "Dominios"
@@ -323,6 +418,17 @@ es:
       view_entry: "ver entrada"
       view_entries: "ver entradas"
       lexical_filters: "Filtros Léxicos"
+      language_filter: "Idioma"
+      part_of_speech: "Categoría gramatical"
+      subjects_filter: "Dominios/Temas"
+
+  ontology_viewer:
+    last_uploaded: "Última carga:"
+    link_to_page: Enlace a esta página
+    ontolex_entity_details: Detalles de entidad OntoLex
+    loading: Cargando...
+    close: Cerrar
+    create_mapping: Crear mapeo
 
   ontology_details:
     sections:
@@ -525,6 +631,10 @@ es:
     tree_view_empty: No se encontraron resultados
     copy_original_uri: Copiar URI original
     copy_portal_uri: Copiar URI de %{portal_name}
+    close_button: Cerrar
+    create_mapping: Crear mapeo
+    link_to_page: Enlace a esta página
+    ontolex_details: Detalles de entidad OntoLex
 
   projects:
     index:
@@ -544,6 +654,21 @@ es:
       edit: Editar
       delete_admin_only: Eliminar (solo admin)
       are_you_sure: ¿Estás seguro?
+    new:
+      heading: Nuevo proyecto
+      create_button: Crear proyecto
+    edit:
+      heading: Editando proyecto
+      update_button: Actualizar proyecto
+    show:
+      title: "Proyecto %{name}"
+      edit_project: Editar proyecto
+      description: "Descripción:"
+      institution: "Institución:"
+      contacts: "Contactos:"
+      home_page: "Página principal:"
+      ontologies_used: Ontologías utilizadas
+      none_associated: No hay ontologías asociadas actualmente con este proyecto
     form:
       errors_on_form: Errores en el formulario
       name_label: Nombre
@@ -577,6 +702,7 @@ es:
     load_from_url: "Cargar desde URL"
     new_versions_loaded: "Nuevas versiones cargadas"
     upload_local_file: "Subir un archivo local"
+    download_latest: "Descargar última ontología"
     visualize:
       jump_to: "Ir a:"
     metadata:
@@ -827,6 +953,9 @@ es:
       map_to_placeholder: Comienza a escribir para seleccionar una clase
 
   change_requests:
+    common:
+      comment_label: Comentario
+      submit_button: Enviar
     create_synonym:
       title: "Añadir propuesta de sinónimo para %{concept_label}"
       labels:
@@ -842,6 +971,27 @@ es:
         comment: Comentario
       submit: Enviar
       close: Cerrar
+    edit_definition:
+      title: "Propuesta: modificar la definición de '%{concept_label}'"
+      proposal_label: "Propuesta: modificar la definición de '%{concept}'"
+      help_text: Introduce el texto de reemplazo deseado
+      comment: Comentario
+      comment_help: Opcionalmente introduce un comentario explicando el motivo de la modificación
+      submit: Enviar
+    node_rename:
+      title: "Propuesta: renombrar '%{concept_label}'"
+      proposal_label: "Propuesta: renombrar '%{concept}'"
+      preferred_name_label: Nombre preferido
+      help_text: Introduce el nuevo nombre preferido
+      comment: Comentario
+      comment_help: Opcionalmente introduce un comentario explicando el motivo del cambio de nombre
+      submit: Enviar
+    node_obsoletion:
+      title: "Propuesta: marcar como obsoleto '%{concept_label}'"
+      proposal_label: "Propuesta: marcar como obsoleto '%{concept}'"
+      comment: Comentario
+      comment_help: Opcionalmente introduce un comentario describiendo el motivo de la obsolescencia
+      submit: Enviar
 
   submissions:
     submission_updated_successfully: "Metadatos actualizados correctamente"
@@ -942,6 +1092,15 @@ es:
       close: cerrar
       search_all_ontology_names: Buscar en todos los nombres de ontologías
 
+  passwords:
+    edit:
+      title: Cambiar contraseña
+      heading: Cambiar contraseña
+      instructions: "Introduce una nueva contraseña para tu cuenta de %{site} (%{username})"
+      new_password: Nueva contraseña
+      confirm_password: Confirmar nueva contraseña
+      update_button: Actualizar
+
   notifier:
     feedback:
       name: Nombre
@@ -973,6 +1132,21 @@ es:
       sign_up: Registrarse
       have_account: ¿Ya tienes una cuenta?
       log_in: Iniciar sesión
+    edit:
+      title: Editar cuenta
+      heading: Editar cuenta
+      errors_updating: "Errores al actualizar la cuenta:"
+      first_name: Nombre
+      last_name: Apellidos
+      email_address: Correo electrónico
+      github_username: Usuario de GitHub
+      github_help: "Usuario en GitHub, por ejemplo: 'octocat'"
+      orcid_id: ORCID iD
+      orcid_help: "ORCID de 16 dígitos, por ejemplo: 0000-1234-5678-9101"
+      grant_admin: Otorgar privilegios de administrador
+      update_button: Actualizar
+      confirm_make_admin: ¿Estás seguro de que quieres hacer a este usuario administrador?
+      confirm_revoke_admin: ¿Estás seguro de que quieres revocar los privilegios de administrador de este usuario?
     index:
       headers:
         first_name: Nombre
@@ -985,6 +1159,7 @@ es:
       actions:
         view_edit_delete: Ver | Editar | Eliminar
     show:
+      title: Información de la cuenta de usuario
       account_basics: Información básica de la cuenta
       first_name: Nombre
       last_name: Apellidos
@@ -995,6 +1170,7 @@ es:
       change_password: Cambiar contraseña
       api_key: Clave API
       api_key_help: "Tu clave API se puede usar para acceder a la API REST y servicios de %{site}"
+      copy_api_key: Copiar clave API
       subscriptions: Suscripciones
       headers:
         ontology: Ontología
@@ -1003,6 +1179,18 @@ es:
       projects_you_created: "Proyectos que creaste en %{site}"
       ontologies: Ontologías
       ontologies_admin_access: "Ontologías a las que tienes acceso administrativo en %{site}"
+      custom_ontology_set: Conjunto personalizado de ontologías
+      custom_ontology_intro: "Personaliza tu visualización:"
+      custom_ontology_description: "elige las ontologías que quieres ver y %{site} ocultará las demás."
+      custom_ontology_login_note: "Nota: debes iniciar sesión para usar esta función"
+      custom_ontology_slice_prefix: "Visita el "
+      custom_ontology_slice_link: "sitio principal"
+      custom_ontology_slice_suffix: " para modificar tu conjunto personalizado de ontologías"
+      select_custom_ontologies: Seleccionar ontologías personalizadas
+      save_custom_ontologies: Guardar ontologías personalizadas
+      no_ontologies_picked: "Aún no has seleccionado ninguna ontología"
+      select_ontologies: Seleccionar ontologías
+      subscribe_error: "Problema al suscribirse a los correos, por favor intenta de nuevo"
 
   notes:
     none_to_display: No hay notas para mostrar

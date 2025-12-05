@@ -1,6 +1,5 @@
 - @title = t('projects.show.edit_project')
-%h1{:style => "padding: 10px;"}
-  Editing project
+%h1{:style => "padding: 10px;"}= t('projects.edit.heading')
 %p{:style => "padding-left: 10px;"}
 = form_for(:project, url: project_path(@project.acronym), html: {method: :put}) do |f|
-  = render partial: 'form', locals: { f: f, button_text: 'Update project' }
+  = render partial: 'form', locals: { f: f, button_text: t('projects.edit.update_button') }

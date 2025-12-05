@@ -118,7 +118,7 @@ module OntologiesHelper
 
     down_link = externalize_api_url(@submissions.first.id) + "/download?apikey=#{get_apikey}"
     render RoundedButtonComponent.new(link: down_link, icon: 'summary/download.svg',
-                                      size: 'medium', title: 'Download latest submission')
+                                      size: 'medium', title: t('ontologies.download_latest'))
   end
 
   def ontology_purl_button(purl)

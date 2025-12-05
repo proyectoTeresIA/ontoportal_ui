@@ -12,6 +12,30 @@ en:
   admin:
     index:
       title: BioPortal Administration
+      console_title: Administration Console
+      tabs:
+        site_admin: Site administration
+        ontology_admin: Ontology administration
+        licensing: Licensing
+        users: Users
+      cache_management: CACHE MANAGEMENT
+      version_management: VERSION MANAGEMENT
+      appliance_id_title: APPLIANCE ID
+      report_generated_on: "Report generated on:"
+      actions:
+        flush_ui_cache: Flush UI cache
+        reset_ui_cache: Reset UI cache connection
+        flush_goo_cache: Flush GOO cache
+        flush_http_cache: Flush HTTP cache
+        check_updates: Check for updates
+        copy_appliance_id: Copy Appliance ID
+        renew_license: Renew license
+        create_user: Create New User
+      license:
+        licensed_to: Licensed to
+        appliance_id: Appliance ID
+        valid_till: Valid till
+        days_remaining: Days remaining
     parse_log:
       title: "Parse Log for %{acronym}"
     licenses:
@@ -144,6 +168,22 @@ en:
       errors: Errors
       problem_detected: We detected a problem with the file.
       problem_validating: Problem validating file, please try again
+    feedback:
+      title: Feedback
+      support_intro: Support is available for Questions, Error reports, Feature requests, Ontology submissions, etc.
+      include_following: "Please include the following:"
+      include_email: Your email, so we can respond.
+      if_error: "If you are describing an error, details of how the error occurred, including:"
+      error_url: URL of the page resulting in the error
+      error_steps: Exact steps to replicate the error
+      error_message: Full error message, if any
+      use_form_or_email: You can use the form below or email us at
+      form_errors: Errors On Form
+      name_label: "Name:*"
+      email_label: "Email Address:*"
+      greeting: Hello
+      comment_label: "Comment:*"
+      submit_button: Send Feedback
     user:
       subscribed_feeds: Subscribed Feeds
       feed_labels:
@@ -219,12 +259,15 @@ en:
   annotatorplus:
     index:
       title: Annotator Plus
+      heading: Annotator +
       intro: Get annotations for terminologies in a text with classes from the ontologies
       annotatorplus_html: <em>Check out <a href="%{annotatorplus_href}">AnnotatorPlus</a> beta; a new version of the Annotator with added support for negation, and more!</em>
       help_aria: View annotator help
       placeholders:
         input_text: Enter or paste text to be annotated
         select_umls_semantic_types: Start typing to select UMLS semantic types
+        select_umls_semantic_groups: Start typing to select UMLS semantic groups or leave blank to use all
+        semantic_groups: Start typing to select UMLS semantic groups or leave blank to use all
       insert_sample_text: insert sample text
       longest_only: Match longest only
       partial_words: Match partial words
@@ -232,7 +275,20 @@ en:
       exclude_numbers: Exclude numbers
       exclude_synonyms: Exclude synonyms
       select_umls_semantic_types: Select UMLS semantic types
+      select_umls_semantic_groups: Select UMLS semantic groups
       include_ancestors_up_to_level: Include ancestors up to level
+      include_score: "Include score:"
+      score_help: Score annotations following the previous 2009 NCBO measure (old) or the C-Value measure (cvalue). If hierarchy expansion is used, then prefer cvalueh.
+      score_threshold: "Filter by score threshold:"
+      score_threshold_help: Specify the minimum score value for annotations
+      confidence_threshold: "Filter confidence threshold:"
+      confidence_threshold_help: Specify the minimum position in the scoring distribution (between 1 and 100)
+      detect_negation: Detect negation
+      negation_help: Detect if a concept has been negated (affirmed, negated, possible)
+      detect_experiencer: Detect experiencer
+      experiencer_help: Detect who experienced each identified concept (patient, other)
+      detect_temporality: Detect temporality
+      temporality_help: Detect when the annotated concept occurred (recent, historical, hypothetical)
       entity_recognizer: Entity recognizer
       get_annotations: Get Annotations
       annotations: Annotations
@@ -246,6 +302,10 @@ en:
         context: Context
         matched_class: Matched Class
         matched_ontology: Matched Ontology
+        score: Score
+        negation: Negation
+        experiencer: Experiencer
+        temporality: Temporality
       format_results_as: "Format results as:"
       to_reproduce: "To reproduce these results:"
       additional_parameters_at: Additional parameters are documented at
@@ -296,6 +356,9 @@ en:
       view_search_documentation: View search documentation
       show_advanced: "Show advanced options >>"
       hide_advanced: "Hide advanced options <<"
+      resource_type: Search Type
+      forms: Forms (OntoLex)
+      classes: Classes
       include_in_search: "Include in search:"
       property_values: Property values
       obsolete_classes: Obsolete classes
@@ -311,6 +374,8 @@ en:
       obsolete_definition: >
         A class that the authors of the ontology have flagged as being obsolete and which they recommend that people not use. These classes 
         are often left in ontologies (rather than removing them entirely) so that existing systems that depend on them will continue to function.
+      pos_placeholder: "e.g., noun, verb, adjective"
+      subjects_placeholder: "Comma-separated URIs or keywords"
     ontolex:
       forms_label: "Forms (OntoLex)"
       domains: "Domains"
@@ -318,6 +383,17 @@ en:
       view_entry: "view entry"
       view_entries: "view entries"
       lexical_filters: "Lexical Filters"
+      language_filter: "Language"
+      part_of_speech: "Part of Speech"
+      subjects_filter: "Domains/Subjects"
+
+  ontology_viewer:
+    last_uploaded: "Last uploaded:"
+    link_to_page: Link to this page
+    ontolex_entity_details: OntoLex Entity Details
+    loading: Loading...
+    close: Close
+    create_mapping: Create Mapping
 
   ontology_details:
     sections:
@@ -479,6 +555,9 @@ en:
       organization: "Organization:"
       license: "License:"
   change_requests:
+    common:
+      comment_label: Comment
+      submit_button: Submit
     create_synonym:
       title: "Add synonym proposal for %{concept_label}"
       labels:
@@ -494,6 +573,27 @@ en:
         comment: Comment
       submit: Submit
       close: Close
+    edit_definition:
+      title: "Proposal: modify the definition of '%{concept_label}'"
+      proposal_label: "Proposal: modify the definition of '%{concept}'"
+      help_text: Enter the desired replacement text
+      comment: Comment
+      comment_help: Optionally enter a comment giving a reason for the modification
+      submit: Submit
+    node_rename:
+      title: "Proposal: rename '%{concept_label}'"
+      proposal_label: "Proposal: rename '%{concept}'"
+      preferred_name_label: Preferred name
+      help_text: Enter the new preferred name
+      comment: Comment
+      comment_help: Optionally enter a comment giving a reason for the rename
+      submit: Submit
+    node_obsoletion:
+      title: "Proposal: obsolete '%{concept_label}'"
+      proposal_label: "Proposal: obsolete '%{concept}'"
+      comment: Comment
+      comment_help: Optionally enter a comment describing the reason for obsoletion
+      submit: Submit
 
   components:
     check_resolvability: checking resolvability...
@@ -519,6 +619,10 @@ en:
     concepts: concepts
     instances: instances
     classes: classes
+    close_button: Close
+    create_mapping: Create Mapping
+    link_to_page: Link to this page
+    ontolex_details: OntoLex Entity Details
     submitted: Submitted
     by: by
     creation_date: Creation date %{date}
@@ -555,6 +659,12 @@ en:
       edit: Edit
       delete_admin_only: Delete (admin only)
       are_you_sure: Are you sure?
+    new:
+      heading: New project
+      create_button: Create project
+    edit:
+      heading: Editing project
+      update_button: Update project
     show:
       title: "Project %{name}"
       edit_project: Edit Project
@@ -583,6 +693,7 @@ en:
     load_from_url: "Load from URL"
     new_versions_loaded: "New versions loaded"
     upload_local_file: "Upload a local file"
+    download_latest: "Download latest ontology"
     visualize:
       jump_to: "Jump to:"
     metadata:
@@ -955,6 +1066,21 @@ en:
       sign_up: Sign Up
       have_account: Already have an account?
       log_in: Log in
+    edit:
+      title: Edit Account
+      heading: Edit account
+      errors_updating: "Errors updating account:"
+      first_name: First name
+      last_name: Last name
+      email_address: Email address
+      github_username: GitHub username
+      github_help: "User handle on GitHub, for example: 'octocat'"
+      orcid_id: ORCID iD
+      orcid_help: "16-digit ORCID, for example: 0000-1234-5678-9101"
+      grant_admin: Grant admin privileges
+      update_button: Update
+      confirm_make_admin: Are you sure you want to make this user an admin?
+      confirm_revoke_admin: Are you sure you want to revoke admin privileges for this user?
     index:
       headers:
         first_name: First Name
@@ -978,6 +1104,7 @@ en:
       change_password: Change password
       api_key: API Key
       api_key_help: "Your API key can be used to access the %{site} RESTful API and services"
+      copy_api_key: Copy API Key
       subscriptions: Subscriptions
       headers:
         ontology: Ontology
@@ -986,6 +1113,27 @@ en:
       projects_you_created: "Projects you created in %{site}"
       ontologies: Ontologies
       ontologies_admin_access: "Ontologies you have administrative access to in %{site}"
+      custom_ontology_set: Custom ontology set
+      custom_ontology_intro: "Customize your display:"
+      custom_ontology_description: "pick the ontologies you want to see and %{site} will hide all other ontologies."
+      custom_ontology_login_note: "Please note: you must be logged in to use this feature"
+      custom_ontology_slice_prefix: "Please visit the "
+      custom_ontology_slice_link: "main site"
+      custom_ontology_slice_suffix: " to modify your custom ontology set"
+      select_custom_ontologies: Select Custom Ontologies
+      save_custom_ontologies: Save Custom Ontologies
+      no_ontologies_picked: "You haven't picked any ontologies yet"
+      select_ontologies: Select ontologies
+      subscribe_error: "Problem subscribing to emails, please try again"
+
+  passwords:
+    edit:
+      title: Change Password
+      heading: Change password
+      instructions: "Enter a new password for your %{site} account (%{username})"
+      new_password: New password
+      confirm_password: Confirm new password
+      update_button: Update
 
   feedback:
     complete:

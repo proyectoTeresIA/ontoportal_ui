@@ -60,11 +60,11 @@
               = t('annotator.index.placeholders.select_umls_semantic_types')
 
           %div.mb-3
-            %label.form-label{for: "semantic_groups"} Select UMLS semantic groups
+            %label.form-label{for: "semantic_groups"}= t('annotatorplus.index.select_semantic_groups')
             = select_tag("semantic_groups", options_for_select(@semantic_groups_for_select), multiple: "true",
                          class: "form-select", "aria-describedby": "selectSemanticGroupsHelpBlock")
             %div#selectSemanticGroupsHelpBlock.form-text
-              Start typing to select UMLS semantic groups or leave blank to use all
+              = t('annotatorplus.index.placeholders.semantic_groups')
 
         %div.mb-3
           %label.form-label{for: "class_hierarchy_max_level"}= t('annotator.index.include_ancestors_up_to_level') + ":"
@@ -72,26 +72,25 @@
           = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select")
 
         %div.mb-3
-          %label.form-label{for: "score"} Include score:
+          %label.form-label{for: "score"}= t('annotatorplus.index.include_score')
           - options = [["none", ""], ["old", "old"], ["cvalue", "cvalue"], ["cvalueh", "cvalueh"]]
           = select_tag(:score, options_for_select(options, 0), class: "form-select",
                        "aria-describedby": "includeScoreHelpBlock")
           %div#includeScoreHelpBlock.form-text
-            Score annotations following the previous 2009 NCBO measure (old) or the C-Value measure (cvalue). If
-            hierarchy expansion is used, then prefer cvalueh.
+            = t('annotatorplus.index.score_help')
 
         %div.mb-3
-          %label.form-label{for: "score_threshold"} Filter by score threshold:
+          %label.form-label{for: "score_threshold"}= t('annotatorplus.index.score_threshold')
           = number_field_tag(:score_threshold, 0, id: "score_threshold", class: "form-control",
                              "aria-describedby": "scoreThresholdHelpBlock")
-          %div#scoreThresholdHelpBlock.form-text Specify the minimum score value for annotations
+          %div#scoreThresholdHelpBlock.form-text= t('annotatorplus.index.score_threshold_help')
 
         %div.mb-3
-          %label.form-label{for: "confidence_threshold"} Filter confidence threshold:
+          %label.form-label{for: "confidence_threshold"}= t('annotatorplus.index.confidence_threshold')
           = number_field_tag(:confidence_threshold, 0, min: 0, max: 100, id: "confidence_threshold",
                              class: "form-control", "aria-describedby": "confidenceThresholdHelpBlock")
           %div#confidenceThresholdHelpBlock.form-text
-            Specify the minimum position in the scoring distribution (between 1 and 100)
+            = t('annotatorplus.index.confidence_threshold_help')
 
         - if @recognizers.length > 1
           %div.mb-3
@@ -103,18 +102,18 @@
         %div.mb-3
           %div.form-check
             = check_box_tag("negation", :all, false, class: "form-check-input")
-            %label.form-check-label{for: "negation"} Detect negation
-            %div#negationHelp.form-text Detect if a concept has been negated (affirmed, negated, possible)
+            %label.form-check-label{for: "negation"}= t('annotatorplus.index.detect_negation')
+            %div#negationHelp.form-text= t('annotatorplus.index.negation_help')
 
           %div.form-check
             = check_box_tag("experiencer", :all, false, class: "form-check-input")
-            %label.form-check-label{for: "experiencer"} Detect experiencer
-            %div#experiencerHelp.form-text Detect who experienced the each identified concept (patient, other)
+            %label.form-check-label{for: "experiencer"}= t('annotatorplus.index.detect_experiencer')
+            %div#experiencerHelp.form-text= t('annotatorplus.index.experiencer_help')
 
           %div.form-check
             = check_box_tag("temporality", :all, false, class: "form-check-input")
-            %label.form-check-label{for: "temporality"} Detect temporality
-            %div#temporalityHelp.form-text Detect when the annotated concept occurred (recent, historical, hypothetical)
+            %label.form-check-label{for: "temporality"}= t('annotatorplus.index.detect_temporality')
+            %div#temporalityHelp.form-text= t('annotatorplus.index.temporality_help')
 
       %div.mb-4
         = tag.input(value: t('annotator.index.get_annotations'), type: "button", id: "annotator_button", class: "btn btn-primary")
@@ -136,19 +135,19 @@
         %thead
           %tr
             %th
-              Class
+              = t('annotatorplus.index.headers.class')
               %span.popup_container
                 %span.bp_popup_link_container
                   %a#filter_classes.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#classes_filter_list.bp_popup_list
             %th
-              Ontology
+              = t('annotatorplus.index.headers.ontology')
               %span.popup_container
                 %span.bp_popup_link_container
                   %a#filter_ontologies.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#ontology_filter_list.bp_popup_list
             %th{class: "match_type"}
-              Type
+              = t('annotatorplus.index.headers.type')
               %span.popup_container
                 %span.bp_popup_link_container
                   %a#filter_match_type.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
@@ -167,10 +166,10 @@
                 %span.bp_popup_link_container
                   %a#filter_matched_ontologies.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#matched_ontology_filter_list.bp_popup_list
-            %th Score
-            %th Negation
-            %th Experiencer
-            %th Temporality
+            %th= t('annotatorplus.index.headers.score')
+            %th= t('annotatorplus.index.headers.negation')
+            %th= t('annotatorplus.index.headers.experiencer')
+            %th= t('annotatorplus.index.headers.temporality')
         %tbody
       %div.my-3
         %b= t('annotator.index.format_results_as')

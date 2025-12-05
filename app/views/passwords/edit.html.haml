@@ -5,14 +5,14 @@
         %div{class: 'alert alert-danger mb-4'}
           - for error in @errors
             %div= error
-      %h2{class: 'pb-2 border-bottom'} Change password
-      = tag.p "Enter a new password for your #{$SITE} account (#{@user.username})", class: 'text-muted mb-4'
+      %h2{class: 'pb-2 border-bottom'}= t('passwords.edit.heading')
+      = tag.p t('passwords.edit.instructions', site: $SITE, username: @user.username), class: 'text-muted mb-4'
       %div.mb-3
-        = f.label :password, 'New password', class: 'form-label'
+        = f.label :password, t('passwords.edit.new_password'), class: 'form-label'
         = f.password_field :password, class: 'form-control', required: 'true'
       %div.mb-4
-        = f.label :password_confirmation, 'Confirm new password', class: 'form-label'
+        = f.label :password_confirmation, t('passwords.edit.confirm_password'), class: 'form-label'
         = f.password_field :password_confirmation, class: 'form-control', required: 'true'
       %div
-        = submit_tag('Update', class: 'btn btn-primary me-1')
+        = submit_tag(t('passwords.edit.update_button'), class: 'btn btn-primary me-1')
         = link_to t('components.cancel_button'), user_path(@user.username), class: 'btn btn-primary'

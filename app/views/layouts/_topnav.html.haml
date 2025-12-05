@@ -16,8 +16,8 @@
           = link_to(t('.annotator'), annotator_index_path, class: "nav-link")
         %li.nav-item
           = link_to(t('.recommender'), recommender_index_path, class: "nav-link")
-        %li.nav-item
-          = link_to(t('.mappings'), mappings_path, class: "nav-link")
+        -# %li.nav-item
+        -#   = link_to(t('.mappings'), mappings_path, class: "nav-link")
         -if session[:user].present? && session[:user].admin?
           %li.nav-item
             = link_to(t('.admin'), admin_index_path, class: "nav-link")

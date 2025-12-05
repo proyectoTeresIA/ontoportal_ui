@@ -46,34 +46,34 @@
       %div.modal-content
         %div.modal-header
           %h4#createNewMappingLabel.modal-title
-          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": "Close"}
+          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": t('ontology_viewer.close')}
         %div.createNewMappingModalBody.modal-body
         %div.modal-footer
-          %button{type: "button", class: "btn btn-secondary", "data-bs-dismiss": "modal"} Close
-          = submit_tag("Create Mapping", class: "btn btn-primary", id: "create_mapping_button")
+          %button{type: "button", class: "btn btn-secondary", "data-bs-dismiss": "modal"}= t('ontology_viewer.close')
+          = submit_tag(t('ontology_viewer.create_mapping'), class: "btn btn-primary", id: "create_mapping_button")
 
   -# Modal dialog for getting a permanent link to a class (must reside in a top-level position in the document to display properly).
   %div#classPermalinkModal{class: "modal fade", tabindex: "-1", aria: {labelledby: "classPermalinkLabel", hidden: "true"}}
     %div.modal-dialog.modal-dialog-centered.modal-lg
       %div.modal-content
         %div.modal-header
-          %h5#classPermalinkLabel.modal-title Link to this page
-          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": "Close"}
+          %h5#classPermalinkLabel.modal-title= t('ontology_viewer.link_to_page')
+          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": t('ontology_viewer.close')}
         %div.modal-body
           = text_field_tag("purl_input", nil, class: "form-control")
         %div.modal-footer
-          %button.btn.btn-secondary{"data-bs-dismiss": "modal"} Close
+          %button.btn.btn-secondary{"data-bs-dismiss": "modal"}= t('ontology_viewer.close')
 
   -# Modal for OntoLex entity details (shared across all OntoLex sections)
   %div#ontolexModal.modal.fade{tabindex: "-1", aria: {labelledby: "ontolexModalLabel", hidden: "true"}}
     %div.modal-dialog.modal-lg
       %div.modal-content
         %div.modal-header
-          %h5#ontolexModalLabel.modal-title OntoLex Entity Details
-          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": "Close"}
+          %h5#ontolexModalLabel.modal-title= t('ontology_viewer.ontolex_entity_details')
+          %button.btn-close{type: "button", "data-bs-dismiss": "modal", "aria-label": t('ontology_viewer.close')}
         %div.modal-body
           %div#ontolexModalContent
-            %p.text-center Loading...
+            %p.text-center= t('ontology_viewer.loading')
 
   = javascript_include_tag 'ontolex_modal'
 
@@ -89,7 +89,7 @@
           %div
             - if (details_available && !sub.released.nil?)
               %span.text-muted
-                Last uploaded:
+                = t('ontology_viewer.last_uploaded')
                 = l(Date.parse(sub.creationDate), format: :monthfull_day_year)
         %div{class: 'ont-info-links d-flex gap-2'}
           = download_button

@@ -47,16 +47,16 @@
             = label(:search, :include_views, t('search.index.ontology_views'), class: "form-check-label", for: 'search_include_views')
       
       %fieldset.row.mb-3#lexical_search_options{style: 'display: none;'}
-        %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.lexical_filters', default: 'Lexical Filters')
+        %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.ontolex.lexical_filters', default: 'Lexical Filters')
         %div.col-sm-10
           %div.mb-2
-            = label(:search, :language, t('search.index.language_filter', default: 'Language'), class: "form-label")
+            = label(:search, :language, t('search.ontolex.language_filter', default: 'Language'), class: "form-label")
             = select(:search, :language, options_for_select([['All languages', ''], ['Spanish (spa)', 'spa'], ['English (eng)', 'eng'], ['French (fre)', 'fre'], ['Catalan (cat)', 'cat'], ['Italian (ita)', 'ita'], ['Portuguese (por)', 'por']]), {}, class: "form-select")
           %div.mb-2
-            = label(:search, :part_of_speech, t('search.index.part_of_speech', default: 'Part of Speech'), class: "form-label")
+            = label(:search, :part_of_speech, t('search.ontolex.part_of_speech', default: 'Part of Speech'), class: "form-label")
             = text_field(:search, :part_of_speech, class: "form-control", placeholder: t('search.index.pos_placeholder', default: 'e.g., noun, verb, adjective'))
           %div.mb-2
-            = label(:search, :subjects, t('search.index.subjects_filter', default: 'Domains/Subjects'), class: "form-label")
+            = label(:search, :subjects, t('search.ontolex.subjects_filter', default: 'Domains/Subjects'), class: "form-label")
             = text_field(:search, :subjects, class: "form-control", placeholder: t('search.index.subjects_placeholder', default: 'Comma-separated URIs or keywords'))
       
       %fieldset.row.mb-3
@@ -92,11 +92,11 @@
   %div.modal-dialog.modal-lg.modal-dialog-scrollable
     %div.modal-content
       %div.modal-header
-        %h5#ontolexModalLabel.modal-title OntoLex Entity Details
-        %button.btn-close{type: "button", data: {bs_dismiss: "modal"}, aria: {label: "Close"}}
+        %h5#ontolexModalLabel.modal-title= t('ontology_viewer.ontolex_entity_details')
+        %button.btn-close{type: "button", data: {bs_dismiss: "modal"}, aria: {label: t('ontology_viewer.close')}}
       %div.modal-body
         %div#ontolexModalContent
-          %p Loading...
+          %p= t('ontology_viewer.loading')
 
 %div#biomixer{style: "display: none;"}
 

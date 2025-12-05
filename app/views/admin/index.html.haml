@@ -2,7 +2,7 @@
 
 %div.row
   %div.col
-    %h3.my-4 Administration Console
+    %h3.my-4= t('admin.index.console_title')
 
 %div.row
   %div.col-2
@@ -15,19 +15,19 @@
   %div.col
     %ul{class: "nav nav-tabs", id: "admin-tabs", role: "tablist"}
       %li{class: "nav-item", role: "presentation"}
-        = tag.button("Site administration", class: "nav-link active", id: "site-admin-tab", "data-bs-toggle": "tab",
+        = tag.button(t('admin.index.tabs.site_admin'), class: "nav-link active", id: "site-admin-tab", "data-bs-toggle": "tab",
                      "data-bs-target": "#site-admin", type: "button", role: "tab", "aria-controls": "site-admin",
                      "aria-selected": "true")
       %li{class: "nav-item", role: "presentation"}
-        = tag.button("Ontology administration", class: "nav-link", id: "ontology-admin-tab", "data-bs-toggle": "tab",
+        = tag.button(t('admin.index.tabs.ontology_admin'), class: "nav-link", id: "ontology-admin-tab", "data-bs-toggle": "tab",
                      "data-bs-target": "#ontology-admin", type: "button", role: "tab",
                      "aria-controls": 'ontology-admin', "aria-selected": "false")
       %li{class: "nav-item", role: "presentation"}
-        = tag.button("Licensing", class: "nav-link", id: "licensing-admin-tab", "data-bs-toggle": "tab",
+        = tag.button(t('admin.index.tabs.licensing'), class: "nav-link", id: "licensing-admin-tab", "data-bs-toggle": "tab",
                      "data-bs-target": "#licensing", type: "button", role: "tab", "aria-controls": "licensing",
                      "aria-selected": "false")
       %li{class: "nav-item", role: "presentation"}
-        = tag.button("Users", class: "nav-link", id: "users-admin-tab", "data-bs-toggle": "tab",
+        = tag.button(t('admin.index.tabs.users'), class: "nav-link", id: "users-admin-tab", "data-bs-toggle": "tab",
                      "data-bs-target": "#users", type: "button", role: "tab", "aria-controls": "users",
                      "aria-selected": "false")
     %div#adminTabContent.tab-content
@@ -38,29 +38,29 @@
         -# Clear caches
         %div#site-admin-clear-caches.my-5
           %div.site-admin-page-header
-            CACHE MANAGEMENT
+            = t('admin.index.cache_management')
           %dive.site-admin-page-section
-            = link_to("Flush UI cache", "#", id: "flush_memcache_action", class: "btn btn-outline-secondary btn-sm admin-action-item",  role: "button")
-            = link_to("Reset UI cache connection", "#", id: "reset_memcache_connection_action", class: "btn btn-outline-secondary btn-sm admin-action-item",  role: "button")
-            = link_to("Flush GOO cache", "#", id: "flush_goo_cache_action", class: "btn btn-outline-secondary btn-sm admin-action-item",  role: "button")
-            = link_to("Flush HTTP cache", "#", id: "flush_http_cache_action", class: "btn btn-outline-secondary btn-sm",  role: "button")
+            = link_to(t('admin.index.actions.flush_ui_cache'), "#", id: "flush_memcache_action", class: "btn btn-outline-secondary btn-sm admin-action-item",  role: "button")
+            = link_to(t('admin.index.actions.reset_ui_cache'), "#", id: "reset_memcache_connection_action", class: "btn btn-outline-secondary btn-sm admin-action-item",  role: "button")
+            = link_to(t('admin.index.actions.flush_goo_cache'), "#", id: "flush_goo_cache_action", class: "btn btn-outline-secondary btn-sm admin-action-item",  role: "button")
+            = link_to(t('admin.index.actions.flush_http_cache'), "#", id: "flush_http_cache_action", class: "btn btn-outline-secondary btn-sm",  role: "button")
         
         -# Check for updates
         %div#site-admin-update-check.mb-5
           %div.site-admin-page-header
-            VERSION MANAGEMENT
+            = t('admin.index.version_management')
           %dive.site-admin-page-section
-            = link_to("Check for updates", "#", id: "update_check_action", class: "btn btn-outline-secondary btn-sm",  role: "button")
+            = link_to(t('admin.index.actions.check_updates'), "#", id: "update_check_action", class: "btn btn-outline-secondary btn-sm",  role: "button")
 
         -# View appliance ID
         %div#site-admin-appliance-id.mb-5
           %div.site-admin-page-header
-            APPLIANCE ID
+            = t('admin.index.appliance_id_title')
           %div.site-admin-page-section
             %div#appliance-id
               %span
               = content_tag(:span, style: 'display: inline-block;') do
-                = render ClipboardComponent.new(message: @update_info[:appliance_id], title: 'Copy Appliance ID', show_content: false)
+                = render ClipboardComponent.new(message: @update_info[:appliance_id], title: t('admin.index.actions.copy_appliance_id'), show_content: false)
 
       -# Ontology Administration tab
       %div.tab-pane.fade{id: "ontology-admin", role: "tabpanel", aria: { labelledby: "ontology-admin-tab" }}
@@ -68,7 +68,8 @@
           %table{:style => "float:left;"}
             %tr
               %td{:style => "white-space:nowrap;"}
-                Report generated on:&nbsp;&nbsp;
+                = t('admin.index.report_generated_on')
+                &nbsp;&nbsp;
                 %span.report_date_generated
                 %a#refresh_report_action{:href => "javascript:;", :class => "link_button ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only", :style => "margin-left:11px;"}
                   %span.ui-button-text{:class => "report_date_generated_button"}
@@ -82,14 +83,14 @@
         %table.table.table-sm.table-bordered.mt-5#license-table
           %thead
             %tr
-              %th{scope: "col"} Licensed to
-              %th{scope: "col"} Appliance ID
-              %th{scope: "col"} Valid till  
-              %th{scope: "col"} Days remaining
+              %th{scope: "col"}= t('admin.index.license.licensed_to')
+              %th{scope: "col"}= t('admin.index.license.appliance_id')
+              %th{scope: "col"}= t('admin.index.license.valid_till')
+              %th{scope: "col"}= t('admin.index.license.days_remaining')
           %tbody
 
         %div.mb-5#renew-license-button
-          = link_to("Renew license", new_admin_license_path(), class: "btn btn-primary", role: "button", remote: "true")
+          = link_to(t('admin.index.actions.renew_license'), new_admin_license_path(), class: "btn btn-primary", role: "button", remote: "true")
 
         %div.mb-5#renew-license-form
 
@@ -97,5 +98,5 @@
       %div.tab-pane.fade{id: "users", role: "tabpanel", aria: { labelledby: "users-admin-tab" }}
         %div.ontologies_list_container.mt-3
           %div.mb-3
-            = link_to("Create New User", new_user_path, class: "btn btn-primary", role: "button")
+            = link_to(t('admin.index.actions.create_user'), new_user_path, class: "btn btn-primary", role: "button")
           %table#adminUsers.zebra{:cellpadding => "0", :cellspacing => "0", :width => "100%"}

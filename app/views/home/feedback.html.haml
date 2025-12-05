@@ -5,26 +5,23 @@
   = form_tag('/feedback') do
     -# Simulate form_for by providing a hidden field to check for submission
     = hidden_field_tag 'sim_submit', 'true'
-    %p{:style => "font-size:14px"}
-      Support is available for Questions, Error reports, Feature requests, Ontology
-      submissions, etc.
-    %p
-      Please include the following:
+    %p{:style => "font-size:14px"}= t('feedback.form.support_intro')
+    %p= t('feedback.form.please_include')
     .feedback
       %ul
-        %li Your email, so we can respond.
+        %li= t('feedback.form.include_email')
         %li
-          If you are describing an error, details of how the error occurred, including:
+          = t('feedback.form.include_error_details')
           %ul
-            %li URL of the page resulting in the error
-            %li Exact steps to replicate the error
-            %li Full error message, if any
+            %li= t('feedback.form.error_url')
+            %li= t('feedback.form.error_steps')
+            %li= t('feedback.form.error_message')
     %p
-      You can use the form below or email us at
+      = t('feedback.form.email_us_intro')
       %a{:href => "mailto:#{$SUPPORT_EMAIL}"}= $SUPPORT_EMAIL
     - unless @errors.nil?
       %div{:style => "color:red;margin-bottom:1em;"}
-        Errors On Form
+        = t('feedback.form.errors_on_form')
         %ul
           - for error in @errors
             %li= error
@@ -33,21 +30,21 @@
       = hidden_field_tag("location", params[:location])
       - if session[:user].nil?
         %tr
-          %th.top Name:*
+          %th.top= t('feedback.form.name_label')
           %td.top
             %input{:name => "name", :style => "width:180px", :type => "text", :value => "#{h(params[:name])}"}/
         %tr
-          %th Email Address:*
+          %th= t('feedback.form.email_label')
           %td
             %input{:name => "email", :style => "width:180px", :type => "text", :value => "#{h(params[:email])}"}/
       - else
-        Hello
+        = t('feedback.form.hello')
         = succeed "," do
           %b= session[:user].username
         = hidden_field_tag "name", session[:user].username
         = hidden_field_tag "email", session[:user].email
       %tr
-        %th.top Comment:*
+        %th.top= t('feedback.form.comment_label')
         %td.top
           %textarea{:cols => "60", :name => "comment", :rows => "8"}= h(params[:comment])
       - if using_captcha? && !session[:user]
@@ -56,4 +53,4 @@
           %td= recaptcha_tags
       %tr
         %td{:align => "right", :colspan => "2"}
-          %input{:type => "submit", :value => "Send Feedback"}/
+          %input{:type => "submit", :value => t('feedback.form.send_button')}/

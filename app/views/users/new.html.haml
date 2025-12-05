@@ -1,8 +1,8 @@
-- @title = t('users.new.title', default: 'Register')
+- @title = t('users.new.title', default: 'Create User (Admin)')
 
 %div.signup
   = form_with scope: :user, url: users_path, class: 'form-signup' do |f|
-    %h4.mb-4= t('users.new.create_account', default: 'Create an account')
+    %h4.mb-4= t('users.new.create_account', default: 'Create a new user account')
 
     -# TODO: display errors in a standard Rails flash message
     - if @errors.present?
@@ -38,8 +38,4 @@
         = recaptcha_tags
 
     %div.d-grid
-      = submit_tag(t('users.new.sign_up', default: 'Sign Up'), class: 'btn btn-lg btn-primary btn-block')
-
-    %p.text-muted.mt-2
-      = t('users.new.have_account', default: 'Already have an account?')
-      = link_to(t('users.new.log_in', default: 'Log in'), login_index_path)
+      = submit_tag(t('users.new.sign_up', default: 'Create User'), class: 'btn btn-lg btn-primary btn-block')

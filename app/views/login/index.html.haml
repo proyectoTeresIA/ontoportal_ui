@@ -22,8 +22,5 @@
       = f.label(:password)
     %div.d-grid.mb-3
       = submit_tag(t('login.index.submit'), class: 'btn btn-lg btn-primary')
-    %p.text-muted.mb-1
-      = t('login.index.new_user', site: $SITE)
-      = link_to(t('login.index.create_account'), new_user_path)
     %p.text-muted
       = link_to(t('login.index.forgot_password'), lost_pass_path)

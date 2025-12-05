@@ -3,7 +3,7 @@
 class UsersController < ApplicationController
   before_action :unescape_id, only: [:edit, :show, :update]
   before_action :verify_owner, only: [:edit, :show]
-  before_action :authorize_admin, only: [:index]
+  before_action :authorize_admin, only: [:index, :new, :create]
 
   layout :determine_layout
 

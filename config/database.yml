@@ -50,6 +50,13 @@ test:
 production:
   <<: *default
   database: bioportal_ui_production
+  pool: <%= ENV["RAILS_MAX_THREADS"] || 5 %>
+  timeout: 5000
+  reconnect: true
+  reaping_frequency: 10
+  variables:
+    wait_timeout: 28800
+    interactive_timeout: 28800
 
 appliance:
   <<: *default

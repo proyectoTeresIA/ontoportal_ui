@@ -12,11 +12,11 @@ main > .container-fluid {
 
 .footer {
   height: 310px; /* Set the fixed height of the footer here */
-  color: #757575;
-  background-color: #ccc;
+  color: #6c757d;
+  border-top: 1px solid #e5e5e5;
 }
 
-body{
+body {
   display: flex;
   flex-direction: column;
   height: 100vh;

@@ -251,10 +251,13 @@ module OntologiesHelper
     if submission.ontology.summaryOnly
       link = 'N/A - metadata only'
     else
+      # Check if this is an OntoLex submission
+      is_ontolex = submission.hasOntologyLanguage == 'ONTOLEX'
+      
       uri = externalize_api_url(submission.id) + "/download?apikey=#{get_apikey}"
-      link = "<a href='#{uri}' 'rel='nofollow'>#{submission.pretty_format}</a>"
+      link = "<a href='#{uri}' 'rel='nofollow'>#{is_ontolex ? 'ONTOLEX' : submission.pretty_format}</a>"
       latest = ontology.explore.latest_submission({ include_status: 'ready' })
-      if latest && latest.submissionId == submission.submissionId
+      if latest && latest.submissionId == submission.submissionId && !is_ontolex
         link += " | <a href='#{externalize_api_url(ontology.id)}/download?apikey=#{get_apikey}&download_format=csv' rel='nofollow'>CSV</a>"
         if !latest.hasOntologyLanguage.eql?('UMLS')
           link += " | <a href='#{externalize_api_url(ontology.id)}/download?apikey=#{get_apikey}&download_format=rdf' rel='nofollow'>RDF/XML</a>"

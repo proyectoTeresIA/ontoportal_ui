@@ -11,11 +11,11 @@ en:
 
   admin:
     index:
-      title: BioPortal Administration
+      title: TeresIA Administration
       console_title: Administration Console
       tabs:
         site_admin: Site administration
-        ontology_admin: Ontology administration
+        ontology_admin: Terminology administration
         licensing: Licensing
         users: Users
       cache_management: CACHE MANAGEMENT
@@ -50,7 +50,7 @@ en:
 
   layouts:
     footer:
-      copyright_html: Copyright &copy; 2005‑2024, The Board of Trustees of Leland Stanford Junior University. All rights reserved.
+      copyright_html: "© 2026 TeresIA Project. Based on OntoPortal (NCBO BioPortal, Stanford University). All rights reserved."
       free_access: "%{site} is free and open to all users, with no login required."
       grant_html: >
 
@@ -69,7 +69,7 @@ en:
         other: This installation of the OntoPortal Appliance is a trial license, which will expire in %{count} days.
     topnav:
       toggle_navigation: Toggle navigation
-      ontologies: Ontologies
+      ontologies: Terminologies
       search: Search
       annotator: Annotator
       recommender: Recommender
@@ -109,8 +109,8 @@ en:
         cookies: Use of Cookies
 
     ontology_report_submissions:
-      header: "Ontology Submissions for %{acronym}"
-      missing: "Ontology %{acronym} does not appear to exist in the system. It may have been deleted. Please refresh your browser window."
+      header: "terminology Submissions for %{acronym}"
+      missing: "terminology %{acronym} does not appear to exist in the system. It may have been deleted. Please refresh your browser window."
       submission: Submission
       release_date: Release Date
       upload_date: Upload Date
@@ -120,25 +120,25 @@ en:
       less: less...
 
   application:
-    ontology_not_found: Ontology %{acronym} not found
+    ontology_not_found: terminology %{acronym} not found
     error_load: "Error: load failed"
     not_found_message: Not Found
     errors_in_fields: "Errors in fields: %{errors}"
 
   home:
     index:
-      find_ontology_placeholder: Start typing ontology name, then choose from list
+      find_ontology_placeholder: Start typing terminology name, then choose from list
       query_placeholder: Enter a class
       tagline: the world's most comprehensive repository of terminologies
       title: Welcome to the %{organization}
       welcome: Welcome to %{organization}'s %{site},
       search_for_class: Search for a class
       advanced_search: Advanced search
-      find_an_ontology: Find an ontology
+      find_an_ontology: Find an terminology
       browse_ontologies: Browse ontologies
       all: All
       browse_by_group: Browse by group
-      ontology_visits: Ontology visits
+      ontology_visits: terminology visits
       more: More
       statistics: Statistics
       ontologies: Ontologies
@@ -151,26 +151,26 @@ en:
         %{site} allows users to browse, upload, download, search, comment on, and create mappings for ontologies.
       browse: >
         Users can browse and explore individual ontologies by navigating either a tree structure or an animated graphical view. Users can also view mappings and 
-        ontology metadata, and download ontologies. Additionally, users who are signed in may submit a new ontology to the library.
+        terminology metadata, and download ontologies. Additionally, users who are signed in may submit a new terminology to the library.
       rest_examples_html: View documentation and examples of the <a href="%{api_url}" target="_blank">%{site} REST API</a>.
       announce_list_html: >
 
-    ontology_upload_button: "Submit Ontology"
+    ontology_upload_button: "Submit terminology"
 
     account:
       title: Account
     validate_ontology_file:
-      heading: Validate your ontology file
+      heading: Validate your terminology file
       validate_button: Validate
       processing: Processing...
-      valid_ontology: Valid Ontology
+      valid_ontology: Valid terminology
       no_errors_found: No errors were found
       errors: Errors
       problem_detected: We detected a problem with the file.
       problem_validating: Problem validating file, please try again
     feedback:
       title: Feedback
-      support_intro: Support is available for Questions, Error reports, Feature requests, Ontology submissions, etc.
+      support_intro: Support is available for Questions, Error reports, Feature requests, terminology submissions, etc.
       include_following: "Please include the following:"
       include_email: Your email, so we can respond.
       if_error: "If you are describing an error, details of how the error occurred, including:"
@@ -207,7 +207,7 @@ en:
       proposals_added: "%{count} proposals added"
 
   submission_inputs:
-    edit_ontology_title: Edit Ontology Metadata
+    edit_ontology_title: Edit terminology Metadata
     name: "Name"
     acronym: "Acronym"
     metadata_selector_label: "Filter properties to show"
@@ -223,7 +223,7 @@ en:
       The resulting RDF triples will then be loaded in %{portal_name} triple-store.
     ontology_owl_language_link: the Protégé
     ontology_owl_language_help: >
-      OWL ontologies submitted to %{portal_name} will be parsed by the OWL-API. An easy way to verify if your ontology will parse is to open it with
+      OWL ontologies submitted to %{portal_name} will be parsed by the OWL-API. An easy way to verify if your terminology will parse is to open it with
       %{link}
       software which does use the same component.
     ontology_umls_language_link: by the UMLS2RDF tool.
@@ -235,19 +235,19 @@ en:
     categories: Categories
     groups: Groups
     visibility: Visibility
-    accounts_allowed: Add or remove accounts that are allowed to see this ontology in %{portal_name}.
-    ontology_view_of_another_ontology: Is this ontology a view of another ontology?
+    accounts_allowed: Add or remove accounts that are allowed to see this terminology in %{portal_name}.
+    ontology_view_of_another_ontology: Is this terminology a view of another ontology?
     contact: Contact
     equivalents: Equivalents
     validators: Validators
     help_text: Help text
     contact_name: "%{name} Name"
     contact_email: "%{name} Email"
-    edit_metadata_instruction: "Edit the metadata of your ontology here. Some of these values are used by %{portal_name} functionalities, including for FAIRness assessment. %{link}"
+    edit_metadata_instruction: "Edit the metadata of your terminology here. Some of these values are used by %{portal_name} functionalities, including for FAIRness assessment. %{link}"
     edit_metadata_instruction_link: "See guidelines and recommendations for metadata here."
     license_help: "%{portal_name} requires an URI for the license. If you do not find your choice here, %{link}"
     license_help_link: "Please pick up an URI from here."
-    deprecated_help: "An ontology with status retired shall necessarily be also deprecated, but not the opposite."
+    deprecated_help: "An terminology with status retired shall necessarily be also deprecated, but not the opposite."
     known_usage_help: "Consider also declaring %{metadata_knownUsage_help}"
     known_usage_help_link: "the projects that are using the ontology"
     help_creator: "The following properties take for value an 'agent' in %{portal_name} (either a person or an organization). These agents are shared over all the ontologies and suggested with autocompletion if they already exist. Editing an agent here will change it to all the ontologies that agent is involved in."
@@ -315,15 +315,15 @@ en:
     intro: Get recommendations for the most relevant ontologies based on an excerpt from a text or a list of keywords
     index:
       title: Recommender
-      heading: Ontology Recommender
-      help_aria: View ontology recommender help
+      heading: terminology Recommender
+      help_aria: View terminology recommender help
       input_section: Input
       output_section: Output
       input_text_label: Text
       input_keywords_label: Keywords (separated by commas)
       output_ontologies_label: Ontologies
-      output_sets_label: Ontology sets
-      textarea_placeholder: Paste a paragraph of text or some keywords to use in calculating ontology recommendations
+      output_sets_label: terminology sets
+      textarea_placeholder: Paste a paragraph of text or some keywords to use in calculating terminology recommendations
       insert_sample_input: insert sample input
       show_advanced: "Show advanced options >>"
       weights_configuration: Weights configuration
@@ -336,7 +336,7 @@ en:
       get_recommendations: Get Recommendations
       edit_input: Edit Input
       errors:
-        not_text: Please paste a paragraph of text or some keywords to use in calculating ontology recommendations.
+        not_text: Please paste a paragraph of text or some keywords to use in calculating terminology recommendations.
         sum_weights: The sum of the weights must be greater than zero.
         range_weights: All the weights must be greater or equal to zero.
         invalid_weights: All the weights must be valid numeric values.
@@ -344,7 +344,7 @@ en:
         max_ontologies: The maximum ontologies per set must be a number between 2 and 4.
         general: Problem getting recommendations, please try again.
         no_results: No recommendations found.
-        no_results_sets: There are no ontology sets recommended for the input provided. Please try the "Ontologies" output.
+        no_results_sets: There are no terminology sets recommended for the input provided. Please try the "Ontologies" output.
         input_size: Please use less than 500 words. If you need to annotate larger pieces of text you can use the Recommender Web Service.
 
   search:
@@ -362,7 +362,7 @@ en:
       include_in_search: "Include in search:"
       property_values: Property values
       obsolete_classes: Obsolete classes
-      ontology_views: Ontology views
+      ontology_views: terminology views
       narrow_search_to: "Narrow search to:"
       exact_matches: Exact matches
       classes_with_definitions: Classes with definitions
@@ -372,7 +372,7 @@ en:
       categories_placeholder: Start typing to select categories or leave blank to use all
       property_definition: Named association between two entities. Examples are "definition" (a relation between a class and some text) and "part-of" (a relation between two classes).
       obsolete_definition: >
-        A class that the authors of the ontology have flagged as being obsolete and which they recommend that people not use. These classes 
+        A class that the authors of the terminology have flagged as being obsolete and which they recommend that people not use. These classes 
         are often left in ontologies (rather than removing them entirely) so that existing systems that depend on them will continue to function.
       pos_placeholder: "e.g., noun, verb, adjective"
       subjects_placeholder: "Comma-separated URIs or keywords"
@@ -626,7 +626,7 @@ en:
     submitted: Submitted
     by: by
     creation_date: Creation date %{date}
-    view_of_the_ontology: "View of the ontology %{ontology}"
+    view_of_the_ontology: "View of the terminology %{ontology}"
     view: View
     debug: Debug
     loading: Loading
@@ -745,14 +745,14 @@ en:
       more: more...
       less: less...
     submit_success:
-      title: Ontology submitted successfully!
-      thanks_metadata: "Thank you for submitting your metadata-only ontology to %{site}."
+      title: terminology submitted successfully!
+      thanks_metadata: "Thank you for submitting your metadata-only terminology to %{site}."
       your_ontology: your ontology
-      visible_but_not_browsable_html: "Users can now see %{link} in our ontology list but they cannot explore or search it. To enable exploring and searching, please upload a full version of your ontology."
-      thanks_view: "Thank you for submitting your ontology view to %{site}."
-      thanks: "Thank you for submitting your ontology to %{site}."
-      processing_time: "We will now put your ontology in the queue to be processed. Please keep in mind that it may take up to several hours before %{site} users will be able to explore and search your ontology."
-      ready_here: "When your ontology is ready for viewing, it will be available here:"
+      visible_but_not_browsable_html: "Users can now see %{link} in our terminology list but they cannot explore or search it. To enable exploring and searching, please upload a full version of your ontology."
+      thanks_view: "Thank you for submitting your terminology view to %{site}."
+      thanks: "Thank you for submitting your terminology to %{site}."
+      processing_time: "We will now put your terminology in the queue to be processed. Please keep in mind that it may take up to several hours before %{site} users will be able to explore and search your ontology."
+      ready_here: "When your terminology is ready for viewing, it will be available here:"
       contact_support_intro: "If you have any questions or problems, please email the %{site} support team at:"
     add_proposal:
       add_proposal: Add a proposal
@@ -761,16 +761,16 @@ en:
       obsolete_class: Obsolete class
       rename_class: Rename class
     licensed_ontology:
-      heading: This ontology is licensed by the owner
+      heading: This terminology is licensed by the owner
       log_in: log in
       have_license_html: "If you already have a license then please %{login_link}."
       enter_license_text: "Please enter complete text into the license compliance field"
-      instructions_html: "In order to access this ontology, you will need to comply with the following license conditions provided by the ontology owner:"
+      instructions_html: "In order to access this ontology, you will need to comply with the following license conditions provided by the terminology owner:"
       contact_html: 'Please contact %{authors} at <a href="mailto:%{email}">%{email}</a> if you have questions regarding the license.'
       submit: Submit
     private:
-      title: This ontology is private
-      body_html: 'This ontology is private and only those who have been granted access by the ontology author may browse its classes. Please contact %{authors} at <a href="mailto:%{email}">%{email}</a> if you would like access.'
+      title: This terminology is private
+      body_html: 'This terminology is private and only those who have been granted access by the terminology author may browse its classes. Please contact %{authors} at <a href="mailto:%{email}">%{email}</a> if you would like access.'
       login_prompt_html: 'If you have already been granted access then please <a href="/login?redirect=%{redirect}">log in</a> and you will be taken to the class browser.'
     widgets_page:
       not_available_html: "Widgets are only available for ontologies stored in %{site}."
@@ -806,7 +806,7 @@ en:
         copy_code_html: "Copy the code below and paste it to your HTML page"
         note: "Note:"
         quick_jump_multi: "If you would like to use Quick Jump across multiple ontologies:"
-        multi_ids: "You can enter a comma-separated list of ontology ids:"
+        multi_ids: "You can enter a comma-separated list of terminology ids:"
         all_ontologies: "You can set the variable to 'all' to search all ontologies in %{site}:"
         include_definitions: "To include definitions in the Jump To drop-down, add the following variable in Javascript:"
         change_path: "In the code that you just pasted, make sure to change the path to the quick_jump.js file to point to the location where you put the file (relative to your HTML file)"
@@ -816,7 +816,7 @@ en:
         field_class_format: "On your form, for the fields where you want to use the class-selection widget, specify the field's class in the following format:"
         for_example: "For example,"
         ncit_uri_behavior: "will use NCI Thesaurus (ontology id is NCIT) and will put the class URI in the field after the user selects the class from the pull-down list."
-        single_or_list: "In addition to single ontology ids, you can use a list:"
+        single_or_list: "In addition to single terminology ids, you can use a list:"
         or: "OR"
         all_site_ontologies: "use 'all' to search across all %{site} ontologies:"
         parameters_intro: "You can use the following parameters to select which value will be placed into the user-visible input field:"
@@ -845,7 +845,7 @@ en:
         admin_only: "Admin Only"
         types:
           ontology: Ontology
-          ontology_view: Ontology View
+          ontology_view: terminology View
         upload_date_options:
           day: Day
           week: Week
@@ -932,7 +932,7 @@ en:
         delimiter: "Delimiter use , or t for tab"
         upload: Upload
     form:
-      target_ontology_or_view: Target ontology or view
+      target_ontology_or_view: Target terminology or view
       target_class: Target class
       details: Details
       comment: Comment
@@ -959,7 +959,7 @@ en:
       identify_obsolete_classes: Identify obsolete classes
       obsolete_property: Obsolete property
       obsolete_property_help_html: >
-        Optionally enter a property ID that indicates obsolete status for ontology classes (the property value must be set to "true"). Note that by default, %{site} checks for existence of the owl:deprecated property.
+        Optionally enter a property ID that indicates obsolete status for terminology classes (the property value must be set to "true"). Note that by default, %{site} checks for existence of the owl:deprecated property.
       obsolete_branch_root: Obsolete branch root
       obsolete_branch_root_help: >
         Optionally enter a class ID for the root of an obsolete branch. All classes in the branch will be marked as obsolete, with the exception of the root class.
@@ -970,10 +970,10 @@ en:
       release_date_label: Release date
       location_label: Location
       metadata_only_label: Metadata only
-      metadata_only_help: Allow users to view and search your ontology metadata, but not its classes and properties.
+      metadata_only_help: Allow users to view and search your terminology metadata, but not its classes and properties.
       load_from_url_label: Load from URL
       nightly_loads: New versions loaded on a nightly basis
-      enter_url_help: Enter a URL, including the name of your ontology source file, e.g., http://www.example.com/my_ontology.owl.
+      enter_url_help: Enter a URL, including the name of your terminology source file, e.g., http://www.example.com/my_ontology.owl.
       upload_local_file_label: Upload local file
       contact_label: Contact
       name_label: Name
@@ -981,7 +981,7 @@ en:
       homepage_label: Homepage
       homepage_help: Enter a URL for the main page of your ontology
       documentation_label: Documentation
-      documentation_help: Enter a URL for a page that provides ontology documentation
+      documentation_help: Enter a URL for a page that provides terminology documentation
       publications_label: Publications
       publications_help: Enter a URL for a page that lists publications about your ontology
       required_fields_note: "* Fields marked with an asterisk are required."
@@ -990,7 +990,7 @@ en:
 
   cookies:
     index:
-      title: Ontology Visits
+      title: terminology Visits
       headers:
         visits_count: "# visits"
       message:
@@ -1041,7 +1041,7 @@ en:
       select_all_filtered_ontologies: Select all filtered ontologies
       show_all: show all
       close: close
-      search_all_ontology_names: Search all ontology names
+      search_all_ontology_names: Search all terminology names
 
   notifier:
     feedback:
@@ -1113,13 +1113,13 @@ en:
       projects_you_created: "Projects you created in %{site}"
       ontologies: Ontologies
       ontologies_admin_access: "Ontologies you have administrative access to in %{site}"
-      custom_ontology_set: Custom ontology set
+      custom_ontology_set: Custom terminology set
       custom_ontology_intro: "Customize your display:"
       custom_ontology_description: "pick the ontologies you want to see and %{site} will hide all other ontologies."
       custom_ontology_login_note: "Please note: you must be logged in to use this feature"
       custom_ontology_slice_prefix: "Please visit the "
       custom_ontology_slice_link: "main site"
-      custom_ontology_slice_suffix: " to modify your custom ontology set"
+      custom_ontology_slice_suffix: " to modify your custom terminology set"
       select_custom_ontologies: Select Custom Ontologies
       save_custom_ontologies: Save Custom Ontologies
       no_ontologies_picked: "You haven't picked any ontologies yet"
@@ -1204,7 +1204,7 @@ en:
       ontologies_api: Ontologies API (REST service)
       annotator: Annotator
       recommender: Recommender
-      bioportal_ui: BioPortal Web User Interface (including ontology visualization, widgets, and Annotator UI)
+      bioportal_ui: BioPortal Web User Interface (including terminology visualization, widgets, and Annotator UI)
     please_see_our: Please see our
     documentation: documentation
     more_info_appliance: for more information on working with the Appliance.
@@ -1224,7 +1224,7 @@ en:
       export_users_csv: Export Appliance Users As CSV
       user_id_header: BioPortal User ID
 
-  # Dynamic ontology submission metadata translations
+  # Dynamic terminology submission metadata translations
   submission_metadata:
     categories:
       general: General
@@ -1235,7 +1235,7 @@ en:
       provenance: Provenance
       lifecycle: Lifecycle
     labels:
-      uri: Ontology IRI
+      uri: terminology IRI
       versionIRI: Version IRI
       version: Version
       description: Description
@@ -1244,7 +1244,7 @@ en:
       publications: Publications
       license: License
       status: Status
-      hasOntologyLanguage: Ontology Language
+      hasOntologyLanguage: terminology Language
       deprecated: Deprecated
       preferredPrefix: Preferred Prefix
       created: Created
@@ -1259,17 +1259,17 @@ en:
       contactEmail: Contact Email
       contactHomepage: Contact Homepage
     help:
-      uri: The main ontology IRI (owl:Ontology/@rdf:about). Usually the top-level namespace.
+      uri: The main terminology IRI (owl:Ontology/@rdf:about). Usually the top-level namespace.
       versionIRI: IRI for this released version (owl:versionIRI).
       version: Version identifier string for this release.
-      description: A concise human-readable summary of the ontology scope and content.
-      homepage: URL of the ontology project home page.
-      documentation: URL of a page containing ontology documentation.
+      description: A concise human-readable summary of the terminology scope and content.
+      homepage: URL of the terminology project home page.
+      documentation: URL of a page containing terminology documentation.
       publications: URL to a page listing publications about the ontology.
-      license: License URI under which this ontology is distributed.
+      license: License URI under which this terminology is distributed.
       status: Maturity / release status of the ontology.
       hasOntologyLanguage: The representation language used to encode the ontology.
-      deprecated: Whether this ontology is deprecated (no longer maintained).
+      deprecated: Whether this terminology is deprecated (no longer maintained).
       preferredPrefix: Short prefix recommended for identifiers minted from this ontology.
       naturalLanguage: Natural language(s) used for labels and definitions.
     enforced_values:

@@ -1,15 +1,15 @@
 # Organization info
-$ORG = ENV['ORG'] || 'NCBO'
-$ORG_URL = ENV['ORG_URL'] || 'https://www.bioontology.org'
+$ORG = ENV['ORG'] || 'TeresIA'
+$ORG_URL = ENV['ORG_URL'] || 'https://proyectoteresia.org/'
 
 # Site name (required)
-$SITE = ENV['SITE'] || 'BioPortal'
+$SITE = ENV['SITE'] || 'TermPortal'
 
 # Full string for site, EX: "NCBO BioPortal", do not modify
 $ORG_SITE = $ORG.nil? || $ORG.empty? ? $SITE : "#{$ORG} #{$SITE}"
 
 # The URL for the BioPortal Rails UI (this application)
-$UI_URL = ENV['UI_URL'] || 'https://bioportal.bioontology.org'
+$UI_URL = ENV['UI_URL'] || 'https://termportal.proyectoteresia.org/'
 
 # If you are running a PURL server to provide URLs for ontologies in your BioPortal instance, enable this option
 $PURL_ENABLED = ENV['PURL_ENABLED'] || false
@@ -53,9 +53,10 @@ ActionMailer::Base.smtp_settings = {
 }
 # Announcements mailman mailing list REQUEST address, EX: list-request@lists.example.org
 # NOTE: You must use the REQUEST address for the mailing list. ONLY WORKS WITH MAILMAN LISTS.
-$ANNOUNCE_LIST = ENV['SUPPORT_EMAIL'] || 'bioportal-test-announce@example.org'
+$ANNOUNCE_LIST = ENV['SUPPORT_EMAIL'] || 'contacto@teresia.es'
 # Email addresses used for sending notifications (errors, feedback, support)
-$SUPPORT_EMAIL = ENV['SUPPORT_EMAIL'] || 'bioportal-test-support@example.org'
+$SUPPORT_EMAIL = ENV['SUPPORT_EMAIL'] || 'contacto@teresia.es'
+
 
 # reCAPTCHA
 # In order to use reCAPTCHA on the account creation and feedback submission pages:

@@ -1024,6 +1024,14 @@ div#topNavigationToggler {
       background-color: #c58612;
     }
   }
+
+  a.nav-link {
+    color: white;
+
+    &:hover {
+      color: lightGray;
+    }
+  }
 }
 
 .navbar-custom {

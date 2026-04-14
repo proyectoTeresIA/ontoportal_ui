@@ -506,6 +506,10 @@ en:
         member: Member
         memberList: Member List
         source: Source
+        resourceName: Resource Name
+        resourceCreator: Resource Creator
+        url: URL
+        domain: Domain
         normativeAuthorization: Normative Authorization
         reliabilityCode: Reliability Code
         code: Code
@@ -520,6 +524,7 @@ en:
         evoked_concept: Evoked Concept
         lexical_senses: Lexical Senses
         lexicalized_concept: Lexicalized Concept
+        original_source: Original Source
         usage_examples: Usage Examples
         translations: Translations
         synonyms: Synonyms

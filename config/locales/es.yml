@@ -541,6 +541,10 @@ es:
         member: Miembro
         memberList: Lista de Miembros
         source: Fuente
+        resourceName: Nombre del Recurso
+        resourceCreator: Creador del Recurso
+        url: URL
+        domain: Dominio
         normativeAuthorization: Autorización Normativa
         reliabilityCode: Código de Fiabilidad
         code: Código
@@ -555,6 +559,7 @@ es:
         evoked_concept: Concepto Evocado
         lexical_senses: Sentidos Léxicos
         lexicalized_concept: Concepto Lexicalizado
+        original_source: Fuente Original
         usage_examples: Ejemplos de Uso
         translations: Traducciones
         synonyms: Sinónimos

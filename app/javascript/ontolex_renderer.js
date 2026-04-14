@@ -37,6 +37,9 @@ var navigableEntities = {
 
 // Embedded objects - deben expandirse inline mostrando todos sus campos
 var embeddedObjects = [
+  'inScheme',
+  'source',
+  'resourceCreator',
   'definition',
   'note',
   'signedForm',

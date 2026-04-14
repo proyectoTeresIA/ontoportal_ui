@@ -28,6 +28,7 @@
         evoked_concept: "#{t('ontology_details.ontolex.headings.evoked_concept')}",
         lexical_senses: "#{t('ontology_details.ontolex.headings.lexical_senses')}",
         lexicalized_concept: "#{t('ontology_details.ontolex.headings.lexicalized_concept')}",
+        original_source: "#{t('ontology_details.ontolex.headings.original_source')}",
         usage_examples: "#{t('ontology_details.ontolex.headings.usage_examples')}",
         translations: "#{t('ontology_details.ontolex.headings.translations')}",
         synonyms: "#{t('ontology_details.ontolex.headings.synonyms')}",
@@ -39,7 +40,13 @@
         view_complete_entry: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.lexical_entry'))}",
         view_complete_sense: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.lexical_sense'))}",
         view_complete_concept: "#{t('ontology_details.ontolex.headings.view_complete', type: t('ontology_details.ontolex.types.lexical_concept'))}",
-        definition: "#{t('ontology_details.ontolex.properties.definition')}"
+        definition: "#{t('ontology_details.ontolex.properties.definition')}",
+        source: "#{t('ontology_details.ontolex.properties.source')}",
+        resource_name: "#{t('ontology_details.ontolex.properties.resourceName')}",
+        resource_creator: "#{t('ontology_details.ontolex.properties.resourceCreator')}",
+        url: "#{t('ontology_details.ontolex.properties.url')}",
+        language: "#{t('ontology_details.ontolex.properties.language')}",
+        domain: "#{t('ontology_details.ontolex.properties.domain')}"
       };
       
       // Custom item renderer for terminological entries
@@ -99,6 +106,49 @@
       function renderTerminologicalEntryDetails(data) {
         var html = '<div class="ontolex-details p-3">';
         var itemId = (data['@id'] || data.id).uri;
+
+        // Original source (LexicalConceptualResource)
+        if (data.sourceResource) {
+          var source = data.sourceResource;
+          var sourceURL = source.url || source.uri || null;
+
+          html += '<div class="mb-4">';
+          html += '<h6 class="border-bottom pb-2 mb-3">' + translations.original_source + '</h6>';
+          html += '<div class="card border-start border-2">';
+          html += '<div class="card-body p-3">';
+
+          if (source.resourceName) {
+            html += '<div class="mb-2"><strong>' + translations.resource_name + ':</strong> ' + source.resourceName + '</div>';
+          }
+
+          if (sourceURL) {
+            html += '<div class="mb-2"><strong>' + translations.url + ':</strong> ';
+            html += '<a href="' + sourceURL + '" target="_blank" rel="noopener noreferrer">' + sourceURL + '</a>';
+            html += '</div>';
+          }
+
+          if (source.resourceCreator && Array.isArray(source.resourceCreator) && source.resourceCreator.length > 0) {
+            var creators = source.resourceCreator.map(function(creator) {
+              if (!creator || typeof creator !== 'object') return creator;
+              return creator.label || creator['@id'] || creator.id;
+            }).filter(function(v) { return !!v; });
+
+            if (creators.length > 0) {
+              html += '<div class="mb-2"><strong>' + translations.resource_creator + ':</strong> ' + creators.join(', ') + '</div>';
+            }
+          }
+
+          if (source.language && Array.isArray(source.language) && source.language.length > 0) {
+            html += '<div class="mb-2"><strong>' + translations.language + ':</strong> ';
+            source.language.forEach(function(lang) {
+              var langCode = (lang || '').toString().split('/').pop();
+              html += '<span class="ontolex-badge badge-language me-2" title="' + lang + '">' + langCode + '</span>';
+            });
+            html += '</div>';
+          }
+
+          html += '</div></div></div>';
+        }
 
         // Forms section
         if (data.loadedForms && data.loadedForms.length > 0) {

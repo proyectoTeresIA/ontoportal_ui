@@ -16,7 +16,7 @@ var ONTOLEX_I18N = {
 
     // Abort it not right page
     var path = currentPathArray();
-    if (path[0] !== "search") {
+    if (path.indexOf("search") === -1) {
       return;
     }
 
@@ -216,7 +216,8 @@ jQuery(document).ready(function() {
     // Perform search
     jQuery("#search_button").click(function(event) {
         event.preventDefault();
-        History.pushState(currentSearchParams(), document.title, "/search?" + objToQueryString(currentSearchParams()));
+        var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+        History.pushState(currentSearchParams(), document.title, basePath + "/search?" + objToQueryString(currentSearchParams()));
     });
 
     // Search on enter
@@ -241,7 +242,8 @@ jQuery(document).ready(function() {
     jQuery("a.class_visualize").live("click", function() {
         var acronym = jQuery(this).attr("data-bp_ontologyid"),
             conceptid = jQuery(this).attr("data-bp_conceptid");
-        jQuery("#biomixer").html('<iframe src="/ajax/biomixer/?ontology=' + acronym + '&conceptid=' + encodeURIComponent(conceptid) + '" frameborder=0 height="500px" width="500px" scrolling="no"></iframe>').show();
+        var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+        jQuery("#biomixer").html('<iframe src="' + basePath + '/ajax/biomixer/?ontology=' + acronym + '&conceptid=' + encodeURIComponent(conceptid) + '" frameborder=0 height="500px" width="500px" scrolling="no"></iframe>').show();
         jQuery.facebox({
             div: '#biomixer'
         });
@@ -1065,7 +1067,7 @@ function resultLinksSpan(res) {
     clsCode = encodeURIComponent(clsID);
     // construct link for class 'details' in facebox
     detailsAttr = {
-        "href": "/ajax/class_details?ontology=" + ontAcronym + "&conceptid=" + clsCode + "&styled=false",
+        "href": "<%= Rails.application.config.relative_url_root || '' %>/ajax/class_details?ontology=" + ontAcronym + "&conceptid=" + clsCode + "&styled=false",
         "rel": "facebox[.class_details_pop]"
     };
     detailsAnchor = jQuery("<a>");

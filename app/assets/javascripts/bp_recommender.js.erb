@@ -189,7 +189,7 @@ rec.getRecommendations = function () {
     params.max_elements_set = $('#input_max_ontologies').val();
     $.ajax({
       type: 'POST',
-      url: '/recommender',
+      url: '<%= Rails.application.config.relative_url_root || "" %>' + '/recommender',
       data: params,
       dataType: 'json',
       success: function (data) {
@@ -393,7 +393,7 @@ rec.checkFirst = function (data) {
 jQuery(document).ready(function () {
   // Abort it not right page
   var path = currentPathArray();
-  if (path[0] !== 'recommender') {
+  if (path.indexOf('recommender') === -1) {
     return;
   }
 

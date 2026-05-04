@@ -204,7 +204,7 @@ function get_annotations() {
 
   jQuery.ajax({
     type: 'POST',
-    url: '/annotator', // Call back to the UI annotation_controller::create method
+    url: '<%= Rails.application.config.relative_url_root || "" %>' + '/annotator', // Call back to the UI annotation_controller::create method
     data: params,
     dataType: 'json',
     success: function (data) {

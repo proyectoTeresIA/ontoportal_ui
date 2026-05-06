@@ -152,7 +152,8 @@ class ApplicationController < ActionController::Base
         userapikey: get_apikey,
         rest_url: external_rest_url,
         proxy_url: $PROXY_URL,
-        biomixer_url: $BIOMIXER_URL
+        biomixer_url: $BIOMIXER_URL,
+        base_url: Rails.application.config.relative_url_root || '',
     }
     config[:ncbo_slice] = @subdomain_filter[:acronym] if (@subdomain_filter[:active] && !@subdomain_filter[:acronym].empty?)
     config.to_json
@@ -256,11 +257,11 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_to_browse # Redirect to the browse Ontologies page
-    redirect_to "/ontologies"
+    redirect_to ontologies_path()
   end
 
   def redirect_to_home # Redirect to Home Page
-    redirect_to "/"
+    redirect_to root_path()
   end
 
 

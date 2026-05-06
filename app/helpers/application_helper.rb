@@ -145,7 +145,7 @@ module ApplicationHelper
     page_name = ontology_viewer_page_name(ontology_acronym, main_language_label(child.prefLabel), 'Classes')
     open = child.expanded? ? "class='open'" : ''
     pref_label_html, tooltip = tree_node_label(child)
-    href = ontology_acronym.blank? ? '#' :  "/ontologies/#{ontology_acronym}/concepts/?id=#{CGI.escape(child.id)}&lang=#{lang}"
+    href = ontology_acronym.blank? ? '#' :  ontology_path(ontology_acronym, p: 'classes', conceptid: child.id, language: lang)
     "<li #{open} id='#{li_id}'><a id='#{CGI.escape(child.id)}' data-bp-ont-page-name='#{page_name}' data-turbo=true data-turbo-frame='concept_show' href='#{href}' #{active_style} title='#{tooltip}'> #{pref_label_html}</a>"
   end
 
@@ -169,8 +169,9 @@ module ApplicationHelper
     [pref_label_html, tooltip]
   end
 
-  def tree_link_to_children(li_id:, child:, ontology_acronym:, lang: )
-    "<ul class='ajax'><li id='#{li_id}'><a id='#{CGI.escape(child.id)}' href='/ajax_concepts/#{ontology_acronym}/?conceptid=#{CGI.escape(child.id)}&callback=children&lang=#{lang}'>ajax_class</a></li></ul>"
+  def tree_link_to_children(li_id:, child:, ontology_acronym:, lang:)
+    url = "#{Rails.application.config.relative_url_root}/ajax_concepts/#{ontology_acronym}/?conceptid=#{CGI.escape(child.id)}&callback=children&lang=#{lang}"
+    "<ul class='ajax'><li id='#{li_id}'><a id='#{CGI.escape(child.id)}' href='#{url}'>ajax_class</a></li></ul>"
   end
 
   def loading_spinner(padding = false, include_text = true)
@@ -394,8 +395,8 @@ module ApplicationHelper
   def get_link_for_cls_ajax(cls_id, ont_acronym, target = nil, style_as_badge = false)
     if cls_id.start_with?('http://') || cls_id.start_with?('https://')
       link = bp_class_link(cls_id, ont_acronym)
-      ajax_url = "/ajax/classes/label?language=#{request_lang}"
-      cls_url = "/ontologies/#{ont_acronym}?p=classes&conceptid=#{CGI.escape(cls_id)}"
+      ajax_url = ajax_classes_label_path(language: request_lang)
+      cls_url = ontology_path(ont_acronym, p: 'classes', conceptid: cls_id)
       label_ajax_link(link, cls_id, ont_acronym, ajax_url, cls_url, target)
     else
       if style_as_badge
@@ -411,8 +412,8 @@ module ApplicationHelper
   def get_link_for_entry_ajax(entry_id, ont_acronym, target = nil)
     if entry_id.start_with?('http://') || entry_id.start_with?('https://')
       # For OntoLex, link to terminological_entries page with id= parameter
-      cls_url = "/ontologies/#{ont_acronym}?p=terminological_entries&id=#{CGI.escape(entry_id)}"
-      ajax_url = "/ajax/classes/label?language=#{request_lang}"
+      cls_url = ontology_path(ont_acronym, p: 'terminological_entries', id: entry_id)
+      ajax_url = ajax_classes_label_path(language: request_lang)
       
       data = label_ajax_data_h(entry_id, ont_acronym, ajax_url, cls_url)
       options = { 'data-controller': 'label-ajax' }.merge(data)

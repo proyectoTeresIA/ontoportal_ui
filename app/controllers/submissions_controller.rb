@@ -37,7 +37,7 @@ class SubmissionsController < ApplicationController
     if response_error?(@submission)
       show_new_errors(@submission)
     else
-      redirect_to "/ontologies/success/#{@ontology.acronym}"
+      redirect_to submit_success_path(@ontology.acronym)
     end
   end
 
@@ -86,7 +86,7 @@ class SubmissionsController < ApplicationController
     end
 
     if params[:submission].nil?
-      return redirect_to "/ontologies/#{acronym}",
+      return redirect_to ontology_path(acronym),
                          notice: t('submissions.submission_updated_successfully')
     end
 
@@ -95,7 +95,7 @@ class SubmissionsController < ApplicationController
       if response_error?(response)
         show_new_errors(response, partial: 'submissions/form_content', id: 'test')
       else
-        redirect_to "/ontologies/#{acronym}",
+        redirect_to ontology_path(acronym),
                     notice: t('submissions.submission_updated_successfully'), status: :see_other
       end
     else

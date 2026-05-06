@@ -20,7 +20,7 @@ class RedirectController < ApplicationController
       redirect_to params[:url] + params_string, :status=>:moved_permanently
       return
     else # Default redirect to the home page
-      redirect_to "/", :status=>:moved_permanently
+      redirect_to root_path(), :status=>:moved_permanently
     end
   end
 end

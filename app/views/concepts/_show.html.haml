@@ -23,7 +23,7 @@
         - count_span = content_tag(:span, "#{t('concepts.mappings')} (#{content_tag(:span, concept_mappings_loader(ontology_acronym: @ontology.acronym, concept_id: @concept.id))})".html_safe, class: "d-flex")
         - tab_item_component(container_tabs: c, title: count_span, path: '#mappings', json_link: "#{baseClassUrl}/mappings?#{apikey}") do
           = render TurboFrameComponent.new(id:'concept_mappings',
-          src:"/ajax/mappings/get_concept_table?ontologyid=#{@ontology.acronym}&conceptid=#{CGI.escape(@concept.id)}")
+          src: ajax_mappings_get_concept_table_path(ontologyid: @ontology.acronym, conceptid: @concept.id))
 
 
   :javascript

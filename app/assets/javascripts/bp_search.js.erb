@@ -1031,10 +1031,11 @@ function classDiv(res, clsLabel, displayOntologyName) {
         clsAttr = null,
         clsAnchor = null,
         clsIdDiv = null;
+        basePath = "<%= Rails.application.config.relative_url_root || '' %>";
     ontAcronym = ontologyIdToAcronym(res.links.ontology);
     clsID = res["@id"];
     clsCode = encodeURIComponent(clsID);
-    clsURI = "/ontologies/" + ontAcronym + "?p=classes&conceptid=" + clsCode;
+    clsURI = basePath + "/ontologies/" + ontAcronym + "?p=classes&conceptid=" + clsCode;
     ontName = displayOntologyName ? getOntologyName(res) : "";
     clsAttr = {
         "title": res.prefLabel,
@@ -1149,6 +1150,7 @@ function aggregateLexicalResults(results) {
 function formatFormSearchResults(aggOntologyResults) {
     var ontResults = aggOntologyResults.same_ont,
         allResults = [];
+    var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
     
     // Process all results from this ontology (not just the first one)
     jQuery(ontResults).each(function() {
@@ -1194,7 +1196,7 @@ function formatFormSearchResults(aggOntologyResults) {
             var entryCode = encodeURIComponent(entryId);
             formLink.attr({
                 "title": displayText,
-                "href": "/ontologies/" + ontAcronym + "?p=terminological_entries&id=" + entryCode,
+                "href": basePath + "/ontologies/" + ontAcronym + "?p=terminological_entries&id=" + entryCode,
                 "data-turbo-frame": "_top"
             });
         } else {

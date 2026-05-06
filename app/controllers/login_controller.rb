@@ -23,7 +23,7 @@ class LoginController < ApplicationController
       logged_in_user = LinkedData::Client::Models::User.authenticate(params[:user][:username], params[:user][:password])
       if logged_in_user && !logged_in_user.errors
         login(logged_in_user)
-        redirect = '/'
+        redirect = root_path()
 
         if session[:redirect]
           redirect = CGI.unescape(session[:redirect])
@@ -42,7 +42,7 @@ class LoginController < ApplicationController
   # Login as the provided username (only for admin users)
   def login_as
     unless session[:user] && session[:user].admin?
-      redirect_to '/'
+      redirect_to root_path()
       return
     end
 
@@ -56,7 +56,7 @@ class LoginController < ApplicationController
     end
 
     # redirect_to request.referer rescue redirect_to "/"
-    redirect_to '/'
+    redirect_to root_path()
   end
 
   # logs out a user
@@ -70,7 +70,7 @@ class LoginController < ApplicationController
       session[:user] = nil
       flash[:success] = 'You have successfully logged out'
     end
-    redirect_to request.referer || '/'
+    redirect_to request.referer || root_path()
   end
 
   def lost_password; end
@@ -85,7 +85,7 @@ class LoginController < ApplicationController
       redirect_to login_index_path, notice: 'Please check your email for a message with reset instructions'
     else
       flash[:notice] = "#{resp.errors.first}. Please try again."
-      redirect_to '/lost_pass'
+      redirect_to lost_pass_path()
     end
   end
 
@@ -99,7 +99,7 @@ class LoginController < ApplicationController
       render 'passwords/edit'
     else
       flash[:notice] = "#{@user.errors.first}. Please reset your password again."
-      redirect_to '/lost_pass'
+      redirect_to lost_pass_path()
     end
   end
 

@@ -14,7 +14,7 @@
                  'class-search-auto-complete-spinner-src-value': asset_path("jquery.simple.tree/spinner.gif")})
           = hidden_field_tag("jump_to_concept_id")
         %div#sd_content.p-1
-          = render TurboFrameComponent.new(id: 'concepts_tree_view' , src: "/ajax/classes/treeview?ontology=#{@ontology.acronym}&conceptid=#{escape(@concept.id)}&lang=#{request_lang(@submission)}")
+          = render TurboFrameComponent.new(id: 'concepts_tree_view' , src: ajax_classes_treeview_path(ontology: @ontology.acronym, conceptid: @concept.id, lang: request_lang(@submission)))
       %div#concept_content.d-flex.flex-column{data:{'container-splitter-target': 'container'}}
         = render partial: 'concepts/show'
 

@@ -599,36 +599,18 @@ var currentPathArray = function() {
 }
 
 function pageUsesTreeView() {
-  var usesTreeView = true;
   var path = currentPathArray();
 
-  if (path[0] !== "ontologies") {
-    usesTreeView = false;
-  } else if ((path.length !== 2) || (path[1] === "new")) {
-    /*
-     * Some ontology pages don't use class trees, e.g.:
-     * ontologies/BRO/edit
-     * ontologies/new
-     */  
-    usesTreeView = false;
-  } else {
-    // Metadata only ontologies don't have class trees.
-    var metadataOnly = jQuery(document).data().bp.ont_viewer.metadata_only;
-    if ((metadataOnly != null) && (metadataOnly === "true")) {
-      usesTreeView = false;
-    }
+  // Buscar el índice de "ontologies" en el path (robusto ante prefijos como /ontoportal)
+  var ontIdx = path.indexOf("ontologies");
+
+  // La ruta debe contener "ontologies" seguido de exactamente un segmento (el acrónimo),
+  // y ese segmento no puede ser "new" (e.g. /ontoportal/ontologies/BRO)
+  if (ontIdx === -1 || path.length !== ontIdx + 2 || path[ontIdx + 1] === "new") {
+    return false;
   }
 
-  return usesTreeView;
+  // Las ontologías metadata-only no tienen árbol de clases
+  var metadataOnly = jQuery(document).data().bp.ont_viewer.metadata_only;
+  return metadataOnly == null || metadataOnly !== "true";
 }
-
-
-
-
-
-
-
-
-
-
-

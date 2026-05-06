@@ -78,7 +78,7 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/ontologies/success/:id' => 'ontologies#submit_success'
+  get '/ontologies/success/:id' => 'ontologies#submit_success', as: :submit_success
   match '/ontologies/:acronym' => 'ontologies#update', via: [:get, :post]
   match '/ontologies/:acronym/submissions/:id' => 'submissions#update', via: [:get, :post]
   get '/ontologies/:ontology_id/submissions/new' => 'submissions#new', :ontology_id => /.+/

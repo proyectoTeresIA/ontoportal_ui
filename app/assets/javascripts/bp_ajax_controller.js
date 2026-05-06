@@ -5,7 +5,8 @@ var BP_CONFIG = jQuery(document).data().bp ? jQuery(document).data().bp.config :
 
 // Note similar code in concepts_helper.rb mirrors the following code:
 function bp_ont_link(ont_acronym) {
-  return '/ontologies/' + ont_acronym;
+  console.log('base url: ' + BP_CONFIG.base_url);
+  return BP_CONFIG.base_url + '/ontologies/' + ont_acronym;
 }
 function bp_cls_link(cls_id, ont_acronym, isOntoLex) {
   var page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
@@ -167,11 +168,13 @@ var ajax_process_cls = function () {
   var cls_id = linkA.attr('data-cls');
   var ont_acronym = linkA.attr('data-ont');
   var isOntoLex = linkA.attr('data-ontolex') === 'true';
-  var ont_uri = '/ontologies/' + ont_acronym;
+  var basePath = (typeof BP_CONFIG !== 'undefined' && BP_CONFIG.ui_url) ? (BP_CONFIG.ui_url.replace(/https?:\/\/[^\/]+/, '')) : '';
+
+  var ont_uri = basePath + '/ontologies/' + ont_acronym;
   var page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
   var id_param = isOntoLex ? 'id' : 'conceptid';
   var cls_uri = ont_uri + '?' + page_param + '&' + id_param + '=' + encodeURIComponent(cls_id);
-  var basePath = (typeof BP_CONFIG !== 'undefined' && BP_CONFIG.ui_url) ? (BP_CONFIG.ui_url.replace(/https?:\/\/[^\/]+/, '')) : '';
+
   var ajax_uri = basePath + '/ajax/classes/label?ontology=' + ont_acronym + '&concept=' + encodeURIComponent(cls_id);
   jQuery.ajax({
     url: ajax_uri,

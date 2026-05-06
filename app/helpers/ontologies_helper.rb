@@ -63,7 +63,7 @@ module OntologiesHelper
           content_tag(:span, t('ontologies.no_license'), class: "mx-1") + inline_svg_tag('icons/law.svg', width: "15px")
         end
       else
-        link_to_modal(nil, "/ajax/submission/show_licenses/#{acronym}", data: { show_modal_title_value: t('ontologies.access_rights_information') }) do
+        link_to_modal(nil, ajax_path + "/submission/show_licenses/#{acronym}", data: { show_modal_title_value: t('ontologies.access_rights_information') }) do
           content_tag(:span, t('ontologies.view_license'), class: "mx-1") + inline_svg_tag('icons/law.svg')
         end
       end
@@ -168,7 +168,7 @@ module OntologiesHelper
 
   def upload_ontology_button
     if session[:user].nil?
-      render Buttons::RegularButtonComponent.new(id: "upload-ontology-button", value: t('home.ontology_upload_button'), variant: "secondary", state: "regular", href: "/login?redirect=/ontologies/new") do |btn|
+      render Buttons::RegularButtonComponent.new(id: "upload-ontology-button", value: t('home.ontology_upload_button'), variant: "secondary", state: "regular", href: login_index_path(redirect: new_ontology_path)) do |btn|
         btn.icon_left do
           inline_svg_tag "upload.svg"
         end
@@ -404,7 +404,7 @@ module OntologiesHelper
     if current_section.eql?(section_title)
       block.call
     else
-      render TurboFrameComponent.new(id: section_title, src: "/ontologies/#{@ontology.acronym}?p=#{section_title}",
+      render TurboFrameComponent.new(id: section_title, src: ontology_path(@ontology.acronym, p: section_title),
                                      loading: "lazy",
                                      target: '_top', data: { "turbo-frame-target": "frame" })
     end
@@ -417,7 +417,7 @@ module OntologiesHelper
 
   def section_data(section_title)
     if ontology_data_section?(section_title)
-      url_value = selected_section?(section_title) ? request.fullpath : "/ontologies/#{@ontology.acronym}?p=#{section_title}"
+      url_value = selected_section?(section_title) ? request.fullpath : ontology_path(@ontology.acronym, p: section_title)
       { controller: "history turbo-frame", 'turbo-frame-url-value': url_value, action: "lang_changed->history#updateURL lang_changed->turbo-frame#updateFrame" }
     else
       {}
@@ -474,8 +474,8 @@ module OntologiesHelper
   def get_link_for_ontolex_entity(entity_id, ont_acronym, entity_type, target = nil, style_as_badge = false)
     if entity_id.start_with?('http://') || entity_id.start_with?('https://')
       link = bp_ontolex_link(entity_id, ont_acronym, entity_type)
-      ajax_url = "/ajax/ontolex/#{entity_type}/label?language=#{request_lang}"
-      entity_url = "/ontologies/#{ont_acronym}?p=#{entity_type}&id=#{CGI.escape(entity_id)}"
+      ajax_url = ajax_path + "/ontolex/#{entity_type}/label?language=#{request_lang}"
+      entity_url = ontology_path(ont_acronym, p: entity_type, id: entity_id)
       label_ajax_link(link, entity_id, ont_acronym, ajax_url, entity_url, target)
     else
       if style_as_badge
@@ -487,7 +487,7 @@ module OntologiesHelper
   end
 
   def bp_ontolex_link(entity_id, ont_acronym, entity_type)
-    "/ontologies/#{ont_acronym}?p=#{entity_type}&id=#{CGI.escape(entity_id)}"
+    ontology_path(ont_acronym, p: entity_type, id: entity_id)
   end
 
   def ontolex_ontology?

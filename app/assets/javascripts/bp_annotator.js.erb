@@ -626,8 +626,10 @@ function get_link(uri, label) {
 }
 
 function get_class_details(cls) {
-  var cls_rel_ui = cls.ui.replace(/^.*\/\/[^\/]+/, ''),
+  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var cls_rel_ui = basePath + cls.ui.replace(/^.*\/\/[^\/]+/, ''),
     ont_rel_ui = cls_rel_ui.replace(/\?p=classes.*$/, '?p=summary');
+  console.log('class rel ui in get_class_details: ' + cls_rel_ui);
   return (class_details = {
     cls_rel_ui: cls_rel_ui,
     ont_rel_ui: ont_rel_ui,
@@ -638,9 +640,10 @@ function get_class_details(cls) {
 }
 
 function get_class_details_from_raw(cls) {
+  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
   var ont_acronym = cls.links.ontology.replace(/.*\//, ''),
     ont_name = annotator_ontologies[cls.links.ontology].name,
-    ont_rel_ui = '/ontologies/' + ont_acronym,
+    ont_rel_ui = basePath + '/ontologies/' + ont_acronym,
     ont_link = null;
   if (ont_name === undefined) {
     ont_link = get_link_for_ont_ajax(ont_acronym);

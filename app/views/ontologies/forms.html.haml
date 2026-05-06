@@ -14,6 +14,7 @@
     (function() {
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
+      var baseURL = "#{Rails.application.config.relative_url_root}";
       var apikey = "#{get_apikey}";
       var isInitialized = false;
       var sidebar = null;
@@ -50,7 +51,7 @@
         
         // Auto-render all fields using shared renderer
         if (window.OntolexRenderer) {
-          html += OntolexRenderer.renderAllFields(data, ontologyAcronym);
+          html += OntolexRenderer.renderAllFields(data, ontologyAcronym, baseURL);
         }
         
         html += '</div>';

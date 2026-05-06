@@ -14,6 +14,7 @@
     (function() {
       var ontologyAcronym = "#{@ontology.acronym}";
       var externalRestUrl = "#{external_rest_url}";
+      var baseURL = "#{Rails.application.config.relative_url_root}";
       var apikey = "#{get_apikey}";
       var isInitialized = false;
       var sidebar = null;
@@ -161,7 +162,7 @@
             html += '<div class="card-body p-3 position-relative">';
             
             // Add navigation link in top-right corner
-            html += '<a href="/ontologies/' + ontologyAcronym + '?p=forms&id=' + encodeURIComponent(formId) + '" class="position-absolute top-0 end-0 mt-2 me-2 text-muted text-decoration-none" style="font-size: 0.75rem;" title="' + translations.view_complete_form + '" data-turbo-frame="_top">';
+            html += '<a href="' + baseURL + '/ontologies/' + ontologyAcronym + '?p=forms&id=' + encodeURIComponent(formId) + '" class="position-absolute top-0 end-0 mt-2 me-2 text-muted text-decoration-none" style="font-size: 0.75rem;" title="' + translations.view_complete_form + '" data-turbo-frame="_top">';
             html += '<i class="fas fa-external-link-alt"></i>';
             html += '</a>';
             
@@ -211,7 +212,7 @@
         html += '<div class="mb-4">';
         html += '<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">';
         html += '<h6 class="mb-0">' + translations.lexical_entry_properties + '</h6>';
-        html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_entries&id=' + encodeURIComponent(itemId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_entry + '" data-turbo-frame="_top">';
+        html += '<a href="' + baseURL + '/ontologies/' + ontologyAcronym + '?p=lexical_entries&id=' + encodeURIComponent(itemId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_entry + '" data-turbo-frame="_top">';
         html += '<i class="fas fa-external-link-alt"></i>';
         html += '</a>';
         html += '</div>';
@@ -247,7 +248,7 @@
           html += '<div class="mb-4">';
           html += '<div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">';
           html += '<h6 class="mb-0">' + translations.evoked_concept + '</h6>';
-          html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_concepts&id=' + encodeURIComponent(conceptId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_concept + '" data-turbo-frame="_top">';
+          html += '<a href="' + baseURL + '/ontologies/' + ontologyAcronym + '?p=lexical_concepts&id=' + encodeURIComponent(conceptId) + '" class="text-muted text-decoration-none" style="font-size: 0.875rem;" title="' + translations.view_complete_concept + '" data-turbo-frame="_top">';
           html += '<i class="fas fa-external-link-alt"></i>';
           html += '</a>';
           html += '</div>';
@@ -268,7 +269,7 @@
             html += '<div class="card-body p-3 position-relative">';
             
             // Add navigation link in top-right corner
-            html += '<a href="/ontologies/' + ontologyAcronym + '?p=lexical_senses&id=' + encodeURIComponent(senseId) + '" class="position-absolute top-0 end-0 mt-2 me-2 text-muted text-decoration-none" style="font-size: 0.75rem;" title="' + translations.view_complete_sense + '" data-turbo-frame="_top">';
+            html += '<a href="' + baseURL + '/ontologies/' + ontologyAcronym + '?p=lexical_senses&id=' + encodeURIComponent(senseId) + '" class="position-absolute top-0 end-0 mt-2 me-2 text-muted text-decoration-none" style="font-size: 0.75rem;" title="' + translations.view_complete_sense + '" data-turbo-frame="_top">';
             html += '<i class="fas fa-external-link-alt"></i>';
             html += '</a>';
             

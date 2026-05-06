@@ -176,7 +176,7 @@
           <div class="grid-75">
             <div ng-if="ontology.type == 'ontology_view'" class="ontology_view_badge" title="<%= t('ontologies.browse.view_of') %> {{ontology.viewOfOnt.name}}"><%= t('ontologies.browse.badges.view') %></div>
             <h2 style="font-size: 1.5em;">
-              <a href="/ontologies/{{ontology.acronym}}">
+              <a href="{{basePath}}/ontologies/{{ontology.acronym}}">
                 <span ng-if="debug">{{$index}} </span>
                 {{ontology.name}} ({{ontology.acronym}})
               </a>
@@ -191,7 +191,7 @@
                 <b><%= t('ontologies.browse.format') %></b>: {{ontology.format}}
               </span>
               <span class="ont-info" ng-if="ontology.type == 'ontology_view'">
-                <b><%= t('ontologies.browse.view_of') %></b>: <a href="/ontologies/{{ontology.viewOfOnt.acronym}}">{{ontology.viewOfOnt.acronym}}</a>
+                <b><%= t('ontologies.browse.view_of') %></b>: <a href="{{basePath}}/ontologies/{{ontology.viewOfOnt.acronym}}">{{ontology.viewOfOnt.acronym}}</a>
               </span>
               <span class="ont-info" ng-if="ontology.summaryOnly">
                 <b><%= t('ontologies.browse.summary_only') %></b>
@@ -219,7 +219,7 @@
           </div>
 
           <div class="badges grid-25 grid-parent" ng-if="ontology.submission !== null && ontology.class_count > 0">
-            <a href="/ontologies/{{ontology.acronym}}?p=classes" ng-if="ontology.format !== 'SKOS'">
+            <a href="{{basePath}}/ontologies/{{ontology.acronym}}?p=classes" ng-if="ontology.format !== 'SKOS'">
               <div class="grid-50 badge_grid">
                 <div class="ontology_badge">
                   <div class="badge_title"><%= t('ontologies.browse.badges.classes') %></div>
@@ -228,7 +228,7 @@
               </div>
             </a>
 
-            <a href="/ontologies/{{ontology.acronym}}?p=classes" ng-if="ontology.individual_count > 0 ">
+            <a href="{{basePath}}/ontologies/{{ontology.acronym}}?p=classes" ng-if="ontology.individual_count > 0 ">
               <div class="grid-50 badge_grid">
                 <div class="ontology_badge">
                   <div class="badge_title">{{ontology.format === 'SKOS' ? "<%= t('ontologies.browse.badges.concepts') %>" : "<%= t('ontologies.browse.badges.instances') %>"}}</div>
@@ -237,7 +237,7 @@
               </div>
             </a>
 
-            <a href="/ontologies/{{ontology.acronym}}#projects_content">
+            <a href="{{basePath}}/ontologies/{{ontology.acronym}}#projects_content">
               <div class="grid-50 badge_grid" ng-if="ontology.projects.length > 0">
                 <div class="ontology_badge">
                   <div class="badge_title"><%= t('ontologies.browse.badges.projects') %></div>
@@ -246,7 +246,7 @@
               </div>
             </a>
 
-            <a href="/ontologies/{{ontology.acronym}}?p=notes">
+            <a href="{{basePath}}/ontologies/{{ontology.acronym}}?p=notes">
               <div class="grid-50 badge_grid" ng-if="ontology.notes.length > 0">
                 <div class="ontology_badge">
                   <div class="badge_title"><%= t('ontologies.browse.badges.notes') %></div>
@@ -274,6 +274,7 @@
   jQuery(document).data().bp.formats = <%=MultiJson.dump(@formats).html_safe%>;
   jQuery(document).data().bp.admin = <%=MultiJson.dump(@admin).html_safe%>;
   jQuery(document).data().bp.development = <%=MultiJson.dump(@development).html_safe%>;
+  jQuery(document).data().bp.base_path = "<%= Rails.application.config.relative_url_root || '' %>";
 </script>
 
 <script src="lib/lunr.js/lunr.min.js"></script>

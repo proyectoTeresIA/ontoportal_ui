@@ -76,11 +76,10 @@ window.OntolexRenderer = {
   },
 
   // Generic function to render all fields of an entity as a Bootstrap striped table
-  renderAllFields: function (data, ontAcronym) {
+  renderAllFields: function (data, ontAcronym, basePath = '') {
     var html = '<table class="table table-striped ontolex-properties-table">';
     html += '<tbody>';
 
-    var rowIndex = 0;
     for (var key in data) {
       if (!Object.prototype.hasOwnProperty.call(data, key)) continue;
       if (skipFields.indexOf(key) !== -1) continue;
@@ -107,12 +106,10 @@ window.OntolexRenderer = {
           isNavigable ? navigableEntities[key] : null,
           ontAcronym,
           isEmbedded,
-          rowIndex,
+          basePath,
         ) +
         '</td>';
       html += '</tr>';
-
-      rowIndex++;
     }
 
     html += '</tbody>';
@@ -120,7 +117,7 @@ window.OntolexRenderer = {
     return html;
   },
 
-  renderFieldValue: function (value, fieldName, entityType, ontAcronym, isEmbedded) {
+  renderFieldValue: function (value, fieldName, entityType, ontAcronym, isEmbedded, basePath) {
     if (Array.isArray(value)) {
       if (value.length === 0) return '<span class="text-muted">-</span>';
 
@@ -151,7 +148,7 @@ window.OntolexRenderer = {
           html += '</button>';
           html += '<div class="collapse" id="' + collapseId + '">';
           html += '<div class="card card-body mt-1">';
-          html += this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded);
+          html += this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded, basePath);
           html += '</div>';
           html += '</div>';
           html += '</div>';
@@ -164,14 +161,14 @@ window.OntolexRenderer = {
         for (var j = 0; j < value.length; j++) {
           listHtml +=
             '<li class="mb-1">' +
-            this.renderSingleValue(value[j], fieldName, entityType, ontAcronym, isEmbedded) +
+            this.renderSingleValue(value[j], fieldName, entityType, ontAcronym, isEmbedded, basePath) +
             '</li>';
         }
         listHtml += '</ul>';
         return listHtml;
       }
     } else {
-      return this.renderSingleValue(value, fieldName, entityType, ontAcronym, isEmbedded);
+      return this.renderSingleValue(value, fieldName, entityType, ontAcronym, isEmbedded, basePath);
     }
   },
 
@@ -191,10 +188,10 @@ window.OntolexRenderer = {
     return 'Item ' + (index + 1);
   },
 
-  renderSingleValue: function (value, fieldName, entityType, ontAcronym, isEmbedded) {
+  renderSingleValue: function (value, fieldName, entityType, ontAcronym, isEmbedded, basePath) {
     // Si es un objeto embebido, expandirlo mostrando todos sus campos
     if (isEmbedded && typeof value === 'object' && value !== null) {
-      return this.renderEmbeddedObject(value, ontAcronym);
+      return this.renderEmbeddedObject(value, ontAcronym, basePath);
     }
 
     if (typeof value === 'object' && value !== null && value['@id']) {
@@ -202,7 +199,8 @@ window.OntolexRenderer = {
       var objLabel =
         value.label || value.prefLabel || value.writtenRep || value.value || this.extractIdFragment(value['@id']);
       if (entityType) {
-        var objLinkUrl = '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value['@id']);
+        var objLinkUrl =
+          basePath + '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value['@id']);
         return (
           '<a href="' +
           objLinkUrl +
@@ -218,7 +216,8 @@ window.OntolexRenderer = {
       // It's a URI
       if (entityType) {
         var uriLabel = this.extractIdFragment(value);
-        var uriLinkUrl = '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
+        var uriLinkUrl =
+          basePath + '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
         return (
           '<a href="' +
           uriLinkUrl +
@@ -244,7 +243,7 @@ window.OntolexRenderer = {
   },
 
   // Renderizar un objeto embebido mostrando todos sus campos en una tabla anidada
-  renderEmbeddedObject: function (obj, ontAcronym) {
+  renderEmbeddedObject: function (obj, ontAcronym, basePath) {
     var html = '<div class="embedded-object-table">';
     html += '<table class="table table-sm table-striped mb-0">';
     html += '<tbody>';
@@ -278,7 +277,7 @@ window.OntolexRenderer = {
 
       html += '<tr>';
       html += '<th scope="row" style="width: 35%;">' + fieldLabel + '</th>';
-      html += '<td>' + this.renderEmbeddedFieldValue(val, key, ontAcronym) + '</td>';
+      html += '<td>' + this.renderEmbeddedFieldValue(val, key, ontAcronym, basePath) + '</td>';
       html += '</tr>';
     }
 
@@ -289,7 +288,7 @@ window.OntolexRenderer = {
   },
 
   // Renderizar el valor de un campo dentro de un objeto embebido
-  renderEmbeddedFieldValue: function (value, fieldName, ontAcronym) {
+  renderEmbeddedFieldValue: function (value, fieldName, ontAcronym, basePath) {
     if (Array.isArray(value)) {
       if (value.length === 0) return '<span class="text-muted">-</span>';
       var items = [];
@@ -301,6 +300,7 @@ window.OntolexRenderer = {
             ontAcronym,
             navigableEntities[fieldName],
             embeddedObjects.indexOf(fieldName) !== -1,
+            basePath,
           ),
         );
       }
@@ -312,22 +312,24 @@ window.OntolexRenderer = {
         ontAcronym,
         navigableEntities[fieldName],
         embeddedObjects.indexOf(fieldName) !== -1,
+        basePath,
       );
     }
   },
 
   // Renderizar un valor simple dentro de un objeto embebido
-  renderEmbeddedSingleValue: function (value, fieldName, ontAcronym, entityType, isNestedEmbedded) {
+  renderEmbeddedSingleValue: function (value, fieldName, ontAcronym, entityType, isNestedEmbedded, basePath) {
     // Si es un objeto embebido anidado, expandirlo recursivamente
     if (isNestedEmbedded && typeof value === 'object' && value !== null) {
-      return this.renderEmbeddedObject(value, ontAcronym);
+      return this.renderEmbeddedObject(value, ontAcronym, basePath);
     }
 
     if (typeof value === 'object' && value !== null && value['@id']) {
       var embLabel =
         value.label || value.prefLabel || value.writtenRep || value.value || this.extractIdFragment(value['@id']);
       if (entityType) {
-        var embLinkUrl = '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value['@id']);
+        var embLinkUrl =
+          basePath + '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value['@id']);
         return (
           '<a href="' +
           embLinkUrl +
@@ -342,7 +344,8 @@ window.OntolexRenderer = {
     } else if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
       if (entityType) {
         var embUriLabel = this.extractIdFragment(value);
-        var embUriLinkUrl = '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
+        var embUriLinkUrl =
+          basePath + '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
         return (
           '<a href="' +
           embUriLinkUrl +

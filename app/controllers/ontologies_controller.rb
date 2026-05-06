@@ -18,7 +18,7 @@ class OntologiesController < ApplicationController
   include OntologiesHelper
   def index
     @app_name = "FacetedBrowsing"
-    @app_dir = "/browse"
+    @app_dir = "#{Rails.application.config.relative_url_root}/browse"
     @base_path = @app_dir
     ontologies = LinkedData::Client::Models::Ontology.all(include: LinkedData::Client::Models::Ontology.include_params + ",viewOf", include_views: true, display_context: false)
     ontologies_hash = Hash[ontologies.map {|o| [o.id, o] }]
@@ -200,7 +200,7 @@ class OntologiesController < ApplicationController
       @ontology.delete
       show_new_errors(@submission)
     else
-      redirect_to "/ontologies/success/#{@ontology.acronym}"
+      redirect_to submit_success_path(@ontology.acronym)
     end
   end
 
@@ -263,12 +263,13 @@ class OntologiesController < ApplicationController
     # PURL-specific redirect to handle /ontologies/{ACR}/{CLASS_ID} paths
     if params[:purl_conceptid]
       params[:purl_conceptid] = "root" if params[:purl_conceptid].eql?("classes")
+      params[:p] = "classes"
       if params[:conceptid]
         params.delete(:purl_conceptid)
       else
         params[:conceptid] = params.delete(:purl_conceptid)
       end
-      redirect_to "/ontologies/#{params[:acronym]}?p=classes#{params_string_for_redirect(params, prefix: "&")}", :status => :moved_permanently
+      redirect_to ontology_path(params[:acronym], p: 'classes') + params_string_for_redirect(params, prefix: "&"), status: :moved_permanently
       return
     end
 
@@ -335,7 +336,7 @@ class OntologiesController < ApplicationController
     case params[:p]
       when "terms"
         params[:p] = 'classes'
-        redirect_to "/ontologies/#{params[:ontology]}#{params_string_for_redirect(params)}", :status => :moved_permanently
+        redirect_to ontology_path(params[:ontology]) + params_string_for_redirect(params), status: :moved_permanently
         return
       when "classes"
         self.classes #rescue self.summary
@@ -405,7 +406,7 @@ class OntologiesController < ApplicationController
   def update
     if params['commit'] == 'Cancel'
       acronym = params['id']
-      redirect_to "/ontologies/#{acronym}"
+      redirect_to ontology_path(acronym)
       return
     end
     # Note: find_by_acronym includes ontology views
@@ -423,7 +424,7 @@ class OntologiesController < ApplicationController
       # if params["ontology"]["subscribe_notifications"].eql?("1")
       #  DataAccess.createUserSubscriptions(@ontology.administeredBy, @ontology.ontologyId, NOTIFICATION_TYPES[:all])
       # end
-      redirect_to "/ontologies/#{@ontology.acronym}"
+      redirect_to ontology_path(@ontology.acronym)
     end
   end
 

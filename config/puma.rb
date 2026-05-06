@@ -13,6 +13,8 @@ threads min_threads_count, max_threads_count
 rails_env = ENV.fetch('RAILS_ENV') { 'development' }
 environment rails_env
 
+worker_timeout 3600
+
 if %w[production staging appliance].include?(rails_env)
 
   # Check if we're running in Docker (with PUMA_BIND_PORT set)

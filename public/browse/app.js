@@ -20,6 +20,7 @@ var app = angular.module('FacetedBrowsing.OntologyList', ['checklist-model', 'ng
   $scope.show_highlight = false;
 
   // Data transfer from Rails
+  $scope.basePath = jQuery(document).data().bp.base_path || '';
   $scope.debug = jQuery(document).data().bp.development;
   $scope.admin = jQuery(document).data().bp.admin;
   $scope.ontologies = jQuery(document).data().bp.ontologies;

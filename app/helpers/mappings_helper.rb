@@ -11,7 +11,7 @@ module MappingsHelper
       concat(content_tag(:div, class: 'concepts-mapping-count mx-1') do
         render(TurboFrameComponent.new(
           id: 'mapping_count',
-          src: "/ajax/mappings/get_concept_table?ontologyid=#{ontology_acronym}&conceptid=#{CGI.escape(concept_id)}",
+          src: ajax_mappings_get_concept_table_path(ontologyid: ontology_acronym, conceptid: concept_id),
           loading: 'lazy'
         )) do |t|
           concat(t.loader { render(LoaderComponent.new(small: true)) })

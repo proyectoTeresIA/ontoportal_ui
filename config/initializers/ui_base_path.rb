@@ -1,4 +1,4 @@
-ui_base_path = ENV["UI_BASE_PATH"].to_s.strip
+ui_base_path = ENV["BASE_PATH"].to_s.strip
 
 if !ui_base_path.empty? && ui_base_path != "/"
   ui_base_path = "/#{ui_base_path}" unless ui_base_path.start_with?("/")

@@ -43,7 +43,7 @@ module BioportalWebUi
 
     # Set the default layout to app/views/layouts/component_preview.html.erb
     config.view_component.default_preview_layout = "component_preview"
-    config.relative_url_root = ENV.fetch('UI_BASE_PATH', '').then do |p|
+    config.relative_url_root = ENV.fetch('BASE_PATH', '').then do |p|
       next if p.empty?
       p.start_with?('/') ? p : "/#{p}"
     end

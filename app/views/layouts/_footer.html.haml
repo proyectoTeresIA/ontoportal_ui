@@ -61,12 +61,16 @@
     -# Teresia footer content.
     %div.row.mb-3
       %div.col.align-content-end
-        %div.row.my-3
+        %div.row.mb-1
           %div.col
-            = image_tag('logos/mciu-csic.jpg', style: 'max-height: 3rem;')
-          %div.col
+            %p.text-muted.mb-1
+              %small Financiado por:
+        %div.row.align-items-center.mb-2
+          %div.col-auto
+            = image_tag('logos/ministerio.jpg', style: 'max-height: 3rem;')
+          %div.col-auto
             = image_tag('logos/prtr.jpg', style: 'max-height: 3rem;')
-          %div.col
+          %div.col-auto
             = image_tag('logos/financiado-eu.jpg', style: 'max-height: 3rem;')
         %div.row.legal-text
           %div.col

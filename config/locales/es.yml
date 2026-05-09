@@ -50,7 +50,7 @@ es:
 
   layouts:
     footer:
-      copyright_html: "Copyright &copy; 2005‑2024, The Board of Trustees of Leland Stanford Junior University. Todos los derechos reservados."
+      copyright_html: "Copyright &copy; 2026 Proyecto TeresIA."
       free_access: "%{site} es gratis y abierto para todos los usuarios, sin necesidad de iniciar sesión."
       grant_html: >
 

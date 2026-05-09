@@ -1,3 +1,6 @@
+# needed for URI.parse in host derivation
+require 'uri'
+
 # Organization info
 $ORG = ENV['ORG'] || 'NCBO'
 $ORG_URL = ENV['ORG_URL'] || 'https://www.bioontology.org'
@@ -95,6 +98,18 @@ $FRONT_NOTICE = ''
 $SITE_NOTICE = {}
 
 $UI_THEME = ENV['UI_THEME'] || 'bioportal'
+
+$HOSTNAME = begin
+  api_url = ENV['API_URL'].to_s
+  if api_url.empty?
+    nil
+  else
+    parsed_url = URI.parse(api_url)
+    parsed_url.host || api_url
+  end
+rescue URI::InvalidURIError
+  ENV['API_URL']
+end
 
 # REST core service address
 $SPARQL_URL = "http://#{$HOSTNAME}:8081/test/"

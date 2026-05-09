@@ -1,3 +1,5 @@
+require 'uri'
+
 # Organization info
 $ORG = ENV['ORG'] || 'NCBO'
 $ORG_URL = ENV['ORG_URL'] || 'https://www.bioontology.org'
@@ -95,10 +97,19 @@ $FRONT_NOTICE = ''
 $SITE_NOTICE = {}
 
 $UI_THEME = ENV['UI_THEME'] || 'bioportal'
-$HOSTNAME = ENV['API_URL']
+$HOSTNAME = begin
+  api_url = ENV['API_URL'].to_s
+  if api_url.empty?
+    nil
+  else
+    parsed_url = URI.parse(api_url)
+    parsed_url.host || api_url
+  end
+rescue URI::InvalidURIError
+  ENV['API_URL']
+end
 
 if $HOSTNAME
-  $HOSTNAME = ENV['API_URL'].split('data.').last
   # add custom stage server configuration if needed (e.g bioportal_config_development_stageportal.lirmm.fr)
   if File.exist?("config/bioportal_config_development_#{$HOSTNAME}")
     require_relative "bioportal_config_development_#{$HOSTNAME}"

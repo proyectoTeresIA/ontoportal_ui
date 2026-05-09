@@ -439,13 +439,16 @@ class ApplicationController < ActionController::Base
 
   def get_metrics_hash
     metrics_hash = {}
-    # TODO: Metrics do not return for views on the backend, need to enable include_views param there
-    @metrics = LinkedData::Client::Models::Metrics.all(include_views: true)
-    @metrics.each do |m| 
-      ontology_link = m.links && m.links['ontology']
-      if ontology_link
-        metrics_hash[ontology_link] = m 
+    begin
+      # TODO: Metrics do not return for views on the backend, need to enable include_views param there
+      @metrics = LinkedData::Client::Models::Metrics.all(include_views: true)
+      @metrics.each do |m|
+        ontology_link = m.links && m.links['ontology']
+        metrics_hash[ontology_link] = m if ontology_link
       end
+    rescue StandardError => e
+      Log.add :error, "Failed to fetch metrics: #{e.class}: #{e.message}"
+      @metrics = []
     end
     return metrics_hash
   end

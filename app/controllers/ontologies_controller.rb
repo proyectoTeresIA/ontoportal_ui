@@ -20,27 +20,63 @@ class OntologiesController < ApplicationController
     @app_name = "FacetedBrowsing"
     @app_dir = "#{Rails.application.config.relative_url_root}/browse"
     @base_path = @app_dir
-    ontologies = LinkedData::Client::Models::Ontology.all(include: LinkedData::Client::Models::Ontology.include_params + ",viewOf", include_views: true, display_context: false)
+    ontology_include = "acronym,name,administeredBy,group,hasDomain,notes,projects,viewOf,summaryOnly,viewingRestriction,acl"
+    ontologies = LinkedData::Client::HTTP.get(
+      "/ontologies",
+      {
+        include: ontology_include,
+        include_views: true,
+        display_links: false,
+        display_context: false
+      }
+    )
     ontologies_hash = Hash[ontologies.map {|o| [o.id, o] }]
     @admin = session[:user] ? session[:user].admin? : false
     @development = Rails.env.development?
 
-    submissions = LinkedData::Client::Models::OntologySubmission.all(include_views: true, display_links: false, display_context: false, include: "submissionStatus,hasOntologyLanguage,pullLocation,description,creationDate,status")
+    submissions = begin
+      LinkedData::Client::Models::OntologySubmission.all(
+        include_views: true,
+        display_links: false,
+        display_context: false,
+        include: "submissionStatus,hasOntologyLanguage,pullLocation,description,creationDate,status"
+      )
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch ontology submissions for browse index: #{e.class}: #{e.message}")
+      []
+    end
     submissions_map = submissions.map do |sub|
       ontology_id = sub.id.split("/")[0..-3].join("/")
       ontology =  ontologies_hash[ontology_id]
+      next if ontology.nil?
+
       [ontology.acronym, sub]
-    end.to_h
+    end.compact.to_h
 
 
-    @categories = LinkedData::Client::Models::Category.all(display_links: false, display_context: false)
+    @categories = begin
+      LinkedData::Client::Models::Category.all(display_links: false, display_context: false)
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch categories for browse index: #{e.class}: #{e.message}")
+      []
+    end
     @categories_hash = Hash[@categories.map {|c| [c.id, c] }]
 
-    @groups = LinkedData::Client::Models::Group.all(display_links: false, display_context: false)
+    @groups = begin
+      LinkedData::Client::Models::Group.all(display_links: false, display_context: false)
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch groups for browse index: #{e.class}: #{e.message}")
+      []
+    end
     @groups_hash = Hash[@groups.map {|g| [g.id, g] }]
 
-    analytics = LinkedData::Client::Analytics.last_month
-    @analytics = Hash[analytics.onts.map {|o| [o[:ont].to_s, o[:views]]}]
+    @analytics = begin
+      analytics = LinkedData::Client::Analytics.last_month
+      Hash[analytics.onts.map {|o| [o[:ont].to_s, o[:views]]}]
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch analytics for browse index: #{e.class}: #{e.message}")
+      {}
+    end
 
     metrics_hash = get_metrics_hash
 

@@ -231,7 +231,8 @@ module OntologiesHelper
   end
 
   def count_links(ont_acronym, page_name = 'summary', count = 0)
-    ont_url = "/ontologies/#{ont_acronym}"
+    base_path = ENV['BASE_PATH'] || ''
+    ont_url = "#{base_path}/ontologies/#{ont_acronym}"
     if count.nil? || count.zero?
       return '0'
     else
@@ -283,12 +284,19 @@ module OntologiesHelper
 
   # Creates a link based on the status of an ontology submission
   def status_link(submission, latest = false, target = '')
+    base_path = ENV['BASE_PATH'] || ''
     version_text = submission.version.nil? || submission.version.length == 0 ? 'unknown' : submission.version
     status_text = " <span class='ontology_submission_status'>" + submission_status2string(submission) + '</span>'
     if submission.ontology.summaryOnly || latest == false
       version_link = version_text
     else
-      version_link = "<a href='/ontologies/#{submission.ontology.acronym}?p=classes' #{target.empty? ? '' : "target='#{target}'"}>#{version_text}</a>"
+      page_name = 'classes'
+      if submission.hasOntologyLanguage == 'SKOS'
+        page_name = 'concepts'
+      elsif submission.hasOntologyLanguage == 'ONTOLEX'
+        page_name = 'terminological_entries'
+      end
+      version_link = "<a href='#{base_path}/ontologies/#{submission.ontology.acronym}?p=#{page_name}' #{target.empty? ? '' : "target='#{target}'"}>#{version_text}</a>"
     end
     version_link + status_text
   end
@@ -331,7 +339,8 @@ module OntologiesHelper
 
   # Link for private/public/licensed ontologies
   def visibility_link(ontology)
-    ont_url = "/ontologies/#{ontology.acronym}" # 'ontology' is NOT a submission here
+    base_path = ENV['BASE_PATH'] || ''
+    ont_url = "#{base_path}/ontologies/#{ontology.acronym}" # 'ontology' is NOT a submission here
     page_name = 'summary' # default ontology page view for visibility link
     link_name = 'Public' # default ontology visibility
     if ontology.summaryOnly
@@ -380,7 +389,13 @@ module OntologiesHelper
   end
 
   def concept_label_to_show(submission: @submission_latest)
-    submission&.hasOntologyLanguage == 'SKOS' ? 'concepts' : 'classes'
+    label = 'classes'
+    if submission&.hasOntologyLanguage == 'SKOS'
+      label = 'concepts'
+    elsif submission&.hasOntologyLanguage == 'ONTOLEX'
+      label = 'terminological entries'
+    end
+    label
   end
 
   def sections_to_show

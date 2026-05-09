@@ -88,50 +88,57 @@
         - if @metrics.nil? || (@metrics.is_a?(Array) && @metrics.empty?) || (@metrics.respond_to?(:status) && @metrics.status == 404)
           %p.font-italic= t('ontologies.metrics.not_yet_calculated', acronym: @ontology.acronym)
         - else
+          - is_ontolex = @submission_latest&.hasOntologyLanguage.to_s.upcase == 'ONTOLEX'
           %table.table.table-sm
-            %tr.border-top
-              %td= t('ontologies.metrics.labels.classes')
-              %td{style: "text-align: right"}= number_with_delimiter(@metrics.classes)
-            %tr
-              %td= t('ontologies.metrics.labels.individuals')
-              %td= number_with_delimiter(@metrics.individuals)
-            %tr
-              %td= t('ontologies.metrics.labels.properties')
-              %td= number_with_delimiter(@metrics.properties)
-            - if @metrics.respond_to?(:ontolexEntries) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexEntries))
-              %tr
-                %td= 'Lexical entries'
+            - if is_ontolex
+              -# ---- OntoLex metrics only ----
+              %tr.border-top
+                %td= t('ontologies.metrics.labels.terms', default: 'Terms')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexEntries)
-            - if @metrics.respond_to?(:ontolexConcepts) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexConcepts))
               %tr
-                %td= 'Lexical concepts'
+                %td= t('ontologies.metrics.labels.ontolex_concepts', default: 'Lexical concepts')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexConcepts)
-            - if @metrics.respond_to?(:ontolexForms) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexForms))
               %tr
-                %td= 'Forms'
+                %td= t('ontologies.metrics.labels.ontolex_forms', default: 'Forms')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexForms)
-            - if @metrics.respond_to?(:ontolexSenses) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexSenses))
               %tr
-                %td= 'Lexical senses'
+                %td= t('ontologies.metrics.labels.ontolex_senses', default: 'Lexical senses')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexSenses)
-            %tr
-              %td= t('ontologies.metrics.labels.max_depth')
-              %td= number_with_delimiter(@metrics.maxDepth)
-            %tr
-              %td= t('ontologies.metrics.labels.max_children')
-              %td= number_with_delimiter(@metrics.maxChildCount)
-            %tr
-              %td= t('ontologies.metrics.labels.avg_children')
-              %td= number_with_delimiter(@metrics.averageChildCount)
-            %tr
-              %td= t('ontologies.metrics.labels.single_child')
-              %td= number_with_delimiter(@metrics.classesWithOneChild)
-            %tr
-              %td= t('ontologies.metrics.labels.more_than_25_children')
-              %td= number_with_delimiter(@metrics.classesWithMoreThan25Children)
-            %tr
-              %td= t('ontologies.metrics.labels.no_definition')
-              %td= number_with_delimiter(@metrics.classesWithNoDefinition)
+              %tr
+                %td= t('ontologies.metrics.labels.ontolex_translations', default: 'Translations')
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexTranslations)
+              %tr
+                %td= t('ontologies.metrics.labels.ontolex_languages', default: 'Languages')
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexLanguages)
+            - else
+              -# ---- Standard OWL/SKOS metrics ----
+              %tr.border-top
+                %td= t('ontologies.metrics.labels.classes')
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.classes)
+              %tr
+                %td= t('ontologies.metrics.labels.individuals')
+                %td= number_with_delimiter(@metrics.individuals)
+              %tr
+                %td= t('ontologies.metrics.labels.properties')
+                %td= number_with_delimiter(@metrics.properties)
+              %tr
+                %td= t('ontologies.metrics.labels.max_depth')
+                %td= number_with_delimiter(@metrics.maxDepth)
+              %tr
+                %td= t('ontologies.metrics.labels.max_children')
+                %td= number_with_delimiter(@metrics.maxChildCount)
+              %tr
+                %td= t('ontologies.metrics.labels.avg_children')
+                %td= number_with_delimiter(@metrics.averageChildCount)
+              %tr
+                %td= t('ontologies.metrics.labels.single_child')
+                %td= number_with_delimiter(@metrics.classesWithOneChild)
+              %tr
+                %td= t('ontologies.metrics.labels.more_than_25_children')
+                %td= number_with_delimiter(@metrics.classesWithMoreThan25Children)
+              %tr
+                %td= t('ontologies.metrics.labels.no_definition')
+                %td= number_with_delimiter(@metrics.classesWithNoDefinition)
 
       -# Visits pane
       %section.ont-metadata-card.ont-analytics-card

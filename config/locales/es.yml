@@ -739,6 +739,12 @@ es:
         single_child: Clases con un solo hijo
         more_than_25_children: Clases con más de 25 hijos
         no_definition: Clases sin definición
+        terms: Términos
+        ontolex_concepts: Conceptos Léxicos
+        ontolex_forms: Formas
+        ontolex_senses: Sentidos Léxicos
+        ontolex_translations: Traducciones
+        ontolex_languages: Idiomas
     visits:
       index:
         title: Visitas a Ontologías

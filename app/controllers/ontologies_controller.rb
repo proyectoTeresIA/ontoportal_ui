@@ -30,7 +30,8 @@ class OntologiesController < ApplicationController
         display_context: false
       }
     )
-    ontologies_hash = Hash[ontologies.map {|o| [o.id, o] }]
+    ontologies = Array(ontologies).select { |o| o.respond_to?(:id) }
+    ontologies_hash = ontologies.each_with_object({}) { |o, acc| acc[o.id] = o }
     @admin = session[:user] ? session[:user].admin? : false
     @development = Rails.env.development?
 
@@ -60,7 +61,7 @@ class OntologiesController < ApplicationController
       Rails.logger.error("Failed to fetch categories for browse index: #{e.class}: #{e.message}")
       []
     end
-    @categories_hash = Hash[@categories.map {|c| [c.id, c] }]
+    @categories_hash = @categories.to_h { |c| [c.id, c] }
 
     @groups = begin
       LinkedData::Client::Models::Group.all(display_links: false, display_context: false)
@@ -68,11 +69,11 @@ class OntologiesController < ApplicationController
       Rails.logger.error("Failed to fetch groups for browse index: #{e.class}: #{e.message}")
       []
     end
-    @groups_hash = Hash[@groups.map {|g| [g.id, g] }]
+    @groups_hash = @groups.to_h { |g| [g.id, g] }
 
     @analytics = begin
       analytics = LinkedData::Client::Analytics.last_month
-      Hash[analytics.onts.map {|o| [o[:ont].to_s, o[:views]]}]
+      analytics.onts.to_h { |o| [o[:ont].to_s, o[:views]] }
     rescue StandardError => e
       Rails.logger.error("Failed to fetch analytics for browse index: #{e.class}: #{e.message}")
       {}

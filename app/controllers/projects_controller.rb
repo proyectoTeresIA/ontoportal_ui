@@ -8,7 +8,10 @@ class ProjectsController < ApplicationController
     @projects.reject! { |p| p.name.nil? }
     @projects.sort! { |a, b| a.name.downcase <=> b.name.downcase }
     @ontologies = LinkedData::Client::Models::Ontology.all(include_views: true)
-    @ontologies_hash = Hash[@ontologies.map { |ont| [ont.id, ont] }]
+    @ontologies_hash = @ontologies.each_with_object({}) do |ont, acc|
+      next unless ont.respond_to?(:id)
+      acc[ont.id] = ont
+    end
     if request.xhr?
       render action: 'index', layout: false
     else

@@ -1,5 +1,13 @@
 - @title = t('search.index.title')
 
+- ontologies_for_js = {}
+- begin
+  - ontology_records = LinkedData::Client::Models::Ontology.all(include_views: true)
+  - ontology_records = Array(ontology_records)
+  - ontologies_for_js = ontology_records.map { |o| o.respond_to?(:id) && o.respond_to?(:name) && o.respond_to?(:acronym) ? [o.id, { name: o.name, acronym: o.acronym }] : nil }.compact.to_h
+- rescue StandardError => e
+  - Rails.logger.error("Failed to build ontology JS map for search page: #{e.class}: #{e.message}")
+
 %div.container.mt-5
   %h1.display-4 
     = t('search.index.heading')
@@ -105,7 +113,7 @@
 :javascript
   // Hash of ontology id => name, acronym for lookup use via JS
   jQuery(document).ready(function() {
-    jQuery(document).data().bp.ontologies = #{Hash[LinkedData::Client::Models::Ontology.all(include_views: true).map {|o| [o.id, {name: o.name, acronym: o.acronym}]}].to_json.html_safe}
+    jQuery(document).data().bp.ontologies = #{ontologies_for_js.to_json.html_safe}
 
     // Toggle between class and lexical search options
     jQuery('input[name="search[resource_type]"]').on('change', function() {

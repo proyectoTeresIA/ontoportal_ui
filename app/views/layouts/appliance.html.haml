@@ -4,11 +4,12 @@
     = render partial: 'ga_tracking'
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
 
-    %title= @title.nil? ? "#{$ORG_SITE}" : "#{@title} | #{$ORG_SITE}"
+    %title TeresIA Portal
 
     = csrf_meta_tag
 
-    <link rel="shortcut icon" href="/fav.ico" type="image/x-icon" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml" />
     
     = stylesheet_link_tag "//fonts.googleapis.com/css?family=Droid+Sans:400", media: "all"
   = stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css", crossorigin: "anonymous"

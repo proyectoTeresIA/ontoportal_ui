@@ -77,27 +77,22 @@
             = t('.grant_html')
         %div.row.pt-1.legal-text
           %div.col
-            = t('.free_access', site: "#{$SITE}")
-        %div.row.pt-1.legal-text
-          %div.col
-            = t('.copyright_html')
+            %div.d-flex.flex-wrap.align-items-center.gap-2
+              %span= t('.copyright_html')
+              %span creado por
+              = link_to('https://librairy.linkeddata.es/', target: '_blank', rel: 'noopener') do
+                = image_tag('https://www.dropbox.com/scl/fi/r4toionktope8ae0o054t/logo-librairy-color-horizontal-positivo.png?rlkey=aitn89tjwrn6misfjn6xl9dw1&dl=1', style: 'max-height: 1.5rem;', alt: 'librAIry')
         %div.row.pt-2
           %div.col
             %ul.list-inline.nav
               %li.list-inline-item.nav-item
                 = link_to(t('layouts.footer_nav.links.cite_us'), Rails.configuration.settings.links[:cite], class: 'nav-link p-0', target: '_blank')
               %li.list-inline-item
-                %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
-              %li.list-inline-item
                 = link_to(t('layouts.footer_nav.links.privacy_policy'), Rails.configuration.settings.links[:privacy_policy],class: 'nav-link p-0',
                           target: '_blank')
               %li.list-inline-item
-                %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
-              %li.list-inline-item
                 = link_to(t('layouts.footer_nav.links.terms'), Rails.configuration.settings.links[:terms], class: 'nav-link p-0',
                           target: '_blank')
-              %li.list-inline-item
-                %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
               %li.list-inline-item
                 = link_to(t('layouts.footer_nav.links.cookies'), Rails.configuration.settings.links[:cookies], class: 'nav-link p-0',
                           target: '_blank')

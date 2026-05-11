@@ -212,11 +212,19 @@ module ApplicationHelper
   end
 
   def get_ontologies_data(ontologies = nil)
-    ontologies ||= LinkedData::Client::Models::Ontology.all(include: 'acronym,name')
+    ontologies = begin
+      ontologies || LinkedData::Client::Models::Ontology.all(include: 'acronym,name')
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch ontologies for picker: #{e.class}: #{e.message}")
+      []
+    end
+
+    ontologies = [] unless ontologies.respond_to?(:each)
     @onts_for_select = []
     @onts_acronym_map = {}
     @onts_uri2acronym_map = {}
     ontologies.each do |ont|
+      next unless ont.respond_to?(:acronym) && ont.respond_to?(:name) && ont.respond_to?(:id)
       next if ont.acronym.blank?
 
       acronym = ont.acronym
@@ -240,8 +248,16 @@ module ApplicationHelper
   def get_categories_data
     @categories_for_select = []
     @categories_map = {}
-    categories = LinkedData::Client::Models::Category.all(include: 'name,ontologies')
+    categories = begin
+      LinkedData::Client::Models::Category.all(include: 'name,ontologies')
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch categories for picker: #{e.class}: #{e.message}")
+      []
+    end
+
+    categories = [] unless categories.respond_to?(:each)
     categories.each do |c|
+      next unless c.respond_to?(:name) && c.respond_to?(:id) && c.respond_to?(:ontologies)
       @categories_for_select << [c.name, c.id]
       @categories_map[c.id] = ontologies_to_acronyms(c.ontologies)
     end
@@ -252,8 +268,16 @@ module ApplicationHelper
   def get_groups_data
     @groups_map = {}
     @groups_for_select = []
-    groups = LinkedData::Client::Models::Group.all(include: 'acronym,name,ontologies')
+    groups = begin
+      LinkedData::Client::Models::Group.all(include: 'acronym,name,ontologies')
+    rescue StandardError => e
+      Rails.logger.error("Failed to fetch groups for picker: #{e.class}: #{e.message}")
+      []
+    end
+
+    groups = [] unless groups.respond_to?(:each)
     groups.each do |g|
+      next unless g.respond_to?(:acronym) && g.respond_to?(:name) && g.respond_to?(:ontologies)
       next if g.acronym.blank?
 
       @groups_for_select << [g.name + " (#{g.acronym})", g.acronym]
@@ -264,6 +288,8 @@ module ApplicationHelper
   end
 
   def ontologies_to_acronyms(ontologyIDs)
+    return [] if ontologyIDs.nil?
+
     acronyms = []
     ontologyIDs.each do |id|
       acronyms << @onts_uri2acronym_map[id]

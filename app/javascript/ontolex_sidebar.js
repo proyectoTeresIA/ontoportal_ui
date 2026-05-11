@@ -40,6 +40,8 @@ window.OntolexSidebar = {
       preloadData: config.preloadData || null,
       skipAutoSelect: config.skipAutoSelect || false,
       initialItemId: config.initialItemId || null, // ID to find and select on initial load
+      currentItems: [],
+      pendingEnterSelectionQuery: null,
     };
 
     var api = {
@@ -168,6 +170,7 @@ window.OntolexSidebar = {
         html += '<div class="input-group input-group-sm">';
         html += '<input type="text" class="form-control" ';
         html += 'id="' + state.containerId + '-search" ';
+        html += 'list="' + state.containerId + '-search-suggestions" ';
         html += 'placeholder="' + state.searchPlaceholder + '" ';
         html += 'value="' + this.escapeHtml(state.searchQuery || '') + '">';
         html +=
@@ -177,8 +180,144 @@ window.OntolexSidebar = {
         html += '<i class="fas fa-search"></i>';
         html += '</button>';
         html += '</div>';
+        html += '<datalist id="' + state.containerId + '-search-suggestions"></datalist>';
         html += '</div>';
         return html;
+      },
+
+      getItemLabels: function (item) {
+        var labels = [];
+
+        if (Array.isArray(item.writtenReps)) {
+          labels = labels.concat(item.writtenReps);
+        }
+
+        if (typeof item.writtenRep === 'string') {
+          labels.push(item.writtenRep);
+        }
+
+        if (typeof item.lemma === 'string') {
+          labels.push(item.lemma);
+        }
+
+        if (typeof item.prefLabel === 'string') {
+          labels.push(item.prefLabel);
+        }
+
+        if (typeof item.label === 'string') {
+          labels.push(item.label);
+        }
+
+        var itemId = item['@id'] || item.id;
+        if (itemId) {
+          labels.push(itemId.toString().split('/').pop());
+        }
+
+        return labels
+          .map(function (label) {
+            return (label || '').toString().trim();
+          })
+          .filter(function (label) {
+            return label.length > 0;
+          });
+      },
+
+      normalizeText: function (value) {
+        return (value || '').toString().trim().toLowerCase();
+      },
+
+      updateSearchSuggestions: function (items) {
+        var $datalist = $('#' + state.containerId + '-search-suggestions');
+        if ($datalist.length === 0) return;
+
+        var seen = {};
+        var suggestions = [];
+        for (var i = 0; i < items.length; i++) {
+          var labels = this.getItemLabels(items[i]);
+          for (var j = 0; j < labels.length; j++) {
+            var label = labels[j];
+            var key = this.normalizeText(label);
+            if (!seen[key]) {
+              seen[key] = true;
+              suggestions.push(label);
+            }
+            if (suggestions.length >= 20) break;
+          }
+          if (suggestions.length >= 20) break;
+        }
+
+        var html = suggestions
+          .map(function (label) {
+            return '<option value="' + $('<div>').text(label).html() + '"></option>';
+          })
+          .join('');
+
+        $datalist.html(html);
+      },
+
+      selectBestMatchForQuery: function (query) {
+        if (!state.currentItems || state.currentItems.length === 0) {
+          return false;
+        }
+
+        var normalizedQuery = this.normalizeText(query);
+        if (!normalizedQuery) {
+          return false;
+        }
+
+        var bestItem = null;
+        var containsItem = null;
+        var bestIndex = null;
+        var containsIndex = null;
+
+        for (var i = 0; i < state.currentItems.length; i++) {
+          var item = state.currentItems[i];
+          var labels = this.getItemLabels(item);
+
+          for (var j = 0; j < labels.length; j++) {
+            var normalizedLabel = this.normalizeText(labels[j]);
+
+            if (normalizedLabel === normalizedQuery) {
+              bestItem = item;
+              bestIndex = i;
+              break;
+            }
+
+            if (!bestItem && normalizedLabel.indexOf(normalizedQuery) === 0) {
+              bestItem = item;
+              bestIndex = i;
+            }
+
+            if (!containsItem && normalizedLabel.indexOf(normalizedQuery) > -1) {
+              containsItem = item;
+              containsIndex = i;
+            }
+          }
+
+          if (bestItem && this.getItemLabels(bestItem).some(function (label) { return label.toLowerCase() === normalizedQuery; })) {
+            break;
+          }
+        }
+
+        var itemToSelect = bestItem || containsItem || state.currentItems[0];
+        var indexToSelect = bestItem ? bestIndex : containsItem ? containsIndex : 0;
+        if (!itemToSelect) {
+          return false;
+        }
+
+        var $items = $('#' + state.containerId + ' .ontolex-sidebar-item');
+        if ($items.length > indexToSelect && indexToSelect >= 0) {
+          $items.eq(indexToSelect).trigger('click');
+          return true;
+        }
+
+        var itemId = itemToSelect['@id'] || itemToSelect.id;
+        if (!itemId) {
+          return false;
+        }
+
+        this.selectItem(itemId);
+        return true;
       },
 
       escapeHtml: function (text) {
@@ -190,6 +329,7 @@ window.OntolexSidebar = {
       renderSidebar: function (items, data) {
         var $container = $('#' + state.containerId);
         var $resultsArea = $container.find('.ontolex-results-area');
+        state.currentItems = items || [];
 
         var html = '';
         if (items.length === 0) {
@@ -224,7 +364,19 @@ window.OntolexSidebar = {
           this.attachSearchHandler();
         }
 
+        this.updateSearchSuggestions(state.currentItems);
+
         this.attachEventHandlers(items);
+
+        // Keep results and details in sync after a search: show the best matching entry.
+        if (state.searchQuery && state.searchQuery.trim() !== '' && items.length > 0) {
+          this.selectBestMatchForQuery(state.searchQuery);
+        }
+
+        if (state.pendingEnterSelectionQuery !== null) {
+          this.selectBestMatchForQuery(state.pendingEnterSelectionQuery);
+          state.pendingEnterSelectionQuery = null;
+        }
       },
 
       renderPagination: function (data) {
@@ -260,27 +412,44 @@ window.OntolexSidebar = {
         var $searchBtn = $('#' + state.containerId + '-search-btn');
 
         // Trigger search function
-        var doSearch = function () {
-          var query = $searchInput.val();
+        var doSearch = function (triggeredByEnter) {
+          var query = ($searchInput.val() || '').trim();
           // Only search if query changed
           if (query !== state.searchQuery) {
             state.searchQuery = query;
             state.currentPage = 1;
+            state.pendingEnterSelectionQuery = triggeredByEnter ? query : null;
             self.loadPage(1);
+          } else if (triggeredByEnter) {
+            self.selectBestMatchForQuery(query);
           }
         };
 
-        // Handle Enter key
-        $searchInput.off('keypress').on('keypress', function (e) {
-          if (e.which === 13) {
-            e.preventDefault();
-            doSearch();
+        var doSearchDebounced = function () {
+          if (state.searchDebounceTimer) {
+            clearTimeout(state.searchDebounceTimer);
           }
+          state.searchDebounceTimer = setTimeout(function () {
+            doSearch(false);
+          }, 250);
+        };
+
+        // Handle Enter key
+        $searchInput.off('keydown keypress').on('keydown keypress', function (e) {
+          if (e.key === 'Enter' || e.which === 13) {
+            e.preventDefault();
+            doSearch(true);
+          }
+        });
+
+        // Autocomplete-like live search while typing
+        $searchInput.off('input').on('input', function () {
+          doSearchDebounced();
         });
 
         // Handle search button click
         $searchBtn.off('click').on('click', function () {
-          doSearch();
+          doSearch(true);
         });
       },
       attachEventHandlers: function (items) {

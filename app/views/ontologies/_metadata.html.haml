@@ -89,17 +89,8 @@
           %p.font-italic= t('ontologies.metrics.not_yet_calculated', acronym: @ontology.acronym)
         - else
           %table.table.table-sm
-            %tr.border-top
-              %td= t('ontologies.metrics.labels.classes')
-              %td{style: "text-align: right"}= number_with_delimiter(@metrics.classes)
-            %tr
-              %td= t('ontologies.metrics.labels.individuals')
-              %td= number_with_delimiter(@metrics.individuals)
-            %tr
-              %td= t('ontologies.metrics.labels.properties')
-              %td= number_with_delimiter(@metrics.properties)
             - if @metrics.respond_to?(:ontolexEntries) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexEntries))
-              %tr
+              %tr.border-top
                 %td= 'Lexical entries'
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexEntries)
             - if @metrics.respond_to?(:ontolexConcepts) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexConcepts))
@@ -114,24 +105,6 @@
               %tr
                 %td= 'Lexical senses'
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexSenses)
-            %tr
-              %td= t('ontologies.metrics.labels.max_depth')
-              %td= number_with_delimiter(@metrics.maxDepth)
-            %tr
-              %td= t('ontologies.metrics.labels.max_children')
-              %td= number_with_delimiter(@metrics.maxChildCount)
-            %tr
-              %td= t('ontologies.metrics.labels.avg_children')
-              %td= number_with_delimiter(@metrics.averageChildCount)
-            %tr
-              %td= t('ontologies.metrics.labels.single_child')
-              %td= number_with_delimiter(@metrics.classesWithOneChild)
-            %tr
-              %td= t('ontologies.metrics.labels.more_than_25_children')
-              %td= number_with_delimiter(@metrics.classesWithMoreThan25Children)
-            %tr
-              %td= t('ontologies.metrics.labels.no_definition')
-              %td= number_with_delimiter(@metrics.classesWithNoDefinition)
 
       -# Visits pane
       %section.ont-metadata-card.ont-analytics-card

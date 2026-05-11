@@ -30,10 +30,12 @@
     </p>
 
     <div ng-controller="OntologyList">
-      <div class="welcome_admin admin" ng-show="admin">
-        <b><%= t('ontologies.browse.welcome_admin') %></b><br/>
-        <%= t('ontologies.browse.admin_coloring_note') %>
-      </div>
+      <% if @admin %>
+        <div class="welcome_admin admin" ng-show="admin">
+          <b><%= t('ontologies.browse.welcome_admin') %></b><br/>
+          <%= t('ontologies.browse.admin_coloring_note') %>
+        </div>
+      <% end %>
 
       <div id="facets" class="grid-20">
         <div >
@@ -69,28 +71,32 @@
           </div>
         </div>
 
-        <div id="missing_status_facet" class="facet admin" ng-show="admin">
-          <h4><%= t('ontologies.browse.facets.missing_status') %></h4>
-          <div class="checkbox_list">
-            <select ng-model="facets.missing_status.active">
-              <option ng-repeat="status in facets.missing_status.values" value="{{status}}">
-                {{status | idToTitle}}
-              </option>
-            </select>
+        <% if @admin %>
+          <div id="missing_status_facet" class="facet admin" ng-show="admin">
+            <h4><%= t('ontologies.browse.facets.missing_status') %></h4>
+            <div class="checkbox_list">
+              <select ng-model="facets.missing_status.active">
+                <option ng-repeat="status in facets.missing_status.values" value="{{status}}">
+                  {{status | idToTitle}}
+                </option>
+              </select>
+            </div>
           </div>
-        </div>
+        <% end %>
 
-        <div id="admin_facet" class="facet admin" ng-show="admin">
-          <h4><%= t('ontologies.browse.facets.admin_only') %></h4>
-          <div class="checkbox_list">
-            <span ng-repeat="artifact in artifacts">
-              <input type="checkbox" checklist-model="facets.artifacts.active" checklist-value="artifact" name="artifact" id="artifact_{{artifact}}" ng-disabled="!facet_counts['artifacts'][artifact]">
-              <label for="artifact_{{artifact}}" ng-class="{facet_disabled: !facet_counts['artifacts'][artifact]}">{{artifact | idToTitle}}</label>
-              <span class="smaller">({{facet_counts["artifacts"][artifact] || 0}})</span>
-              <br/>
-            </span>
+        <% if @admin %>
+          <div id="admin_facet" class="facet admin" ng-show="admin">
+            <h4><%= t('ontologies.browse.facets.admin_only') %></h4>
+            <div class="checkbox_list">
+              <span ng-repeat="artifact in artifacts">
+                <input type="checkbox" checklist-model="facets.artifacts.active" checklist-value="artifact" name="artifact" id="artifact_{{artifact}}" ng-disabled="!facet_counts['artifacts'][artifact]">
+                <label for="artifact_{{artifact}}" ng-class="{facet_disabled: !facet_counts['artifacts'][artifact]}">{{artifact | idToTitle}}</label>
+                <span class="smaller">({{facet_counts["artifacts"][artifact] || 0}})</span>
+                <br/>
+              </span>
+            </div>
           </div>
-        </div>
+        <% end %>
 
       </div>
 
@@ -152,17 +158,19 @@
               <span class="ont-info" ng-if="facets.categories.active.length > 1">
                 <b><%= t('ontologies.browse.categories') %></b>: {{categoryNames(ontology.categories).join(', ')}}
               </span>
-              <span>
-                <span class="ont-info admin" ng-if="admin">
-                  <b><%= t('ontologies.browse.admins') %></b>: {{adminUsernames(ontology.administeredBy).join(', ')}}
+              <% if @admin %>
+                <span>
+                  <span class="ont-info admin" ng-if="admin">
+                    <b><%= t('ontologies.browse.admins') %></b>: {{adminUsernames(ontology.administeredBy).join(', ')}}
+                  </span>
+                  <span class="ont-info admin" ng-if="admin && ontology.pullLocation">
+                    <b><a href="{{ontology.pullLocation}}"><%= t('ontologies.browse.pull_url') %></a></b>
+                  </span>
+                  <span class="ont-info admin" ng-if="admin && ontology.submission">
+                    <b><%= t('ontologies.browse.status') %></b>: {{ontology.submissionStatusFormatted}}
+                  </span>
                 </span>
-                <span class="ont-info admin" ng-if="admin && ontology.pullLocation">
-                  <b><a href="{{ontology.pullLocation}}"><%= t('ontologies.browse.pull_url') %></a></b>
-                </span>
-                <span class="ont-info admin" ng-if="admin && ontology.submission">
-                  <b><%= t('ontologies.browse.status') %></b>: {{ontology.submissionStatusFormatted}}
-                </span>
-              </span>
+              <% end %>
             </div>
 
             <span ng-hide="ontology.submission"><%= t('ontologies.browse.no_submissions') %></span>

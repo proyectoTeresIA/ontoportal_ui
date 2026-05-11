@@ -167,17 +167,11 @@ module OntologiesHelper
   end
 
   def upload_ontology_button
-    if session[:user].nil?
-      render Buttons::RegularButtonComponent.new(id: "upload-ontology-button", value: t('home.ontology_upload_button'), variant: "secondary", state: "regular", href: login_index_path(redirect: new_ontology_path)) do |btn|
-        btn.icon_left do
-          inline_svg_tag "upload.svg"
-        end
-      end
-    else
-      render Buttons::RegularButtonComponent.new(id: "upload-ontology-button", value: t('home.ontology_upload_button'), variant: "secondary", state: "regular", href: new_ontology_path) do |btn|
-        btn.icon_left do
-          inline_svg_tag "upload.svg"
-        end
+    return if session[:user].nil?
+
+    render Buttons::RegularButtonComponent.new(id: "upload-ontology-button", value: t('home.ontology_upload_button'), variant: "secondary", state: "regular", href: new_ontology_path) do |btn|
+      btn.icon_left do
+        inline_svg_tag "upload.svg"
       end
     end
   end

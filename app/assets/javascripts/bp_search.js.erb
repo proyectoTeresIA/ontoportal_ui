@@ -319,25 +319,13 @@ function currentSearchParams() {
     var params = {}, ont_val = null;
     // Search query
     params.q = jQuery("#search_keywords").val();
-    // Resource type (class vs lexical)
-    params.resource_type = jQuery("input[name='search[resource_type]']:checked").val() || 'class';
+    // Fixed lexical mode in UI
+    params.resource_type = 'form';
     // Ontologies
     ont_val = jQuery("#ontology_ontologyId").val();
     params.ontologies = (ont_val === null) ? "" : ont_val.join(",");
-    // Advanced options (class search)
-    params.include_properties = jQuery("#search_include_properties").is(":checked");
-    params.include_views = jQuery("#search_include_views").is(":checked");
-    params.includeObsolete = jQuery("#search_include_obsolete").is(":checked");
-    params.require_definition = jQuery("#search_require_definition").is(":checked");
     params.exact_match = jQuery("#search_exact_match").is(":checked");
-    params.categories = jQuery("#search_categories").val() || "";
-    
-    // Lexical-specific options (Forms)
-    if (params.resource_type === 'form') {
-        params.language = jQuery("#search_language").val() || "";
-        params.part_of_speech = jQuery("#search_part_of_speech").val() || "";
-        params.subjects = jQuery("#search_subjects").val() || "";
-    }
+    params.language = jQuery("#search_language").val() || "";
     
     return params;
 }
@@ -364,19 +352,9 @@ function performSearch() {
     var ont_val = jQuery("#ontology_ontologyId").val() || null,
         onts = (ont_val === null) ? "" : ont_val.join(","),
         query = jQuery("#search_keywords").val(),
-        resourceType = jQuery("input[name='search[resource_type]']:checked").val() || 'class',
-        // Advanced options (class search)
-        includeProps = jQuery("#search_include_properties").is(":checked"),
-        includeViews = jQuery("#search_include_views").is(":checked"),
-        includeObsolete = jQuery("#search_include_obsolete").is(":checked"),
-        includeNonProduction = jQuery("#search_include_non_production").is(":checked"),
-        includeOnlyDefinitions = jQuery("#search_require_definition").is(":checked"),
+        resourceType = 'form',
         exactMatch = jQuery("#search_exact_match").is(":checked"),
-        categories = jQuery("#search_categories").val() || "",
-        // Lexical-specific options
-        language = jQuery("#search_language").val() || "",
-        partOfSpeech = jQuery("#search_part_of_speech").val() || "",
-        subjects = jQuery("#search_subjects").val() || "";
+        language = jQuery("#search_language").val() || "";
 
     // Set the list of search words to be blacklisted for the ontology ownership algorithm
     blacklistSearchWordsArr = query.split(/\s+/);
@@ -393,20 +371,8 @@ function performSearch() {
         format: "jsonp",
         ncbo_slice: (("ncbo_slice" in jQuery(document).data().bp.config) ? jQuery(document).data().bp.config.ncbo_slice : '')
     };
-    
-    // Add class-specific or form-specific parameters
-    if (resourceType === 'form') {
-        if (language) requestData.language = language;
-        if (partOfSpeech) requestData.part_of_speech = partOfSpeech;
-        if (subjects) requestData.subjects = subjects;
-    } else {
-        requestData.include_properties = includeProps;
-        requestData.include_views = includeViews;
-        requestData.obsolete = includeObsolete;
-        requestData.include_non_production = includeNonProduction;
-        requestData.require_definition = includeOnlyDefinitions;
-        requestData.categories = categories;
-    }
+
+    if (language) requestData.language = language;
 
     jQuery.ajax({
         // bp.config is created in views/layouts/_header..., which calls
@@ -423,22 +389,12 @@ function performSearch() {
                 resultsOntCount = "",
                 resultsOntDiv = "";
                 
-            // For class search, filter by categories if needed
-            if (resourceType === 'class' && categories.length > 0) {
-                data.collection = filterCategories(data.collection, categories);
-            }
-            
+
             if (!jQuery.isEmptyObject(data)) {
-                if (resourceType === 'form') {
-                    // Format form results (OntoLex)
-                    groupedResults = aggregateLexicalResults(data.collection);
-                } else {
-                    // Format class results as usual
-                    groupedResults = aggregateResults(data.collection);
-                }
+                groupedResults = aggregateLexicalResults(data.collection);
                 
                 jQuery(groupedResults).each(function() {
-                    results.push(resourceType === 'form' ? formatFormSearchResults(this) : formatSearchResults(this));
+                    results.push(formatFormSearchResults(this));
                 });
             }
             

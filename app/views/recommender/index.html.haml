@@ -19,16 +19,6 @@
       %input#radioItKeywords.form-check-input{name: "input_type", type: "radio", value: "2"}
       %label.form-check-label{for: "radioItKeywords"}= t('recommender.index.input_keywords_label', default: 'Keywords (separated by commas)')
   
-  -# Specify output format
-  %div.mb-3
-    %h5= t('recommender.index.output_section', default: 'Output')
-    %div.form-check.form-check-inline
-      %input#radioOtSingle.form-check-input{name: "output_type", type: "radio", value: "1", checked: "checked"}
-      %label.form-check-label{for: "radioOtSingle"}= t('recommender.index.output_ontologies_label', default: 'Ontologies')
-    %div.form-check.form-check-inline
-      %input#radioOtSets.form-check-input{name: "output_type", type: "radio", value: "2"}
-      %label.form-check-label{for: "radioOtSets"}= t('recommender.index.output_sets_label', default: 'Ontology sets')
-  
   -# Input text or keywords
   %div.mb-3
     = text_area_tag("inputText", nil, rows: 10, class: "form-control default", placeholder: t('recommender.index.textarea_placeholder'), aria: {describedby: "inputTextHelpBlock"})
@@ -57,15 +47,8 @@
       %div.col-md-2
         %label{for: "input_ws"}= t('recommender.index.specialization_label')
         = number_field_tag("input_ws", "0.15", min: "0", step: "1", class: "form-control")
-    -# Specify ontology set size
-    %h6= t('recommender.index.max_ontologies_per_set')
-    %div.row.mb-3
-      %div.col-md-2
-        = number_field_tag("input_max_ontologies", "3", in: 2...5, class: "form-control")
-    %div.row.mb-3
-      -# Specify ontologies
-      %div#ontologyPicker
-        = render(partial: "shared/ontology_picker")
+    -# Hidden defaults for simplified UI
+    = hidden_field_tag("output_type", "1")
 
   %div.my-4
     = submit_tag(t('recommender.index.get_recommendations'), id: "recommenderButton", type: "button", class: "btn btn-primary")

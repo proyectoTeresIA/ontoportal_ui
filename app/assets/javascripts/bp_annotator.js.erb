@@ -192,8 +192,9 @@ function get_annotations() {
   });
   params.mappings = mappings;
 
-  if (jQuery('#semantic_types').val() !== null) {
-    params.semantic_types = jQuery('#semantic_types').val();
+  var semanticTypesVal = jQuery('#semantic_types').val();
+  if (semanticTypesVal && semanticTypesVal.length > 0) {
+    params.semantic_types = semanticTypesVal;
     annotationsTable.fnSetColumnVis(BP_COLUMNS.sem_types, true);
     jQuery('#results_error').html('Only results from ontologies with semantic types available are displayed.');
   } else {

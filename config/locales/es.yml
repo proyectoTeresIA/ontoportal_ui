@@ -70,8 +70,8 @@ es:
 
     topnav:
       toggle_navigation: Alternar navegación
-      ontologies: Terminologías
-      search: Buscar
+      ontologies: Explorador
+      search: Buscador
       annotator: Anotador
       recommender: Recomendador
       mappings: Mapeos
@@ -259,7 +259,7 @@ es:
   annotator:
     index:
       title: Anotador
-      intro: Obtén anotaciones para terminologías en un texto con términos de las terminologías
+      intro: Identifica términos en un texto dado
       annotatorplus_html: <em>Echa un vistazo a la beta de <a href="%{annotatorplus_href}">AnnotatorPlus</a>; una nueva versión del Annotator con soporte añadido para negación, ¡y más!</em>
       help_aria: Ver ayuda del anotador
       placeholders:
@@ -274,7 +274,7 @@ es:
       select_umls_semantic_types: Seleccionar tipos semánticos UMLS
       include_ancestors_up_to_level: Incluir ancestros hasta el nivel
       entity_recognizer: Reconocedor de entidades
-      get_annotations: Obtener anotaciones
+      get_annotations: Identifica términos
       annotations: Anotaciones
       results_filtered_by: "Los resultados están filtrados por:"
       filter: Filtro
@@ -367,7 +367,7 @@ es:
       specialization_label: Especialización
       max_ontologies_per_set: Máximo de terminologías por conjunto
       pick_ontologies_label: Seleccionar terminologías
-      get_recommendations: Obtener recomendaciones
+      get_recommendations: Sugiere terminologías
       edit_input: Editar entrada
       errors:
         not_text: Por favor, pega un párrafo de texto o algunas palabras clave para calcular recomendaciones de terminologías.
@@ -417,7 +417,7 @@ es:
       other_forms: "Otras formas"
       view_entry: "ver entrada"
       view_entries: "ver entradas"
-      lexical_filters: "Filtros Léxicos"
+      lexical_filters: "Filtrar"
       language_filter: "Idioma"
       part_of_speech: "Categoría gramatical"
       subjects_filter: "Dominios/Temas"

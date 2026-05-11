@@ -79,8 +79,9 @@
           %div.col
             %div.d-flex.flex-wrap.align-items-center.gap-2
               %span= t('.copyright_html')
-              %span creado por
-              = link_to('librAIry', 'https://librairy.linkeddata.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none')
+              %span Creado por
+              = link_to('https://librairy.linkeddata.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
+                = image_tag("#{root_path}assets/logo-librairy.svg", alt: 'librAIry', style: 'max-height: 1rem; width: auto;')
         %div.row.pt-2
           %div.col
             %ul.list-inline.nav

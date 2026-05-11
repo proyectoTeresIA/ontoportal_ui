@@ -153,16 +153,20 @@ rec.getRecommendations = function () {
     errors = true;
   }
 
-  var maxOntologies = parseInt($('#input_max_ontologies').val());
+  var hasMaxOntologiesInput = $('#input_max_ontologies').length > 0;
+  var maxOntologies = 3;
+  if (hasMaxOntologiesInput) {
+    maxOntologies = parseInt($('#input_max_ontologies').val());
 
-  if (isNaN(maxOntologies) || maxOntologies % 1 != 0) {
-    $('.invalidMaxOntError').show();
-    errors = true;
-  }
+    if (isNaN(maxOntologies) || maxOntologies % 1 != 0) {
+      $('.invalidMaxOntError').show();
+      errors = true;
+    }
 
-  if (maxOntologies < 2 || maxOntologies > 4) {
-    $('.maxOntologiesError').show();
-    errors = true;
+    if (maxOntologies < 2 || maxOntologies > 4) {
+      $('.maxOntologiesError').show();
+      errors = true;
+    }
   }
 
   if (!errors) {
@@ -171,22 +175,20 @@ rec.getRecommendations = function () {
     var params = {};
     var ont_select = jQuery('#ontology_ontologyId');
     params.input = $('#inputText').val();
-    params.ontologies = ont_select.val() === null ? [] : ont_select.val();
+    params.ontologies = ont_select.length === 0 || ont_select.val() === null ? [] : ont_select.val();
     // Input type (text or keywords)
     if ($('#radioItText').is(':checked'))
       params.input_type = 1; //text
     else params.input_type = 2; //keywords
-    // Output type (ontologies or ontology sets)
-    if ($('#radioOtSingle').is(':checked'))
-      params.output_type = 1; //ontologies
-    else params.output_type = 2; //ontology sets
+    // Output type fixed to ontologies in simplified UI
+    params.output_type = 1;
     // Weights
     params.wc = $('#input_wc').val();
     params.wa = $('#input_wa').val();
     params.wd = $('#input_wd').val();
     params.ws = $('#input_ws').val();
     // Maximum number of ontologies per set (only for the "ontology sets" output)
-    params.max_elements_set = $('#input_max_ontologies').val();
+    params.max_elements_set = maxOntologies;
     $.ajax({
       type: 'POST',
       url: '<%= Rails.application.config.relative_url_root || "" %>' + '/recommender',
@@ -365,8 +367,7 @@ rec.getRecommendations = function () {
             });
           } else {
             // No results
-            if ($('#radioOtSets').is(':checked')) $('#noResultsSets').show();
-            else $('#noResults').show();
+            $('#noResults').show();
           }
         }
       },

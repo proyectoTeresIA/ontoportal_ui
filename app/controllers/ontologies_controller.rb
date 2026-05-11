@@ -129,10 +129,11 @@ class OntologiesController < ApplicationController
 
       sub = submissions_map[ont.acronym]
       if sub
+        description = sub.description.to_s.strip
         o[:submissionStatus]          = sub.submissionStatus
         o[:submission]                = true
         o[:pullLocation]              = sub.pullLocation
-        o[:description]               = sub.description
+        o[:description]               = description.casecmp("null").zero? ? "" : description
         o[:creationDate]              = sub.creationDate
         o[:submissionStatusFormatted] = submission_status2string(sub).gsub(/\(|\)/, "")
 

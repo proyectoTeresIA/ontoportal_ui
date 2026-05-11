@@ -21,51 +21,18 @@
                   data: {controller: 'popup', action: 'click->popup#open'},
                   aria: {label: t('search.index.view_search_documentation')})
     
-    -# Resource type selector (outside advanced options)
-    %fieldset.row.mb-3
-      %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.resource_type', default: 'Search Type')
-      %div.col-sm-10
-        %div.form-check
-          = radio_button(:search, :resource_type, 'form', checked: true, class: "form-check-input")
-          = label(:search, :resource_type_form, t('search.index.forms', default: 'Forms (OntoLex)'), class: "form-check-label", for: 'search_resource_type_form')
-        %div.form-check
-          = radio_button(:search, :resource_type, 'class', class: "form-check-input")
-          = label(:search, :resource_type_class, t('search.index.classes', default: 'Classes'), class: "form-check-label", for: 'search_resource_type_class')
-    
     %div.mb-3
       = link_to(t('search.index.show_advanced'), "javascript:void(0)", id: "advanced_options",
             data: {text_swap: t('search.index.hide_advanced')})
 
     -# Advanced search options
     %div#search_options{class: 'mb-3', style: 'display: none;'}
-      
-      %fieldset.row.mb-3#class_search_options
-        %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.include_in_search')
-        %div.col-sm-10
-          %div.form-check
-            = check_box(:search, :include_properties, class: "form-check-input")
-            = label(:search, :include_properties, t('search.index.property_values'), class: "form-check-label definition",
-                    title: t(".property_definition"), for: 'search_include_properties')
-          %div.form-check
-            = check_box(:search, :include_obsolete, class: "form-check-input")
-            = label(:search, :include_obsolete, t('search.index.obsolete_classes'), class: "form-check-label definition",
-                    title: t(".obsolete_definition").chomp, for: 'search_include_obsolete')
-          %div.form-check
-            = check_box(:search, :include_views, class: "form-check-input")
-            = label(:search, :include_views, t('search.index.ontology_views'), class: "form-check-label", for: 'search_include_views')
-      
-      %fieldset.row.mb-3#lexical_search_options{style: 'display: none;'}
+      %fieldset.row.mb-3#lexical_search_options
         %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.ontolex.lexical_filters', default: 'Lexical Filters')
         %div.col-sm-10
           %div.mb-2
             = label(:search, :language, t('search.ontolex.language_filter', default: 'Language'), class: "form-label")
             = select(:search, :language, options_for_select([['All languages', ''], ['Spanish (spa)', 'spa'], ['English (eng)', 'eng'], ['French (fre)', 'fre'], ['Catalan (cat)', 'cat'], ['Italian (ita)', 'ita'], ['Portuguese (por)', 'por']]), {}, class: "form-select")
-          %div.mb-2
-            = label(:search, :part_of_speech, t('search.ontolex.part_of_speech', default: 'Part of Speech'), class: "form-label")
-            = text_field(:search, :part_of_speech, class: "form-control", placeholder: t('search.index.pos_placeholder', default: 'e.g., noun, verb, adjective'))
-          %div.mb-2
-            = label(:search, :subjects, t('search.ontolex.subjects_filter', default: 'Domains/Subjects'), class: "form-label")
-            = text_field(:search, :subjects, class: "form-control", placeholder: t('search.index.subjects_placeholder', default: 'Comma-separated URIs or keywords'))
       
       %fieldset.row.mb-3
         %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.narrow_search_to')
@@ -73,16 +40,6 @@
           %div.form-check
             = check_box(:search, :exact_match, class: "form-check-input")
             = label(:search, :exact_match, t('search.index.exact_matches'), class: "form-check-label", for: 'search_exact_match')
-          %div.form-check#require_definition_option
-            = check_box(:search, :require_definition, class: "form-check-input")
-            = label(:search, :require_definition, t('search.index.classes_with_definitions'), class: "form-check-label",
-                    for: 'search_require_definition')
-
-      %div.mb-3
-        %h6{style: "font-size: 10pt !important"}= t('search.index.categories')
-        = select(:search, :categories, options_for_select(categories_for_select), {}, style: "width: 432px", multiple: "true", data: {placeholder: t(".categories_placeholder")})
-      %div.mb-5
-        = render :partial => "shared/ontology_picker", locals: {sel_text: t('shared.ontology_picker.select_ontologies')}
 
     = button_tag(t('search.index.search_button'), id: "search_button", class: "btn btn-primary")
     = content_tag(:span, id: "search_spinner") do
@@ -114,28 +71,6 @@
   // Hash of ontology id => name, acronym for lookup use via JS
   jQuery(document).ready(function() {
     jQuery(document).data().bp.ontologies = #{ontologies_for_js.to_json.html_safe}
-
-    // Toggle between class and lexical search options
-    jQuery('input[name="search[resource_type]"]').on('change', function() {
-      var resourceType = jQuery('input[name="search[resource_type]"]:checked').val();
-      if (resourceType === 'form') {
-        jQuery('#class_search_options').hide();
-        jQuery('#lexical_search_options').show();
-        jQuery('#require_definition_option').hide();
-      } else {
-        jQuery('#class_search_options').show();
-        jQuery('#lexical_search_options').hide();
-        jQuery('#require_definition_option').show();
-      }
-    });
-    
-    // Initialize with correct options shown (lexical is default)
-    var initialResourceType = jQuery('input[name="search[resource_type]"]:checked').val();
-    if (initialResourceType === 'form') {
-      jQuery('#class_search_options').hide();
-      jQuery('#lexical_search_options').show();
-      jQuery('#require_definition_option').hide();
-    }
 
     if (jQuery("#search_keywords").val() !== "") {
         performSearch();

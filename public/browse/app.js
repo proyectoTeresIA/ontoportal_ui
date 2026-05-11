@@ -22,7 +22,8 @@ var app = angular.module('FacetedBrowsing.OntologyList', ['checklist-model', 'ng
   // Data transfer from Rails
   $scope.basePath = jQuery(document).data().bp.base_path || '';
   $scope.debug = false;
-  $scope.admin = jQuery(document).data().bp.admin;
+  // Only a real boolean true should enable admin-only facets.
+  $scope.admin = jQuery(document).data().bp.admin === true;
   $scope.ontologies = jQuery(document).data().bp.ontologies;
   $scope.formats = jQuery(document).data().bp.formats.sort();
   $scope.categories = jQuery(document).data().bp.categories.sort(function(a, b){

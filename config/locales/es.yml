@@ -402,7 +402,7 @@ es:
       classes_with_definitions: Términos con definiciones
       categories: Categorías
       search_button: Buscar
-      search_keywords_placeholder: Introduce una clase
+      search_keywords_placeholder: Introduce un término
       categories_placeholder: Comienza a escribir para seleccionar categorías o déjalo en blanco para usar todas
       property_definition: >
         Asociación nombrada entre dos entidades. Ejemplos: 'definición' (relación entre una clase y un texto) y 'parte-de' (relación entre dos términos).

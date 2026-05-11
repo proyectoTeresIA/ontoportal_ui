@@ -1,6 +1,7 @@
 //= link_tree ../images
 //= link_tree ../builds
 //= link application.js
+//= link angular_bootstrap_data.js
 //= link bp_annotator.js
 //= link bp_annotatorplus.js
 //= link ontolex_sidebar.js

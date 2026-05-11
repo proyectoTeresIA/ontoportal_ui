@@ -35,16 +35,6 @@
         <%= t('ontologies.browse.admin_coloring_note') %>
       </div>
 
-      <div ng-show="debug" class="facet" style="position: relative;">
-        <h2><%= t('ontologies.browse.debug_info') %></h2>
-        types: {{facets.types.active}}<br/>
-        artifacts: {{facets.artifacts.active}}<br/>
-        formats: {{facets.formats.active}}<br/>
-        groups: {{facets.groups.active}}<br/>
-        categories: {{facets.categories.active}}<br/>
-        Selected ontologies: {{visible_ont_count}}
-      </div>
-
       <div id="facets" class="grid-20">
         <div >
           <%= upload_ontology_button %>

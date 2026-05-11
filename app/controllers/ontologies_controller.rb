@@ -33,7 +33,7 @@ class OntologiesController < ApplicationController
     ontologies = Array(ontologies).select { |o| o.respond_to?(:id) }
     ontologies_hash = ontologies.each_with_object({}) { |o, acc| acc[o.id] = o }
     @admin = session[:user] ? session[:user].admin? : false
-    @development = Rails.env.development?
+    @development = false
 
     submissions = begin
       LinkedData::Client::Models::OntologySubmission.all(

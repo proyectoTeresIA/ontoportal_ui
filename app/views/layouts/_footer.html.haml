@@ -81,7 +81,8 @@
               %span= t('.copyright_html')
               %span Creado por
               = link_to('http://librairy.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
-                = image_tag('logos/logo-librairy.svg', alt: 'librAIry', style: 'max-height: 1rem; width: auto;')
+                - logo_public_path = "#{Rails.application.config.relative_url_root || ''}/logos/logo-librairy.svg"
+                = image_tag(logo_public_path, alt: 'librAIry', style: 'max-height: 1rem; width: auto;', skip_pipeline: true)
         %div.row.pt-2
           %div.col
             %ul.list-inline.nav

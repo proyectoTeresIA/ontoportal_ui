@@ -80,13 +80,8 @@
             %div.d-flex.flex-wrap.align-items-center.gap-2
               %span= t('.copyright_html')
               %span Creado por
-              = link_to('https://librairy.linkeddata.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
-                - logo_public_path = "#{Rails.application.config.relative_url_root || ''}/assets/logo-librairy.svg"
-                - logo_exists = File.exist?(Rails.root.join('public', 'assets', 'logo-librairy.svg'))
-                - if logo_exists
-                  = image_tag(logo_public_path, alt: 'librAIry', style: 'max-height: 1rem; width: auto;', skip_pipeline: true)
-                - else
-                  %span.fw-semibold librAIry
+              = link_to('http://librairy.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
+                = image_tag('logos/logo-librairy.svg', alt: 'librAIry', style: 'max-height: 1rem; width: auto;')
         %div.row.pt-2
           %div.col
             %ul.list-inline.nav

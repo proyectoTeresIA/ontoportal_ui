@@ -7,11 +7,20 @@
 		  
 var tb_pathToImage = "<%= asset_path("thickbox/loadingAnimation.gif") %>";
 
+function tb_with_base_path(path) {
+	var basePath = (document.body && document.body.dataset && document.body.dataset.basePath) || "";
+	if (!basePath || !path || path.indexOf("/") !== 0 || path.indexOf(basePath + "/") === 0) {
+		return path;
+	}
+	return basePath + path;
+}
+
 /*!!!!!!!!!!!!!!!!! edit below this line at your own risk !!!!!!!!!!!!!!!!!!!!!!!*/
 
 //on page load call tb_init
 $(document).ready(function(){   
 	tb_init('a.thickbox, area.thickbox, input.thickbox');//pass where to apply thickbox
+	tb_pathToImage = tb_with_base_path(tb_pathToImage);
 	imgLoader = new Image();// preload image
 	imgLoader.src = tb_pathToImage;
 });

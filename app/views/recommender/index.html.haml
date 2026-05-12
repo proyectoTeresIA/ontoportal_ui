@@ -53,8 +53,8 @@
   %div.my-4
     = submit_tag(t('recommender.index.get_recommendations'), id: "recommenderButton", type: "button", class: "btn btn-primary")
     = submit_tag(t('recommender.index.edit_input'), id: "editButton", type: "button", style: "display: none;", class: "btn btn-primary")
-    = content_tag(:span, class: "recommenderSpinner") do
-      = image_tag("spinners/spinner_000000_16px.gif", style: "vertical-align: middle;")
+    = content_tag(:span, class: "recommenderSpinner", style: "display: none;") do
+      %span.spinner-border.spinner-border-sm.ms-1{role: "status", 'aria-hidden': "true"}
 
 %div.row#recommenderErrorsDisplay.mb-4
   %div.col

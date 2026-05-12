@@ -122,12 +122,6 @@
           </div>
         </div>
 
-        <div class="ontology" ng-show="visible_ont_count == 0 && searchText.length > 0" style="border: solid thin lightGray;">
-          <div style="text-align: center; color: gray; height: 2em; padding: 4em;">
-            <h2 style="font-weight: normal;"><%= t('ontologies.browse.no_matches') %></h2>
-          </div>
-        </div>
-
         <div class="ontology grid-parent clearfix" ng-repeat="ontology in ontologies | orderBy:ontology_sort_order" ng-if="ontology.show">
           <div class="grid-75">
             <div ng-if="ontology.type == 'ontology_view'" class="ontology_view_badge" title="<%= t('ontologies.browse.view_of') %> {{ontology.viewOfOnt.name}}"><%= t('ontologies.browse.badges.view') %></div>

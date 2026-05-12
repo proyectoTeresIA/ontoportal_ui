@@ -42,8 +42,8 @@
             = label(:search, :exact_match, t('search.index.exact_matches'), class: "form-check-label", for: 'search_exact_match')
 
     = button_tag(t('search.index.search_button'), id: "search_button", class: "btn btn-primary")
-    = content_tag(:span, id: "search_spinner") do
-      %img{src: asset_path('spinners/spinner_000000_16px.gif'), style: "vertical-align: middle;"}
+    = content_tag(:span, id: "search_spinner", style: "display: none;") do
+      %span.spinner-border.spinner-border-sm.ms-1{role: "status", 'aria-hidden': "true"}
 
   -# Search results
   %div.row.my-4#search_results_container

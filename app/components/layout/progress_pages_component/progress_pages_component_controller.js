@@ -6,6 +6,7 @@ export default class extends Controller {
         this.pagesItems = this.pageItemTargets
         this.buttons = [this.backBtnTarget, this.nextBtnTarget, this.finishBtnTarget]
         this.currentForm = 1
+        this.showForm()
     }
 
     navigateBack(){

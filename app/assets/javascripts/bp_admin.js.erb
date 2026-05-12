@@ -104,7 +104,7 @@ AjaxAction.prototype._ajaxCall = function() {
   var notices = [];
   var promises = [];
   var params = jQuery.extend(true, {}, self.params);
-  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var basePath = window.BP_CONFIG.base_url;
 
   if (self.isProgressMessageEnabled) {
     self.showProgressMessage();
@@ -216,7 +216,7 @@ AjaxAction.prototype.onSuccessAction = function(data, ontology, deferredObj) {
     return;
   }
   var processId = data["process_id"];
-  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var basePath = window.BP_CONFIG.base_url;
   var success = [];
   var errors = [];
   var done = [];
@@ -360,7 +360,7 @@ DeleteSubmission.prototype = Object.create(AjaxAction.prototype);
 DeleteSubmission.prototype.constructor = DeleteSubmission;
 
 DeleteSubmission.prototype.onSuccessAction = function(data, ontology, deferredObj) {
-  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var basePath = window.BP_CONFIG.base_url;
   jQuery.facebox({
     ajax: basePath + "/admin/ontologies/" + ontology + "/submissions?time=" + new Date().getTime()
   });
@@ -506,7 +506,7 @@ UpdateCheck.prototype.onErrorAction = function(errors) {
 
 UpdateCheck.isUpdateCheckEnabled = false;
 UpdateCheck.act = function(forceCheck) {
-  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var basePath = window.BP_CONFIG.base_url;
   if (UpdateCheck.isUpdateCheckEnabled) {
     new UpdateCheck(forceCheck).ajaxCall();
   } else {
@@ -556,7 +556,7 @@ function populateOntologyRows(data) {
   for (var acronym in ontologies) {
     var errorMessages = [];
     var ontology = ontologies[acronym];
-    var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+    var basePath = window.BP_CONFIG.base_url;
     var ontLink = "<a href='" + basePath + "/ontologies/" + acronym + "' target='_blank' style='" + (ontology["problem"] === true ? "color:red;" : "") + "'>" + acronym + "</a>";
     var bpLinks = '';
     var format = ontology["format"];
@@ -633,7 +633,7 @@ function _showStatusMessages(success, errors, notices, isAppendMode) {
 
 function displayOntologies(data, ontology) {
   var ontTable = null;
-  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var basePath = window.BP_CONFIG.base_url;
 
   if (jQuery.fn.dataTable.isDataTable('#adminOntologies')) {
     ontTable = jQuery('#adminOntologies').DataTable();
@@ -765,7 +765,7 @@ function displayOntologies(data, ontology) {
 
 function showSubmissions(ev, acronym) {
   ev.preventDefault();
-  var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+  var basePath = window.BP_CONFIG.base_url;
   jQuery.facebox({ ajax: basePath + "/admin/ontologies/" + acronym + "/submissions" });
 }
 
@@ -885,7 +885,7 @@ jQuery(".admin.index").ready(function() {
 
 /* users part */
 function populateUserRows(data) {
-    let basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+    let basePath = window.BP_CONFIG.base_url;
     let users = data['users'];
     let allRows = [];
     // let hideFields = ["format", "administeredBy", "date_created", "report_date_updated", "errErrorStatus", "errMissingStatus", "problem", "logFilePath"];
@@ -913,7 +913,7 @@ function populateUserRows(data) {
 function displayUsers(data) {
     let ontTable = null;
     let allRows
-    var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+    var basePath = window.BP_CONFIG.base_url;
     if (jQuery.fn.dataTable.isDataTable('#adminUsers')) {
         ontTable = jQuery('#adminUsers').DataTable();
 

@@ -8,6 +8,10 @@ var ONTOLEX_I18N = {
     viewEntries: <%= I18n.t('search.ontolex.view_entries').to_json %>
 };
 
+if (window.BP_CONFIG === undefined) {
+    window.BP_CONFIG = jQuery(document).data().bp.config;
+}
+
 // History and navigation management
 (function(window, undefined) {
     // Establish Variables
@@ -216,7 +220,7 @@ jQuery(document).ready(function() {
     // Perform search
     jQuery("#search_button").click(function(event) {
         event.preventDefault();
-        var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+        var basePath = window.BP_CONFIG.base_url;
         History.pushState(currentSearchParams(), document.title, basePath + "/search?" + objToQueryString(currentSearchParams()));
     });
 
@@ -242,7 +246,7 @@ jQuery(document).ready(function() {
     jQuery("a.class_visualize").live("click", function() {
         var acronym = jQuery(this).attr("data-bp_ontologyid"),
             conceptid = jQuery(this).attr("data-bp_conceptid");
-        var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+        var basePath = window.BP_CONFIG.base_url;
         jQuery("#biomixer").html('<iframe src="' + basePath + '/ajax/biomixer/?ontology=' + acronym + '&conceptid=' + encodeURIComponent(conceptid) + '" frameborder=0 height="500px" width="500px" scrolling="no"></iframe>').show();
         jQuery.facebox({
             div: '#biomixer'
@@ -411,7 +415,7 @@ function performSearch() {
     jQuery.ajax({
         // bp.config is created in views/layouts/_header..., which calls
         // ApplicationController::bp_config_json
-        url: determineHTTPS(jQuery(document).data().bp.config.rest_url) + "/search",
+        url: determineHTTPS(window.BP_CONFIG.rest_url) + "/search",
         data: requestData,
         dataType: "jsonp",
         success: function(data) {
@@ -1031,7 +1035,7 @@ function classDiv(res, clsLabel, displayOntologyName) {
         clsAttr = null,
         clsAnchor = null,
         clsIdDiv = null;
-        basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+        basePath = window.BP_CONFIG.base_url;
     ontAcronym = ontologyIdToAcronym(res.links.ontology);
     clsID = res["@id"];
     clsCode = encodeURIComponent(clsID);
@@ -1150,7 +1154,7 @@ function aggregateLexicalResults(results) {
 function formatFormSearchResults(aggOntologyResults) {
     var ontResults = aggOntologyResults.same_ont,
         allResults = [];
-    var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
+    var basePath = window.BP_CONFIG.base_url;
     
     // Process all results from this ontology (not just the first one)
     jQuery(ontResults).each(function() {

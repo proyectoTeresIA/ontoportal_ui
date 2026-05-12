@@ -81,7 +81,7 @@
               %span= t('.copyright_html')
               %span Creado por
               = link_to('https://librairy.linkeddata.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
-                = image_tag(asset_path('logo-librairy.svg'), alt: 'librAIry', style: 'max-height: 1rem; width: auto;')
+                = image_tag('logo-librairy.svg', alt: 'librAIry', style: 'max-height: 1rem; width: auto;')
         %div.row.pt-2
           %div.col
             %ul.list-inline.nav
@@ -102,4 +102,3 @@
         %div.row
           %div.col.text-center
             = link_to(image_tag('logos/teresia_logo_footer.jpg', class: 'footer-logo'), 'https://proyectoteresia.org')
-= javascript_include_tag "application"

@@ -303,10 +303,11 @@ class AdminController < ApplicationController
   end
 
   def _users
-    response = { users: {}, errors: '', success: '' }
+    response = { users: [], errors: '', success: '' }
     start = Time.now
     begin
-      response[:users] = JSON.parse(LinkedData::Client::HTTP.get(USERS_URL, { include: 'all' }, raw: true))
+      parsed_users = JSON.parse(LinkedData::Client::HTTP.get(USERS_URL, { include: 'all' }, raw: true))
+      response[:users] = parsed_users.is_a?(Array) ? parsed_users : []
 
       response[:success] = "users successfully retrieved in  #{Time.now - start}s"
       Log.add :debug, "Users - retrieved #{response[:users].length} users in #{Time.now - start}s"

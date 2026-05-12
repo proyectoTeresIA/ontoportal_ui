@@ -886,17 +886,17 @@ jQuery(".admin.index").ready(function() {
 /* users part */
 function populateUserRows(data) {
     let basePath = "<%= Rails.application.config.relative_url_root || '' %>";
-    let users = data['users'];
+  let users = Array.isArray(data && data['users']) ? data['users'] : [];
     let allRows = [];
     // let hideFields = ["format", "administeredBy", "date_created", "report_date_updated", "errErrorStatus", "errMissingStatus", "problem", "logFilePath"];
     users.forEach(user =>{
         let id = '<a href="'+ user['@id']+'" >' + user['@id'] + '</a>';
-        let email = user['email'];
-        let username = user['username'];
-        let roles = user['role'];
-        let firstname = user['firstName']
-        let lastname = user['lastName']
-        let created = user['created']
+    let email = user['email'] || '';
+    let username = user['username'] || '';
+    let roles = user['role'] || [];
+    let firstname = user['firstName'] || '';
+    let lastname = user['lastName'] || '';
+    let created = user['created'] || '';
         let actions = [
             '<a href="' + basePath + '/accounts/'+ user['username'] +'"  class="mx-1">Detail</a>' ,
             '<a href="javascript:;" class="delete-user mx-1" data-account-name="' + username + '">Delete</a>',

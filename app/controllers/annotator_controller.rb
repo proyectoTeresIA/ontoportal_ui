@@ -61,6 +61,10 @@ class AnnotatorController < ApplicationController
 
     Log.add :debug, "DEBUG ANNOTATOR QUERY: #{query}"
     annotations = parse_json(query) # See application_controller.rb
+    if annotations.respond_to?(:empty?) && annotations.empty?
+      fallback_annotations = ontolex_fallback_annotations(text_to_annotate, options[:ontologies])
+      annotations = fallback_annotations unless fallback_annotations.empty?
+    end
     #annotations = LinkedData::Client::HTTP.get(query)
     Log.add :debug, "Retrieved #{annotations.length} annotations: #{Time.now - start}s"
     if annotations.empty? || params[:raw] == "true"
@@ -107,6 +111,82 @@ class AnnotatorController < ApplicationController
     end
     
     semantic_types
+  end
+
+  def ontolex_fallback_annotations(text, acronyms)
+    return [] if text.to_s.strip.empty?
+
+    target_acronyms = Array(acronyms).map(&:to_s).reject(&:empty?)
+    if target_acronyms.empty?
+      target_acronyms = LinkedData::Client::Models::Ontology.all(include: 'acronym')
+                        .map(&:acronym)
+                        .compact
+    end
+    return [] if target_acronyms.empty?
+
+    words = text.downcase.scan(/\p{L}[\p{L}\p{N}_-]*/u).uniq.select { |w| w.length >= 3 }
+    return [] if words.empty?
+
+    annotations = []
+    seen = {}
+
+    target_acronyms.each do |acr|
+      words.each do |word|
+        begin
+          query = "#{REST_URI}/search?q=#{CGI.escape(word)}&resource_type=form&ontologies=#{CGI.escape(acr)}"
+          results = parse_json(query)
+          collection = (results || {})['collection'] || []
+        rescue => e
+          Log.add :debug, "OntoLex fallback search failed for #{acr}/#{word}: #{e.message}"
+          next
+        end
+
+        collection.each do |form|
+          reps = Array(form['writtenRep']).map(&:to_s)
+          next if reps.empty?
+          rep = reps.first
+          next unless rep.casecmp?(word)
+
+          class_id = Array(form['lexicalEntries']).first || form['@id']
+          next if class_id.nil?
+
+          ontology_uri = form.dig('links', 'ontology') || "#{REST_URI}/ontologies/#{acr}"
+          ui_path = "/ontologies/#{acr}?p=terminological_entries&id=#{CGI.escape(class_id.to_s)}"
+
+          regex = /\b#{Regexp.escape(rep)}\b/i
+          text.to_enum(:scan, regex).each do
+            m = Regexp.last_match
+            from = m.begin(0) + 1
+            to = m.end(0)
+            key = "#{class_id}|#{from}|#{to}"
+            next if seen[key]
+            seen[key] = true
+
+            annotations << {
+              'annotatedClass' => {
+                '@id' => class_id.to_s,
+                'prefLabel' => rep,
+                'links' => {
+                  'ontology' => ontology_uri,
+                  'ui' => ui_path
+                }
+              },
+              'annotations' => [
+                {
+                  'from' => from,
+                  'to' => to,
+                  'matchType' => 'mgrep'
+                }
+              ],
+              'hierarchy' => [],
+              'mappings' => []
+            }
+          end
+        end
+      end
+    end
+
+    annotations
   end
 
   def massage_annotated_classes(annotations, options)

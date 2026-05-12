@@ -39,6 +39,9 @@
     jQuery(document).data().bp.ont_chart = {};
   </script>
 
+	<%= javascript_include_tag "application", "data-turbo-track": "reload" %>
+	<%= javascript_include_tag "application_esbuild", "data-turbo-track": "reload", defer: true %>
+
   <!-- BioPortal-specific JavaScript is loaded in _footer.html.erb. -->  
 </head>
 <body class="<%= controller_name %> <%= action_name %> d-flex flex-column h-100">

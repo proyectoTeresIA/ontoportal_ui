@@ -323,7 +323,13 @@ function currentSearchParams() {
     params.resource_type = 'form';
     // Ontologies
     ont_val = jQuery("#ontology_ontologyId").val();
-    params.ontologies = (ont_val === null) ? "" : ont_val.join(",");
+    if (Array.isArray(ont_val)) {
+        params.ontologies = ont_val.join(",");
+    } else if (typeof ont_val === "string") {
+        params.ontologies = ont_val;
+    } else {
+        params.ontologies = "";
+    }
     params.exact_match = jQuery("#search_exact_match").is(":checked");
     params.language = jQuery("#search_language").val() || "";
     
@@ -349,12 +355,18 @@ function performSearch() {
     jQuery("#search_results").html("");
     jQuery("#result_stats").html("");
 
-    var ont_val = jQuery("#ontology_ontologyId").val() || null,
-        onts = (ont_val === null) ? "" : ont_val.join(","),
+    var ont_val = jQuery("#ontology_ontologyId").val(),
+        onts = "",
         query = jQuery("#search_keywords").val(),
         resourceType = 'form',
         exactMatch = jQuery("#search_exact_match").is(":checked"),
         language = jQuery("#search_language").val() || "";
+
+    if (Array.isArray(ont_val)) {
+        onts = ont_val.join(",");
+    } else if (typeof ont_val === "string") {
+        onts = ont_val;
+    }
 
     // Set the list of search words to be blacklisted for the ontology ownership algorithm
     blacklistSearchWordsArr = query.split(/\s+/);

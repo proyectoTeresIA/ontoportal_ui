@@ -122,7 +122,7 @@
           </div>
         </div>
 
-        <div class="ontology" ng-show="visible_ont_count == 0" style="border: solid thin lightGray;">
+        <div class="ontology" ng-show="visible_ont_count == 0 && searchText.length > 0" style="border: solid thin lightGray;">
           <div style="text-align: center; color: gray; height: 2em; padding: 4em;">
             <h2 style="font-weight: normal;"><%= t('ontologies.browse.no_matches') %></h2>
           </div>
@@ -145,9 +145,6 @@
               </span>
               <span class="ont-info" ng-if="facets.formats.active.length > 1">
                 <b><%= t('ontologies.browse.format') %></b>: {{ontology.format}}
-              </span>
-              <span class="ont-info" ng-if="ontology.type == 'ontology_view'">
-                <b><%= t('ontologies.browse.view_of') %></b>: <a href="{{basePath}}/ontologies/{{ontology.viewOfOnt.acronym}}">{{ontology.viewOfOnt.acronym}}</a>
               </span>
               <span class="ont-info" ng-if="ontology.summaryOnly">
                 <b><%= t('ontologies.browse.summary_only') %></b>
@@ -172,8 +169,6 @@
                 </span>
               <% end %>
             </div>
-
-            <span ng-hide="ontology.submission"><%= t('ontologies.browse.no_submissions') %></span>
           </div>
 
           <div class="badges grid-25 grid-parent" ng-if="ontology.submission !== null && ontology.class_count > 0">

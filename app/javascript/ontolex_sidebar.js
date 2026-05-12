@@ -90,13 +90,27 @@ window.OntolexSidebar = {
           dataType: 'json',
           success: function (data) {
             state.currentXhr = null;
-            var items = data.collection || [];
+            var response = data || {};
+            var items = [];
 
-            if (data.page) {
-              state.currentPage = data.page;
+            if (Array.isArray(response)) {
+              items = response;
+              response = {
+                collection: items,
+                page: page,
+                pageCount: 1,
+              };
+            } else if (Array.isArray(response.collection)) {
+              items = response.collection;
+            } else if (Array.isArray(response.items)) {
+              items = response.items;
             }
 
-            self.renderSidebar(items, data);
+            if (response.page) {
+              state.currentPage = response.page;
+            }
+
+            self.renderSidebar(items, response);
 
             // If we were finding a specific item, highlight it now
             if (findingItem && state.initialItemId) {

@@ -62,21 +62,6 @@
               %i.fas.fa-user-edit{"aria-hidden": "true", style: "margin-left: 0.5rem;"}
       = render partial: "submissions"
 
-    -# Views pane (don't show if the ontology is a view - we don't allow views of views).
-    - unless @ontology.view?
-      %section.ont-metadata-card.ont-views-card
-        %div.ont-section-toolbar
-          %header.pb-2.fw-bold= t('ontologies.views.header', acronym: @ontology.acronym)
-          = new_view_link
-        - if @views.empty?
-          %p.font-italic= t('ontologies.views.none_available', acronym: @ontology.acronym)
-        - else
-          %div.border-top
-            %dl
-              - @view_decorators.each do |view_decorator|
-                %dt= view_decorator.linked_name
-                %dd= view_decorator.description
-
     %div.right-hand-content
 
       -# Metrics pane

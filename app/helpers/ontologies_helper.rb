@@ -4,8 +4,22 @@ require 'iso-639'
 module OntologiesHelper
 
   def external_rest_url
-    env_url = ENV['EXTERNAL_API_URL']
-    return env_url.chomp('/') if env_url && !env_url.empty?
+    env_url = ENV['EXTERNAL_API_URL'].to_s.strip
+
+    if !env_url.empty? && !(env_url.include?('localhost') || env_url.include?('127.0.0.1'))
+      return env_url.chomp('/')
+    end
+
+    if respond_to?(:request) && request
+      base_path = Rails.application.config.relative_url_root.to_s
+      base_url = request.base_url
+      api_path = "#{base_path}/api".gsub(%r{/+}, '/')
+      api_path = "/#{api_path}" unless api_path.start_with?('/')
+      return "#{base_url}#{api_path}".chomp('/')
+    end
+
+    return env_url.chomp('/') unless env_url.empty?
+
     rest_url
   end
 

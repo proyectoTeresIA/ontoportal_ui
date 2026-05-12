@@ -139,8 +139,8 @@ class ApplicationController < ActionController::Base
     # config/bioportal_config.rb
     # config/initializers/ontologies_api_client.rb
     
-    # Use external URL for browser requests (if defined, otherwise fallback to internal URL)
-    external_rest_url = ENV['EXTERNAL_API_URL'] || LinkedData::Client.settings.rest_url
+    # Use helper-resolved external URL so browser calls never point to localhost in production.
+    external_rest_url = helpers.external_rest_url
     
     config = {
         org: $ORG,

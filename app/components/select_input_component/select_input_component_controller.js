@@ -48,8 +48,14 @@ export default class SelectInput extends Controller {
       myOptions['create'] = true;
     }
 
-    this.select = useTomSelect(this.element, myOptions, this.#triggerChange.bind(this));
-    this.element.style.visibilty = 'hidden';
+    try {
+      this.select = useTomSelect(this.element, myOptions, this.#triggerChange.bind(this));
+    } catch (error) {
+      this.element.style.visibility = 'visible';
+      return;
+    }
+
+    this.element.style.visibility = 'visible';
 
     [...this.element.attributes].forEach((attribute) => {
       if (

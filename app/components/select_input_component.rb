@@ -44,8 +44,6 @@ class SelectInputComponent < ViewComponent::Base
       data: data,
     }.merge(@html_options)
 
-    select_html_options[:style] = "#{select_html_options[:style]}; visibility: hidden"
-
     select_tag(name, options_for_select(values, selected), select_html_options)
 
   end

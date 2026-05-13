@@ -323,11 +323,9 @@ function currentSearchParams() {
     var params = {}, ont_val = null;
     // Search query
     params.q = jQuery("#search_keywords").val();
-    // Resource type (class vs lexical)
-    params.resource_type = jQuery("input[name='search[resource_type]']:checked").val() || 'class';
     // Ontologies
     ont_val = jQuery("#ontology_ontologyId").val();
-    params.ontologies = (ont_val === null) ? "" : ont_val.join(",");
+    params.ontologies = "";
     // Advanced options (class search)
     params.include_properties = jQuery("#search_include_properties").is(":checked");
     params.include_views = jQuery("#search_include_views").is(":checked");
@@ -337,11 +335,10 @@ function currentSearchParams() {
     params.categories = jQuery("#search_categories").val() || "";
     
     // Lexical-specific options (Forms)
-    if (params.resource_type === 'form') {
-        params.language = jQuery("#search_language").val() || "";
-        params.part_of_speech = jQuery("#search_part_of_speech").val() || "";
-        params.subjects = jQuery("#search_subjects").val() || "";
-    }
+    params.language = jQuery("#search_language").val() || "";
+    params.language = (params.language === "all") ? "" : params.language;
+    params.part_of_speech = jQuery("#search_part_of_speech").val() || "";
+    params.subjects = jQuery("#search_subjects").val() || "";
     
     return params;
 }
@@ -368,7 +365,6 @@ function performSearch() {
     var ont_val = jQuery("#ontology_ontologyId").val() || null,
         onts = (ont_val === null) ? "" : ont_val.join(","),
         query = jQuery("#search_keywords").val(),
-        resourceType = jQuery("input[name='search[resource_type]']:checked").val() || 'class',
         // Advanced options (class search)
         includeProps = jQuery("#search_include_properties").is(":checked"),
         includeViews = jQuery("#search_include_views").is(":checked"),
@@ -385,102 +381,165 @@ function performSearch() {
     // Set the list of search words to be blacklisted for the ontology ownership algorithm
     blacklistSearchWordsArr = query.split(/\s+/);
     
-    // Build request data based on resource type
-    var requestData = {
+    // Make parallel requests for both class and form searches
+    var classRequestData = {
         q: query,
-        resource_type: resourceType,
         exact_match: exactMatch,
         ontologies: onts,
         pagesize: 150,
         apikey: jQuery(document).data().bp.config.apikey,
         userapikey: jQuery(document).data().bp.config.userapikey,
         format: "jsonp",
-        ncbo_slice: (("ncbo_slice" in jQuery(document).data().bp.config) ? jQuery(document).data().bp.config.ncbo_slice : '')
+        ncbo_slice: (("ncbo_slice" in jQuery(document).data().bp.config) ? jQuery(document).data().bp.config.ncbo_slice : ''),
+        include_properties: includeProps,
+        include_views: includeViews,
+        obsolete: includeObsolete,
+        include_non_production: includeNonProduction,
+        require_definition: includeOnlyDefinitions,
+        categories: categories
     };
     
-    // Add class-specific or form-specific parameters
-    if (resourceType === 'form') {
-        if (language) requestData.language = language;
-        if (partOfSpeech) requestData.part_of_speech = partOfSpeech;
-        if (subjects) requestData.subjects = subjects;
-    } else {
-        requestData.include_properties = includeProps;
-        requestData.include_views = includeViews;
-        requestData.obsolete = includeObsolete;
-        requestData.include_non_production = includeNonProduction;
-        requestData.require_definition = includeOnlyDefinitions;
-        requestData.categories = categories;
+    var formRequestData = {
+        q: query,
+        exact_match: exactMatch,
+        ontologies: onts,
+        pagesize: 150,
+        apikey: jQuery(document).data().bp.config.apikey,
+        userapikey: jQuery(document).data().bp.config.userapikey,
+        format: "jsonp",
+        ncbo_slice: (("ncbo_slice" in jQuery(document).data().bp.config) ? jQuery(document).data().bp.config.ncbo_slice : ''),
+        resource_type: 'form'
+    };
+    
+    if (language) formRequestData.language = language;
+    if (partOfSpeech) formRequestData.part_of_speech = partOfSpeech;
+    if (subjects) formRequestData.subjects = subjects;
+
+    var allResults = [];
+    var completedRequests = 0;
+    var totalRequests = 2;
+
+    // Function to handle search completion
+    function handleSearchComplete() {
+        completedRequests++;
+        if (completedRequests === totalRequests) {
+            displayAggregatedResults(allResults);
+        }
     }
 
+    // Search for classes
     jQuery.ajax({
-        // bp.config is created in views/layouts/_header..., which calls
-        // ApplicationController::bp_config_json
         url: determineHTTPS(window.BP_CONFIG.rest_url) + "/search",
-        data: requestData,
+        data: classRequestData,
         dataType: "jsonp",
         success: function(data) {
-            var results = [],
-                ontologies = {},
-                groupedResults = null,
-                result_count = jQuery("#result_stats"),
-                resultsByOnt = "",
-                resultsOntCount = "",
-                resultsOntDiv = "";
-                
-            // For class search, filter by categories if needed
-            if (resourceType === 'class' && categories.length > 0) {
-                data.collection = filterCategories(data.collection, categories);
+            if (!jQuery.isEmptyObject(data) && data.collection && data.collection.length > 0) {
+                allResults = allResults.concat(data.collection);
             }
-            
-            if (!jQuery.isEmptyObject(data)) {
-                if (resourceType === 'form') {
-                    // Format form results (OntoLex)
-                    groupedResults = aggregateLexicalResults(data.collection);
-                } else {
-                    // Format class results as usual
-                    groupedResults = aggregateResults(data.collection);
-                }
-                
-                jQuery(groupedResults).each(function() {
-                    results.push(resourceType === 'form' ? formatFormSearchResults(this) : formatSearchResults(this));
-                });
-            }
-            
-            // Display error message if no results found
-            if (data.collection.length === 0) {
-                result_count.html("");
-                jQuery("#search_results").html("<h2>No matches found</h2>");
-            } else {
-                if (jQuery("#ontology_ontologyId").val() === null) {
-                    resultsOntCount = jQuery("<span>");
-                    resultsOntCount.attr("id", "ontologies_count_total");
-                    resultsOntCount.text(groupedResults.length);
-                    resultsByOnt = jQuery("<a>");
-                    resultsByOnt.attr({
-                        "id": "ont_tooltip",
-                        "href": "javascript:void(0)"
-                    });
-                    resultsByOnt.append("Matches in ");
-                    resultsByOnt.append(resultsOntCount);
-                    resultsByOnt.append(" ontologies");
-                    resultsOntDiv = jQuery("<div>");
-                    resultsOntDiv.attr("id", "ontology_counts");
-                    resultsOntDiv.addClass("ontology_counts_tooltip");
-                    resultsByOnt.append(resultsOntDiv);
-                }
-                result_count.html(resultsByOnt);
-                jQuery("#search_results").html(results.join(""));
-            }
-            jQuery("a[rel*=facebox]").facebox();
-            jQuery("#search_results").show();
-            jQuery("#search_spinner").hide();
+            handleSearchComplete();
         },
         error: function() {
-            jQuery("#search_spinner").hide();
-            jQuery("#search_results").hide();
-            jQuery("#search_messages").html("<span style='color: red'>Problem searching, please try again");
+            handleSearchComplete();
         }
     });
+
+    // Search for forms
+    jQuery.ajax({
+        url: determineHTTPS(window.BP_CONFIG.rest_url) + "/search",
+        data: formRequestData,
+        dataType: "jsonp",
+        success: function(data) {
+            if (!jQuery.isEmptyObject(data) && data.collection && data.collection.length > 0) {
+                allResults = allResults.concat(data.collection);
+            }
+            handleSearchComplete();
+        },
+        error: function() {
+            handleSearchComplete();
+        }
+    });
+}
+
+function isFormResult(result) {
+    // Detect if a result is an OntoLex form based on its properties
+    return result.hasOwnProperty('writtenRep') || 
+           result.hasOwnProperty('lexicalEntries') || 
+           result.hasOwnProperty('@type') && Array.isArray(result['@type']) && 
+           result['@type'].some(function(type) { 
+               return type && (type.indexOf('Form') > -1 || type.indexOf('form') > -1 || 
+                             type.indexOf('LexicalEntry') > -1 || type.indexOf('lexical') > -1); 
+           });
+}
+
+function displayAggregatedResults(allResults) {
+    var results = [],
+        classResults = [],
+        formResults = [],
+        classGroupedResults = null,
+        formGroupedResults = null,
+        groupedResults = [],
+        result_count = jQuery("#result_stats"),
+        resultsByOnt = "",
+        resultsOntCount = "",
+        resultsOntDiv = "";
+    
+    if (allResults.length > 0) {
+        // Separate results into classes and forms
+        jQuery(allResults).each(function() {
+            if (isFormResult(this)) {
+                formResults.push(this);
+            } else {
+                classResults.push(this);
+            }
+        });
+        
+        // Aggregate class results
+        if (classResults.length > 0) {
+            classGroupedResults = aggregateResults(classResults);
+            jQuery(classGroupedResults).each(function() {
+                results.push(formatSearchResults(this));
+            });
+        }
+        
+        // Aggregate form results separately
+        if (formResults.length > 0) {
+            formGroupedResults = aggregateLexicalResults(formResults);
+            jQuery(formGroupedResults).each(function() {
+                results.push(formatFormSearchResults(this));
+            });
+        }
+        
+        groupedResults = (classGroupedResults || []).concat(formGroupedResults || []);
+    }
+    
+    // Display error message if no results found
+    if (allResults.length === 0) {
+        result_count.html("");
+        jQuery("#search_results").html("<h2>No matches found</h2>");
+    } else {
+        if (jQuery("#ontology_ontologyId").val() === null) {
+            resultsOntCount = jQuery("<span>");
+            resultsOntCount.attr("id", "ontologies_count_total");
+            resultsOntCount.text(groupedResults.length);
+            resultsByOnt = jQuery("<a>");
+            resultsByOnt.attr({
+                "id": "ont_tooltip",
+                "href": "javascript:void(0)"
+            });
+            resultsByOnt.append("Matches in ");
+            resultsByOnt.append(resultsOntCount);
+            resultsByOnt.append(" ontologies");
+            resultsOntDiv = jQuery("<div>");
+            resultsOntDiv.attr("id", "ontology_counts");
+            resultsOntDiv.addClass("ontology_counts_tooltip");
+            resultsByOnt.append(resultsOntDiv);
+        }
+        result_count.html(resultsByOnt);
+        jQuery("#search_results").html(results.join(""));
+    }
+    jQuery("a[rel*=facebox]").facebox();
+    jQuery("#search_results").show();
+    jQuery("#search_spinner").hide();
 }
 
 function aggregateResults(results) {

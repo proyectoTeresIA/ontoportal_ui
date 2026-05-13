@@ -69,8 +69,8 @@ en:
         other: This installation of the OntoPortal Appliance is a trial license, which will expire in %{count} days.
     topnav:
       toggle_navigation: Toggle navigation
-      ontologies: Ontologies
-      search: Search
+      ontologies: Browser
+      search: Searcher
       annotator: Annotator
       recommender: Recommender
       mappings: Mappings
@@ -256,6 +256,7 @@ en:
   annotator:
     index:
       title: Annotator
+      intro: Identifies terms in the provided text.
   annotatorplus:
     index:
       title: Annotator Plus
@@ -312,7 +313,7 @@ en:
       annotator_web_service: Annotator Web Service
 
   recommender:
-    intro: Get recommendations for the most relevant ontologies based on an excerpt from a text or a list of keywords
+    intro: Get recommendations for the most relevant ontologies regarding an excerpt from a text or a list of keywords
     index:
       title: Recommender
       heading: Ontology Recommender
@@ -323,7 +324,7 @@ en:
       input_keywords_label: Keywords (separated by commas)
       output_ontologies_label: Ontologies
       output_sets_label: Ontology sets
-      textarea_placeholder: Paste a paragraph of text or some keywords to use in calculating ontology recommendations
+      textarea_placeholder: Paste a paragraph of text or some keywords to use in obtaining ontology recommendations
       insert_sample_input: insert sample input
       show_advanced: "Show advanced options >>"
       weights_configuration: Weights configuration
@@ -349,9 +350,9 @@ en:
 
   search:
     index:
-      intro: Search for a class in multiple ontologies
+      intro: Search for a term in multiple terminologies
       title: Search
-      heading: Class Search
+      heading: Term Search
       help: help
       view_search_documentation: View search documentation
       show_advanced: "Show advanced options >>"
@@ -382,8 +383,16 @@ en:
       other_forms: "Other forms"
       view_entry: "view entry"
       view_entries: "view entries"
-      lexical_filters: "Lexical Filters"
+      lexical_filters: "Terms filters"
       language_filter: "Language"
+      languages:
+        all: "All languages"
+        spa: "Spanish (spa)"
+        eng: "English (eng)"
+        fre: "French (fre)"
+        cat: "Catalan (cat)"
+        ita: "Italian (ita)"
+        por: "Portuguese (por)"
       part_of_speech: "Part of Speech"
       subjects_filter: "Domains/Subjects"
 

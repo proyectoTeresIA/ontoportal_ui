@@ -70,8 +70,8 @@ es:
 
     topnav:
       toggle_navigation: Alternar navegación
-      ontologies: Ontologías
-      search: Buscar
+      ontologies: Explorador
+      search: Buscador
       annotator: Anotador
       recommender: Recomendador
       mappings: Mapeos
@@ -259,7 +259,7 @@ es:
   annotator:
     index:
       title: Anotador
-      intro: Obtén anotaciones para terminologías en un texto con clases de las ontologías
+      intro: Identifica términos en el texto proporcionado.
       annotatorplus_html: <em>Echa un vistazo a la beta de <a href="%{annotatorplus_href}">AnnotatorPlus</a>; una nueva versión del Annotator con soporte añadido para negación, ¡y más!</em>
       help_aria: Ver ayuda del anotador
       placeholders:
@@ -346,7 +346,7 @@ es:
       annotator_web_service: Servicio web del Anotador
 
   recommender:
-    intro: Obtén recomendaciones de las ontologías más relevantes basadas en un extracto de texto o una lista de palabras clave
+    intro: Obtén recomendaciones de las ontologías más relevantes con respecto a un extracto de texto o a una lista de palabras clave
     index:
       title: Recomendador
       heading: Recomendador de Ontologías
@@ -357,7 +357,7 @@ es:
       input_keywords_label: Palabras clave (separadas por comas)
       output_ontologies_label: Ontologías
       output_sets_label: Conjuntos de ontologías
-      textarea_placeholder: Pega un párrafo de texto o algunas palabras clave para calcular recomendaciones de ontologías
+      textarea_placeholder: Pega un párrafo de texto o algunas palabras clave para obtener recomendaciones de ontologías
       insert_sample_input: insertar entrada de ejemplo
       show_advanced: "Mostrar opciones avanzadas >>"
       weights_configuration: Configuración de pesos
@@ -383,9 +383,9 @@ es:
 
   search:
     index:
-      intro: Busca una clase en múltiples ontologías
+      intro: Busca un término en múltiples terminologías
       title: Buscar
-      heading: Búsqueda de clases
+      heading: Búsqueda de términos
       help: ayuda
       view_search_documentation: Ver documentación de búsqueda
       show_advanced: "Mostrar opciones avanzadas >>"
@@ -417,8 +417,16 @@ es:
       other_forms: "Otras formas"
       view_entry: "ver entrada"
       view_entries: "ver entradas"
-      lexical_filters: "Filtros Léxicos"
+      lexical_filters: "Filtros de términos"
       language_filter: "Idioma"
+      languages:
+        all: "Todos los idiomas"
+        spa: "Español (spa)"
+        eng: "Inglés (eng)"
+        fre: "Francés (fre)"
+        cat: "Catalán (cat)"
+        ita: "Italiano (ita)"
+        por: "Portugués (por)"
       part_of_speech: "Categoría gramatical"
       subjects_filter: "Dominios/Temas"
 

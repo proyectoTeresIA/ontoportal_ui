@@ -402,7 +402,7 @@ module OntologiesHelper
     sections = ['summary']
     if !@ontology.summaryOnly && (submission_ready?(@submission_latest) || @old_submission_ready)
       if ontolex_ontology?
-        sections += ['terminological_entries', 'forms', 'lexical_entries', 'lexical_senses', 'lexical_concepts']
+        sections += ['terminological_entries', 'forms', 'lexical_entries', 'lexical_senses', 'lexical_concepts', 'mappings']
       else
         sections += ['classes']
         sections += %w[properties]

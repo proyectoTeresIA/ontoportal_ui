@@ -1,0 +1,54 @@
+%div#ontolex_mappings_section
+
+  - if @ontolex_mappings.blank?
+    %p.text-muted.p-2= t('mappings.ontolex.none_for_ontology', default: 'No cross-ontology mappings found for this resource.')
+
+  - else
+    %p.text-muted.small.mb-2
+      = t('mappings.ontolex.showing', default: "Showing %{count} mapping(s)", count: @ontolex_mappings.size)
+
+    %table.table.table-sm.table-hover
+      %thead.table-light
+        %tr
+          %th= t('mappings.ontolex.source_concept', default: 'Source concept')
+          %th= t('mappings.ontolex.target_concept', default: 'Target concept')
+          %th= t('mappings.ontolex.target_ontology', default: 'Target ontology')
+          %th= t('mappings.ontolex.relation_type', default: 'Relation')
+      %tbody
+        - @ontolex_mappings.each do |map|
+          - source = map.classes&.first
+          - target = map.classes&.last
+          - source_id = source&.id.to_s
+          - target_id = target&.id.to_s
+          - source_label = source&.prefLabel || source_id.split(%r{[#/]}).last
+          - target_label = target&.prefLabel || target_id.split(%r{[#/]}).last
+          - target_ont_link = target&.links&.dig('ontology') || ''
+          - target_acr = target_ont_link.split('/').last
+          %tr
+            %td
+              - if source_id.start_with?('http')
+                = link_to source_label, ontology_path(@ontology.acronym, p: 'lexical_concepts', id: source_id), data: { turbo: false }
+              - else
+                = source_label
+            %td
+              - if target_id.start_with?('http')
+                = link_to target_label, ontology_path(target_acr, p: 'lexical_concepts', id: target_id), data: { turbo: false }
+              - else
+                = target_label
+            %td
+              - if target_acr.present?
+                = link_to target_acr, ontology_path(target_acr)
+            %td
+              %span.badge.bg-secondary= map.source
+
+    - if @ontolex_pages.to_i > 1
+      %nav.mt-2
+        %ul.pagination.pagination-sm
+          - (@ontolex_page.to_i > 1 ? [1, @ontolex_page.to_i - 1] : []).each do |p|
+            %li.page-item
+              %a.page-link{href: mapping_count_path(id: @ontology.acronym, page: p)}= p == 1 ? '«' : '‹'
+          %li.page-item.active
+            %span.page-link= @ontolex_page
+          - (@ontolex_page.to_i < @ontolex_pages.to_i ? [@ontolex_page.to_i + 1, @ontolex_pages.to_i] : []).each do |p|
+            %li.page-item
+              %a.page-link{href: mapping_count_path(id: @ontology.acronym, page: p)}= p == @ontolex_pages.to_i ? '»' : '›'

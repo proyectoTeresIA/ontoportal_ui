@@ -43,8 +43,23 @@ class MappingsController < ApplicationController
 
   def count
     @ontology = LinkedData::Client::Models::Ontology.find_by_acronym(params[:id]).first
-    @mapping_counts = mapping_counts(@ontology.acronym)
-    render partial: 'count'
+
+    if is_ontolex_format?(@ontology)
+      submission = @ontology.explore.latest_submission rescue nil
+      page, size = page_params
+      response = LinkedData::Client::HTTP.get(
+        "/ontologies/#{@ontology.acronym}/mappings",
+        { page: page || 1, pagesize: size || 50 }
+      )
+      @ontolex_mappings = response&.collection || []
+      @ontolex_total    = response&.totalCount || 0
+      @ontolex_page     = response&.page || 1
+      @ontolex_pages    = response&.pageCount || 1
+      render partial: 'ontolex_mappings', layout: false
+    else
+      @mapping_counts = mapping_counts(@ontology.acronym)
+      render partial: 'count'
+    end
   end
 
   def show
@@ -81,10 +96,22 @@ class MappingsController < ApplicationController
 
    def get_concept_table
     @ontology = LinkedData::Client::Models::Ontology.find_by_acronym(params[:ontologyid]).first
-    @concept = get_concept_or_entry(@ontology, params[:conceptid])
-
-    @mappings = get_concept_mappings(@concept)
     @type = params[:type]
+
+    if is_ontolex_format?(@ontology)
+      concept_id = CGI.unescape(params[:conceptid].to_s)
+      page, size = page_params
+      response = LinkedData::Client::HTTP.get(
+        "/ontologies/#{@ontology.acronym}/lexical_concepts/#{CGI.escape(concept_id)}/mappings",
+        { page: page || 1, pagesize: size || 50 }
+      )
+      @mappings = response&.collection || []
+      @ontolex_mappings = true
+    else
+      @concept = get_concept_or_entry(@ontology, params[:conceptid])
+      @mappings = get_concept_mappings(@concept)
+    end
+
     @delete_mapping_permission = check_delete_mapping_permission(@mappings)
     render partial: 'mappings/concept_mappings', layout: false
   end

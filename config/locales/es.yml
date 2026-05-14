@@ -18,7 +18,7 @@ es:
       console_title: Consola de Administración
       tabs:
         site_admin: Administración del sitio
-        ontology_admin: Administración de ontologías
+        ontology_admin: Administración de terminologías
         licensing: Licencias
         users: Usuarios
       cache_management: GESTIÓN DE CACHÉ
@@ -50,7 +50,7 @@ es:
 
   layouts:
     footer:
-      copyright_html: "Copyright &copy; 2005‑2024, The Board of Trustees of Leland Stanford Junior University. Todos los derechos reservados."
+      copyright_html: "Copyright © 2026 Proyecto TeresIA."
       free_access: "%{site} es gratis y abierto para todos los usuarios, sin necesidad de iniciar sesión."
       grant_html: >
 
@@ -110,8 +110,8 @@ es:
         terms: Términos de uso
         cookies: Uso de cookies
     ontology_report_submissions:
-      header: "Envíos de Ontología para %{acronym}"
-      missing: "La ontología %{acronym} no parece existir en el sistema. Puede que haya sido eliminada. Por favor, actualiza la ventana del navegador."
+      header: "Envíos de Terminología para %{acronym}"
+      missing: "La terminología %{acronym} no parece existir en el sistema. Puede que haya sido eliminada. Por favor, actualiza la ventana del navegador."
       submission: Envío
       release_date: Fecha de lanzamiento
       upload_date: Fecha de carga
@@ -121,28 +121,28 @@ es:
       less: menos...
 
   application:
-    ontology_not_found: Ontología %{acronym} no encontrada
+    ontology_not_found: Terminología %{acronym} no encontrada
     error_load: "Error: la carga falló"
     not_found_message: No encontrado
     errors_in_fields: "Errores en los campos: %{errors}"
 
   home:
     index:
-      find_ontology_placeholder: Comienza a escribir el nombre de la ontología y elige de la lista
+      find_ontology_placeholder: Comienza a escribir el nombre de la terminología y elige de la lista
       query_placeholder: Introduce una clase
-      tagline: el repositorio de terminologías más completo del mundo
-      title: Bienvenido/a a %{organization}
+      tagline: un punto de acceso unificado para consultar, explorar y gestionar recursos terminológicos en español y lenguas cooficiales
+      title: Inicio
       welcome: Bienvenido/a al %{site} de %{organization},
       search_for_class: Buscar una clase
       advanced_search: Búsqueda avanzada
-      find_an_ontology: Encontrar una ontología
-      browse_ontologies: Explorar ontologías
+      find_an_ontology: Encontrar una terminología
+      browse_ontologies: Explorar terminologías
       all: Todas
       browse_by_group: Explorar por grupo
-      ontology_visits: Visitas a ontologías
+      ontology_visits: Visitas a terminologías
       more: Más
       statistics: Estadísticas
-      ontologies: Ontologías
+      ontologies: Terminologías
       classes: Clases
       properties: Propiedades
       mappings: Mapeos
@@ -156,22 +156,22 @@ es:
       rest_examples_html: Ver documentación y ejemplos de la <a href="%{api_url}" target="_blank">API REST de %{site}</a>.
       announce_list_html: >
 
-    ontology_upload_button: "Enviar ontología"
+    ontology_upload_button: "Enviar terminología"
 
     account:
       title: Cuenta
     validate_ontology_file:
-      heading: Valida tu archivo de ontología
+      heading: Valida tu archivo de terminología
       validate_button: Validar
       processing: Procesando...
-      valid_ontology: Ontología válida
+      valid_ontology: Terminología válida
       no_errors_found: No se encontraron errores
       errors: Errores
       problem_detected: Detectamos un problema con el archivo.
       problem_validating: Problema validando el archivo, por favor inténtalo de nuevo
     feedback:
       title: Comentarios
-      support_intro: Ofrecemos soporte para preguntas, informes de errores, solicitudes de funcionalidades, envío de ontologías, etc.
+      support_intro: Ofrecemos soporte para preguntas, informes de errores, solicitudes de funcionalidades, envío de terminologías, etc.
       include_following: "Por favor, incluye lo siguiente:"
       include_email: Tu correo electrónico, para poder responderte.
       if_error: "Si describes un error, detalles de cómo ocurrió, incluyendo:"
@@ -194,11 +194,11 @@ es:
         addition: "Adición:"
       statistics: Estadísticas
       stats:
-        total_number_ontologies: Número total de ontologías
+        total_number_ontologies: Número total de terminologías
         ncbo_library: Biblioteca NCBO
         remote: Remotas
         number_of_classes_types: Número de clases/tipos
-      my_ontologies: Mis ontologías
+      my_ontologies: Mis terminologías
       proposals: Propuestas
       proposals_messages:
         pending: "Tu propuesta para %{target} sigue pendiente."
@@ -208,7 +208,7 @@ es:
       proposals_added: "%{count} propuestas añadidas"
 
   submission_inputs:
-    edit_ontology_title: Editar metadatos de la ontología
+    edit_ontology_title: Editar metadatos de la terminología
     name: "Nombre"
     acronym: "Acrónimo"
     metadata_selector_label: "Filtrar propiedades a mostrar"
@@ -238,23 +238,23 @@ es:
     categories: Categorías
     groups: Grupos
     visibility: Visibilidad
-    accounts_allowed: Añade o elimina cuentas que pueden ver esta ontología en %{portal_name}.
-    ontology_view_of_another_ontology: ¿Es esta ontología una vista de otra ontología?
+    accounts_allowed: Añade o elimina cuentas que pueden ver esta terminología en %{portal_name}.
+    ontology_view_of_another_ontology: ¿Es esta terminología una vista de otra terminología?
     contact: Contacto
     equivalents: Equivalentes
     validators: Validadores
     help_text: Texto de ayuda
     contact_name: "Nombre de %{name}"
     contact_email: "Correo electrónico de %{name}"
-    edit_metadata_instruction: "Edita aquí los metadatos de tu ontología. Algunos de estos valores se usan por las funcionalidades de %{portal_name}, incluido para la evaluación FAIR. %{link}"
+    edit_metadata_instruction: "Edita aquí los metadatos de tu terminología. Algunos de estos valores se usan por las funcionalidades de %{portal_name}, incluido para la evaluación FAIR. %{link}"
     edit_metadata_instruction_link: "Consulta aquí las directrices y recomendaciones para metadatos."
     license_help: "%{portal_name} requiere un URI para la licencia. Si no encuentras tu opción aquí, %{link}"
     license_help_link: "Por favor, elige un URI de aquí."
-    deprecated_help: "Una ontología con estado retirado necesariamente también debe estar obsoleta, pero no al contrario."
+    deprecated_help: "Una terminología con estado retirado necesariamente también debe estar obsoleta, pero no al contrario."
     known_usage_help: "Considera también declarar %{metadata_knownUsage_help}"
-    known_usage_help_link: "los proyectos que usan la ontología"
-    help_creator: "Las siguientes propiedades toman como valor un 'agente' en %{portal_name} (ya sea una persona u organización). Estos agentes se comparten entre todas las ontologías y se sugieren con autocompletado si ya existen. Editar un agente aquí lo cambiará en todas las ontologías en las que participe ese agente."
-    version_help: "Para más información sobre cómo codificar la información de versionado en una ontología, consulta %{link}"
+    known_usage_help_link: "los proyectos que usan la terminología"
+    help_creator: "Las siguientes propiedades toman como valor un 'agente' en %{portal_name} (ya sea una persona u organización). Estos agentes se comparten entre todas las terminologías y se sugieren con autocompletado si ya existen. Editar un agente aquí lo cambiará en todas las terminologías en las que participe ese agente."
+    version_help: "Para más información sobre cómo codificar la información de versionado en una terminología, consulta %{link}"
     version_helper_link: "directrices y recomendaciones."
   annotator:
     index:
@@ -280,12 +280,12 @@ es:
       filter: Filtro
       headers:
         class: Clase
-        ontology: Ontología
+        ontology: Terminología
         type: Tipo
         umls_sem_type: Tipo semántico UMLS
         context: Contexto
         matched_class: Clase coincidente
-        matched_ontology: Ontología coincidente
+        matched_ontology: Terminología coincidente
       format_results_as: "Formatear resultados como:"
       to_reproduce: "Para reproducir estos resultados:"
       additional_parameters_at: Parámetros adicionales documentados en
@@ -295,7 +295,7 @@ es:
     index:
       title: Annotator Plus
       heading: Annotator +
-      intro: Obtén anotaciones para terminologías en un texto con clases de las ontologías
+      intro: Obtén anotaciones para terminologías en un texto con clases de las terminologías
       help_aria: Ver ayuda del anotador
       placeholders:
         input_text: Introduce o pega texto para anotar
@@ -330,12 +330,12 @@ es:
       filter: Filtro
       headers:
         class: Clase
-        ontology: Ontología
+        ontology: Terminología
         type: Tipo
         umls_sem_type: Tipo semántico UMLS
         context: Contexto
         matched_class: Clase coincidente
-        matched_ontology: Ontología coincidente
+        matched_ontology: Terminología coincidente
         score: Puntuación
         negation: Negación
         experiencer: Experiencia
@@ -346,18 +346,18 @@ es:
       annotator_web_service: Servicio web del Anotador
 
   recommender:
-    intro: Obtén recomendaciones de las ontologías más relevantes con respecto a un extracto de texto o a una lista de palabras clave
+    intro: Obtén recomendaciones de las terminologías más relevantes con respecto a un extracto de texto o a una lista de palabras clave
     index:
       title: Recomendador
-      heading: Recomendador de Ontologías
-      help_aria: Ver ayuda del recomendador de ontologías
+      heading: Recomendador de Terminologías
+      help_aria: Ver ayuda del recomendador de terminologías
       input_section: Entrada
       output_section: Salida
       input_text_label: Texto
       input_keywords_label: Palabras clave (separadas por comas)
-      output_ontologies_label: Ontologías
-      output_sets_label: Conjuntos de ontologías
-      textarea_placeholder: Pega un párrafo de texto o algunas palabras clave para obtener recomendaciones de ontologías
+      output_ontologies_label: Terminologías
+      output_sets_label: Conjuntos de terminologías
+      textarea_placeholder: Pega un párrafo de texto o algunas palabras clave para obtener recomendaciones de terminologías
       insert_sample_input: insertar entrada de ejemplo
       show_advanced: "Mostrar opciones avanzadas >>"
       weights_configuration: Configuración de pesos
@@ -365,20 +365,20 @@ es:
       acceptance_label: Aceptación
       knowledge_detail_label: Detalle del conocimiento
       specialization_label: Especialización
-      max_ontologies_per_set: Máximo de ontologías por conjunto
-      pick_ontologies_label: Seleccionar ontologías
+      max_ontologies_per_set: Máximo de terminologías por conjunto
+      pick_ontologies_label: Seleccionar terminologías
       get_recommendations: Obtener recomendaciones
       edit_input: Editar entrada
       errors:
-        not_text: Por favor, pega un párrafo de texto o algunas palabras clave para calcular recomendaciones de ontologías.
+        not_text: Por favor, pega un párrafo de texto o algunas palabras clave para calcular recomendaciones de terminologías.
         sum_weights: La suma de los pesos debe ser mayor que cero.
         range_weights: Todos los pesos deben ser mayores o iguales a cero.
         invalid_weights: Todos los pesos deben ser valores numéricos válidos.
-        invalid_max_ont: El máximo de ontologías por conjunto debe ser un valor entero válido.
-        max_ontologies: El máximo de ontologías por conjunto debe ser un número entre 2 y 4.
+        invalid_max_ont: El máximo de terminologías por conjunto debe ser un valor entero válido.
+        max_ontologies: El máximo de terminologías por conjunto debe ser un número entre 2 y 4.
         general: Problema al obtener recomendaciones, inténtalo de nuevo.
         no_results: No se encontraron recomendaciones.
-        no_results_sets: No hay conjuntos de ontologías recomendados para la entrada proporcionada. Prueba la salida "Ontologías".
+        no_results_sets: No hay conjuntos de terminologías recomendados para la entrada proporcionada. Prueba la salida "Terminologías".
         input_size: Por favor, usa menos de 500 palabras. Si necesitas anotar textos más largos puedes usar el servicio web del Recomendador.
 
   search:
@@ -396,7 +396,7 @@ es:
       include_in_search: "Incluir en la búsqueda:"
       property_values: Valores de propiedad
       obsolete_classes: Clases obsoletas
-      ontology_views: Vistas de ontología
+      ontology_views: Vistas de terminología
       narrow_search_to: "Restringir búsqueda a:"
       exact_matches: Coincidencias exactas
       classes_with_definitions: Clases con definiciones
@@ -630,7 +630,7 @@ es:
     submitted: Enviado
     by: por
     creation_date: Fecha de creación %{date}
-    view_of_the_ontology: "Vista de la ontología %{ontology}"
+    view_of_the_ontology: "Vista de la terminología %{ontology}"
     view: Ver
     debug: Depurar
     loading: Cargando
@@ -660,7 +660,7 @@ es:
         description: Descripción
         contacts: Contactos
         institutions: Instituciones
-        ontologies: Ontologías
+        ontologies: Terminologías
         user: Usuario
         created: Creado
       home_page: Página principal
@@ -680,8 +680,8 @@ es:
       institution: "Institución:"
       contacts: "Contactos:"
       home_page: "Página principal:"
-      ontologies_used: Ontologías utilizadas
-      none_associated: No hay ontologías asociadas actualmente con este proyecto
+      ontologies_used: Terminologías utilizadas
+      none_associated: No hay terminologías asociadas actualmente con este proyecto
     form:
       errors_on_form: Errores en el formulario
       name_label: Nombre
@@ -693,13 +693,13 @@ es:
       homepage_label: Página principal
       homepage_example_label: "Ejemplo:"
       description_label: Descripción
-      select_ontologies_used: Seleccionar ontologías usadas
+      select_ontologies_used: Seleccionar terminologías usadas
       submit: Guardar
       cancel: Cancelar
 
   ontologies:
-    intro: Explora la biblioteca de ontologías
-    submit_new_ontology: "Enviar nueva ontología"
+    intro: Explora la biblioteca de terminologías
+    submit_new_ontology: "Enviar nueva terminología"
     details: "Detalles"
     general_information: "Información general"
     dates_and_contacts: "Fechas y contactos"
@@ -715,7 +715,7 @@ es:
     load_from_url: "Cargar desde URL"
     new_versions_loaded: "Nuevas versiones cargadas"
     upload_local_file: "Subir un archivo local"
-    download_latest: "Descargar última ontología"
+    download_latest: "Descargar última terminología"
     visualize:
       jump_to: "Ir a:"
     metadata:
@@ -724,7 +724,7 @@ es:
         acronym: Acrónimo
         visibility: Visibilidad
         viewing_restriction: Restricción de visualización
-        view_of_ontology: Vista de la ontología
+        view_of_ontology: Vista de la terminología
         description: Descripción
         status: Estado
         format: Formato
@@ -755,7 +755,7 @@ es:
         ontolex_languages: Idiomas
     visits:
       index:
-        title: Visitas a Ontologías
+        title: Visitas a Terminologías
         headers:
           visits_count: "# visitas"
       header: Visitas
@@ -777,14 +777,14 @@ es:
       more: más...
       less: menos...
     submit_success:
-      title: ¡Ontología enviada correctamente!
-      thanks_metadata: "Gracias por enviar tu ontología solo de metadatos a %{site}."
-      your_ontology: tu ontología
-      visible_but_not_browsable_html: "Ahora los usuarios pueden ver %{link} en nuestra lista de ontologías, pero no pueden explorarla ni buscar en ella. Para habilitar la exploración y la búsqueda, por favor sube una versión completa de tu ontología."
-      thanks_view: "Gracias por enviar la vista de tu ontología a %{site}."
-      thanks: "Gracias por enviar tu ontología a %{site}."
-      processing_time: "Pondremos tu ontología en la cola para ser procesada. Ten en cuenta que puede llevar varias horas antes de que los usuarios de %{site} puedan explorar y buscar en tu ontología."
-      ready_here: "Cuando tu ontología esté lista para verse, estará disponible aquí:"
+      title: ¡Terminología enviada correctamente!
+      thanks_metadata: "Gracias por enviar tu terminología solo de metadatos a %{site}."
+      your_ontology: tu terminología
+      visible_but_not_browsable_html: "Ahora los usuarios pueden ver %{link} en nuestra lista de terminologías, pero no pueden explorarla ni buscar en ella. Para habilitar la exploración y la búsqueda, por favor sube una versión completa de tu terminología."
+      thanks_view: "Gracias por enviar la vista de tu terminología a %{site}."
+      thanks: "Gracias por enviar tu terminología a %{site}."
+      processing_time: "Pondremos tu terminología en la cola para ser procesada. Ten en cuenta que puede llevar varias horas antes de que los usuarios de %{site} puedan explorar y buscar en tu terminología."
+      ready_here: "Cuando tu terminología esté lista para verse, estará disponible aquí:"
       contact_support_intro: "Si tienes alguna pregunta o problema, envía un correo al equipo de soporte de %{site}:"
     add_proposal:
       add_proposal: Añadir una propuesta
@@ -793,19 +793,19 @@ es:
       obsolete_class: Marcar clase como obsoleta
       rename_class: Renombrar clase
     licensed_ontology:
-      heading: Esta ontología tiene licencia del propietario
+      heading: Esta terminología tiene licencia del propietario
       log_in: iniciar sesión
       have_license_html: "Si ya tienes una licencia, por favor %{login_link}."
       enter_license_text: "Introduce un texto completo en el campo de cumplimiento de licencia"
-      instructions_html: "Para acceder a esta ontología, deberás cumplir con las siguientes condiciones de licencia proporcionadas por el propietario de la ontología:"
+      instructions_html: "Para acceder a esta terminología, deberás cumplir con las siguientes condiciones de licencia proporcionadas por el propietario de la terminología:"
       contact_html: 'Por favor, contacta con %{authors} en <a href="mailto:%{email}">%{email}</a> si tienes preguntas sobre la licencia.'
       submit: Enviar
     private:
-      title: Esta ontología es privada
-      body_html: 'Esta ontología es privada y solo quienes han recibido acceso por el autor de la ontología pueden navegar sus clases. Por favor contacta a %{authors} en <a href="mailto:%{email}">%{email}</a> si deseas acceso.'
+      title: Esta terminología es privada
+      body_html: 'Esta terminología es privada y solo quienes han recibido acceso por el autor de la terminología pueden navegar sus clases. Por favor contacta a %{authors} en <a href="mailto:%{email}">%{email}</a> si deseas acceso.'
       login_prompt_html: 'Si ya se te ha concedido acceso entonces por favor <a href="/login?redirect=%{redirect}">inicia sesión</a> y serás llevado al navegador de clases.'
     widgets_page:
-      not_available_html: "Los widgets solo están disponibles para ontologías almacenadas en %{site}."
+      not_available_html: "Los widgets solo están disponibles para terminologías almacenadas en %{site}."
       add_widgets_heading_html: "Añade Widgets Web de %{org} a tu sitio para %{acronym}"
       headers:
         widget_type: "Tipo de widget"
@@ -837,9 +837,9 @@ es:
         put_on_server_period: "y ponlo en tu servidor."
         copy_code_html: "Copia el código de abajo y pégalo en tu página HTML"
         note: "Nota:"
-        quick_jump_multi: "Si quieres usar Quick Jump en múltiples ontologías:"
-        multi_ids: "Puedes introducir una lista separada por comas de IDs de ontología:"
-        all_ontologies: "Puedes establecer la variable a 'all' para buscar en todas las ontologías en %{site}:"
+        quick_jump_multi: "Si quieres usar Quick Jump en múltiples terminologías:"
+        multi_ids: "Puedes introducir una lista separada por comas de IDs de terminología:"
+        all_ontologies: "Puedes establecer la variable a 'all' para buscar en todas las terminologías en %{site}:"
         include_definitions: "Para incluir definiciones en el desplegable de Jump To, añade la siguiente variable en Javascript:"
         change_path: "En el código que acabas de pegar, asegúrate de cambiar la ruta al archivo quick_jump.js para que apunte a la ubicación donde lo pusiste (relativo a tu archivo HTML)"
         example_same_dir: "Por ejemplo, si pusiste el archivo quick_jump.js en el mismo directorio que tu archivo HTML, este es el código que usarías:"
@@ -847,10 +847,10 @@ es:
         include_header_form_complete_html: "En la cabecera de la página donde quieres el campo del formulario, incluye el archivo <b>form_complete.js</b>."
         field_class_format: "En tu formulario, para los campos donde quieras usar el widget de selección de clases, especifica la clase del campo en el siguiente formato:"
         for_example: "Por ejemplo,"
-        ncit_uri_behavior: "usará NCI Thesaurus (el id de la ontología es NCIT) y pondrá la URI de la clase en el campo después de que el usuario seleccione la clase de la lista desplegable."
-        single_or_list: "Además de IDs de ontología individuales, puedes usar una lista:"
+        ncit_uri_behavior: "usará NCI Thesaurus (el id de la terminología es NCIT) y pondrá la URI de la clase en el campo después de que el usuario seleccione la clase de la lista desplegable."
+        single_or_list: "Además de IDs de terminología individuales, puedes usar una lista:"
         or: "O"
-        all_site_ontologies: "usa 'all' para buscar en todas las ontologías de %{site}:"
+        all_site_ontologies: "usa 'all' para buscar en todas las terminologías de %{site}:"
         parameters_intro: "Puedes usar los siguientes parámetros para seleccionar qué valor se colocará en el campo visible al usuario:"
         param_uri: "coloca la URI completa de la clase (p.ej.,"
         param_shortid: 'coloca el ID corto de la clase, como se usa en %{site} (p.ej., "Common_Neoplasm");'
@@ -861,7 +861,7 @@ es:
         detailed_demo_prefix: "También puedes ver una"
         detailed_demo_link: "demostración detallada"
     browse:
-      loading_title: "Cargando ontologías"
+      loading_title: "Cargando terminologías"
       loading_wait: "por favor espera..."
       title: "Explorar"
       welcome_admin: "Bienvenido administrador"
@@ -876,8 +876,8 @@ es:
         missing_status: "Estado faltante"
         admin_only: "Solo administrador"
         types:
-          ontology: Ontología
-          ontology_view: Vista de ontología
+          ontology: Terminología
+          ontology_view: Vista de terminología
         upload_date_options:
           day: Día
           week: Semana
@@ -926,26 +926,26 @@ es:
   # removed duplicate notes and submission_inputs blocks added later to avoid duplication
 
   mappings:
-    intro: Explora mapeos entre clases en diferentes ontologías
+    intro: Explora mapeos entre clases en diferentes terminologías
     create_new_mapping: Crear nuevo mapeo
     index:
       help_aria: Ver ayuda de mapeos
       title: Mapeos
       no_mappings_available: No hay mapeos disponibles
-      select_an_ontology: Selecciona una ontología
+      select_an_ontology: Selecciona una terminología
       loading_mappings: Cargando mapeos...
     table:
       headers:
         delete: Eliminar
         mapping_to: Mapeado a
-        ontology: Ontología
+        ontology: Terminología
         source: Fuente
       none_for_class: Actualmente no hay mapeos para esta clase.
     count:
       headers:
-        ontology: Ontología
+        ontology: Terminología
         mappings: Mapeos
-      none_for_ontology: No hay mapeos hacia o desde esta ontología
+      none_for_ontology: No hay mapeos hacia o desde esta terminología
     show:
       none_found: No se encontraron mapeos
       source: Fuente
@@ -953,8 +953,8 @@ es:
       form:
         file: Archivo
         user: Usuario
-        source_ontology: Ontología origen
-        destination_ontology: Ontología destino
+        source_ontology: Terminología origen
+        destination_ontology: Terminología destino
         uses_names: ¿Usa nombres?
         source_position: Posición origen
         destination_position: Posición destino
@@ -964,7 +964,7 @@ es:
         delimiter: "Delimitador usa , o t para tab"
         upload: Subir
     form:
-      target_ontology_or_view: Ontología o vista destino
+      target_ontology_or_view: Terminología o vista destino
       target_class: Clase destino
       details: Detalles
       comment: Comentario
@@ -1038,25 +1038,25 @@ es:
         Opcionalmente, introduce un ID de clase para la raíz de una rama obsoleta. Todas las clases de la rama se marcarán como obsoletas, excepto la clase raíz.
       version_label: Versión
       language_label: Idioma
-      language_help: Introduce el idioma del contenido de la ontología, p. ej., español, inglés, francés, etc.
+      language_help: Introduce el idioma del contenido de la terminología, p. ej., español, inglés, francés, etc.
       status_label: Estado
       release_date_label: Fecha de publicación
       location_label: Ubicación
       metadata_only_label: Solo metadatos
-      metadata_only_help: Permite a los usuarios ver y buscar los metadatos de tu ontología, pero no sus clases y propiedades.
+      metadata_only_help: Permite a los usuarios ver y buscar los metadatos de tu terminología, pero no sus clases y propiedades.
       load_from_url_label: Cargar desde URL
       nightly_loads: Nuevas versiones cargadas cada noche
-      enter_url_help: Introduce una URL, incluyendo el nombre del archivo fuente de tu ontología, p. ej., http://www.example.com/mi_ontologia.owl.
+      enter_url_help: Introduce una URL, incluyendo el nombre del archivo fuente de tu terminología, p. ej., http://www.example.com/mi_ontologia.owl.
       upload_local_file_label: Subir archivo local
       contact_label: Contacto
       name_label: Nombre
       email_label: Correo electrónico
       homepage_label: Página principal
-      homepage_help: Introduce una URL para la página principal de tu ontología
+      homepage_help: Introduce una URL para la página principal de tu terminología
       documentation_label: Documentación
-      documentation_help: Introduce una URL para una página que proporcione documentación de la ontología
+      documentation_help: Introduce una URL para una página que proporcione documentación de la terminología
       publications_label: Publicaciones
-      publications_help: Introduce una URL para una página que liste publicaciones sobre tu ontología
+      publications_help: Introduce una URL para una página que liste publicaciones sobre tu terminología
       required_fields_note: "* Los campos marcados con un asterisco son obligatorios."
       cancel: Cancelar
   no_result_was_found: "No se encontraron resultados"
@@ -1094,8 +1094,8 @@ es:
 
   shared:
     ontology_picker:
-      select_ontologies: Seleccionar ontologías
-      placeholder: Comienza a escribir para seleccionar ontologías o déjalo en blanco para usar todas
+      select_ontologies: Seleccionar terminologías
+      placeholder: Comienza a escribir para seleccionar terminologías o déjalo en blanco para usar todas
       clear_selection: limpiar selección
       select_from_list: seleccionar de la lista
     close_bracket: "[cerrar]"
@@ -1105,11 +1105,11 @@ es:
       select_groups: Grupos
       select_categories: Categorías
       filtered_groups_and_categories: "Grupos y categorías filtrados:"
-      select_all_filtered_ontologies: Seleccionar todas las ontologías filtradas
+      select_all_filtered_ontologies: Seleccionar todas las terminologías filtradas
       show_all: mostrar todas
-      heading: Selector avanzado de ontologías
+      heading: Selector avanzado de terminologías
       close: cerrar
-      search_all_ontology_names: Buscar en todos los nombres de ontologías
+      search_all_ontology_names: Buscar en todos los nombres de terminologías
 
   passwords:
     edit:
@@ -1192,23 +1192,23 @@ es:
       copy_api_key: Copiar clave API
       subscriptions: Suscripciones
       headers:
-        ontology: Ontología
+        ontology: Terminología
         subscription_type: Tipo de suscripción
       projects: Proyectos
       projects_you_created: "Proyectos que creaste en %{site}"
-      ontologies: Ontologías
-      ontologies_admin_access: "Ontologías a las que tienes acceso administrativo en %{site}"
-      custom_ontology_set: Conjunto personalizado de ontologías
+      ontologies: Terminologías
+      ontologies_admin_access: "Terminologías a las que tienes acceso administrativo en %{site}"
+      custom_ontology_set: Conjunto personalizado de terminologías
       custom_ontology_intro: "Personaliza tu visualización:"
-      custom_ontology_description: "elige las ontologías que quieres ver y %{site} ocultará las demás."
+      custom_ontology_description: "elige las terminologías que quieres ver y %{site} ocultará las demás."
       custom_ontology_login_note: "Nota: debes iniciar sesión para usar esta función"
       custom_ontology_slice_prefix: "Visita el "
       custom_ontology_slice_link: "sitio principal"
-      custom_ontology_slice_suffix: " para modificar tu conjunto personalizado de ontologías"
-      select_custom_ontologies: Seleccionar ontologías personalizadas
-      save_custom_ontologies: Guardar ontologías personalizadas
-      no_ontologies_picked: "Aún no has seleccionado ninguna ontología"
-      select_ontologies: Seleccionar ontologías
+      custom_ontology_slice_suffix: " para modificar tu conjunto personalizado de terminologías"
+      select_custom_ontologies: Seleccionar terminologías personalizadas
+      save_custom_ontologies: Guardar terminologías personalizadas
+      no_ontologies_picked: "Aún no has seleccionado ninguna terminología"
+      select_ontologies: Seleccionar terminologías
       subscribe_error: "Problema al suscribirse a los correos, por favor intenta de nuevo"
 
   notes:
@@ -1267,10 +1267,10 @@ es:
       La distribución del Appliance Virtual de OntoPortal contiene una versión preinstalada y preconfigurada del software de código abierto de NCBO más utilizado, ejecutándose sobre un sistema operativo Linux.
     description_included: "El siguiente software está incluido en la imagen:"
     included:
-      ontologies_api: API de Ontologías (servicio REST)
+      ontologies_api: API de Terminologías (servicio REST)
       annotator: Anotador
       recommender: Recomendador
-      bioportal_ui: Interfaz Web de BioPortal (incluye visualización de ontologías, widgets y la interfaz del Anotador)
+      bioportal_ui: Interfaz Web de BioPortal (incluye visualización de terminologías, widgets y la interfaz del Anotador)
     please_see_our: Por favor, consulta nuestra
     documentation: documentación
     more_info_appliance: para más información sobre cómo trabajar con el Appliance.
@@ -1301,7 +1301,7 @@ es:
       provenance: Procedencia
       lifecycle: Ciclo de vida
     labels:
-      uri: IRI de la ontología
+      uri: IRI de la terminología
       versionIRI: IRI de la versión
       version: Versión
       description: Descripción
@@ -1310,7 +1310,7 @@ es:
       publications: Publicaciones
       license: Licencia
       status: Estado
-      hasOntologyLanguage: Lenguaje de la ontología
+      hasOntologyLanguage: Lenguaje de la terminología
       deprecated: Obsoleta
       preferredPrefix: Prefijo preferido
       created: Creada
@@ -1325,18 +1325,18 @@ es:
       contactEmail: Correo de contacto
       contactHomepage: Página de contacto
     help:
-      uri: El IRI principal de la ontología (owl:Ontology/@rdf:about). Normalmente el espacio de nombres superior.
+      uri: El IRI principal de la terminología (owl:Ontology/@rdf:about). Normalmente el espacio de nombres superior.
       versionIRI: IRI de esta versión publicada (owl:versionIRI).
       version: Cadena identificadora de versión para este lanzamiento.
-      description: Un resumen conciso y legible del alcance y contenido de la ontología.
-      homepage: URL de la página principal del proyecto de la ontología.
-      documentation: URL de una página que contiene la documentación de la ontología.
-      publications: URL a una página que lista publicaciones sobre la ontología.
-      license: URI de la licencia bajo la cual se distribuye esta ontología.
-      status: Estado de madurez / publicación de la ontología.
-      hasOntologyLanguage: El lenguaje de representación usado para codificar la ontología.
-      deprecated: Indica si la ontología está obsoleta (ya no se mantiene).
-      preferredPrefix: Prefijo corto recomendado para identificadores generados a partir de esta ontología.
+      description: Un resumen conciso y legible del alcance y contenido de la terminología.
+      homepage: URL de la página principal del proyecto de la terminología.
+      documentation: URL de una página que contiene la documentación de la terminología.
+      publications: URL a una página que lista publicaciones sobre la terminología.
+      license: URI de la licencia bajo la cual se distribuye esta terminología.
+      status: Estado de madurez / publicación de la terminología.
+      hasOntologyLanguage: El lenguaje de representación usado para codificar la terminología.
+      deprecated: Indica si la terminología está obsoleta (ya no se mantiene).
+      preferredPrefix: Prefijo corto recomendado para identificadores generados a partir de esta terminología.
       naturalLanguage: Idioma(s) natural(es) usados para etiquetas y definiciones.
     enforced_values:
       status:

@@ -15,8 +15,7 @@
 	<%= csrf_meta_tag %>
 
 	<title><%if @title.nil?%><%=$ORG_SITE%><%else%><%="#{@title} | #{$ORG_SITE}"%><%end%></title>
-
-	<link rel="shortcut icon" href=<%= asset_path('favicon.ico') %> type="image/x-icon" />
+  <link rel="icon" href="<%= root_path %>favicon.png" type="image/png" />
 
 	<!-- Fonts -->
 	<link href='//fonts.googleapis.com/css?family=Droid+Sans:400' rel='stylesheet' type='text/css'>

@@ -6,7 +6,7 @@ $ORG_URL = ENV['ORG_URL'] || 'https://www.bioontology.org'
 $SITE = ENV['SITE'] || 'BioPortal'
 
 # Full string for site, EX: "NCBO BioPortal", do not modify
-$ORG_SITE = $ORG.nil? || $ORG.empty? ? $SITE : "#{$ORG} #{$SITE}"
+$ORG_SITE = ENV['ORG_SITE'] || ($ORG.nil? || $ORG.empty? ? $SITE : "#{$ORG} #{$SITE}")
 
 # The URL for the BioPortal Rails UI (this application)
 $UI_URL = ENV['UI_URL'] || 'https://bioportal.bioontology.org'

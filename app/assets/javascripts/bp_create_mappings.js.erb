@@ -106,7 +106,7 @@ function getClassDetails(input) {
   var current_ont_id = jQuery("#map_to_bioportal_ontology_id").val();
   var current_concept_id = jQuery("#map_to_bioportal_full_id").val();
   jQuery("#map_to_concept_details_table").html('<%= image_tag("spinners/spinner_000000_16px.gif", style: "padding: 5px;") %>');
-  var basePath = window.BP_CONFIG.base_url;
+  var basePath = BP_CONFIG.base_url || '';
   jQuery("#map_to_concept_details_table").load(basePath + "/ajax/class_details?ontology=" + encodeURIComponent(current_ont_id) + "&styled=false&conceptid=" + encodeURIComponent(current_concept_id));
 }
 
@@ -181,7 +181,7 @@ var bp_createMapping = {
 
     // If we have a concept mapping table, update it with new mappings
     if (document.getElementById("concept_mappings_table") != null) {
-      var basePath = window.BP_CONFIG.base_url;
+      var basePath = BP_CONFIG.base_url || '';
       var url = basePath + "/ajax/mappings/get_concept_table?ontologyid=" + ontology_id + "&conceptid=" + encodeURIComponent(source_class_id);
       jQuery("#concept_mappings_table").load(url, function(){
         jQuery("#mapping_count").html(jQuery("#mapping_details tbody tr:visible").size());

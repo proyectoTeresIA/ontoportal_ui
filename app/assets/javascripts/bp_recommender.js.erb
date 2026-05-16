@@ -189,7 +189,7 @@ rec.getRecommendations = function () {
     params.max_elements_set = $('#input_max_ontologies').val();
     $.ajax({
       type: 'POST',
-      url: '<%= Rails.application.config.relative_url_root || "" %>' + '/recommender',
+      url: (BP_CONFIG.base_url || '') + '/recommender',
       data: params,
       dataType: 'json',
       success: function (data) {

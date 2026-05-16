@@ -220,7 +220,7 @@ jQuery(document).ready(function() {
     // Perform search
     jQuery("#search_button").click(function(event) {
         event.preventDefault();
-        var basePath = window.BP_CONFIG.base_url;
+        var basePath = BP_CONFIG.base_url || '';
         History.pushState(currentSearchParams(), document.title, basePath + "/search?" + objToQueryString(currentSearchParams()));
     });
 
@@ -246,7 +246,7 @@ jQuery(document).ready(function() {
     jQuery("a.class_visualize").live("click", function() {
         var acronym = jQuery(this).attr("data-bp_ontologyid"),
             conceptid = jQuery(this).attr("data-bp_conceptid");
-        var basePath = window.BP_CONFIG.base_url;
+        var basePath = BP_CONFIG.base_url || '';
         jQuery("#biomixer").html('<iframe src="' + basePath + '/ajax/biomixer/?ontology=' + acronym + '&conceptid=' + encodeURIComponent(conceptid) + '" frameborder=0 height="500px" width="500px" scrolling="no"></iframe>').show();
         jQuery.facebox({
             div: '#biomixer'
@@ -1094,7 +1094,7 @@ function classDiv(res, clsLabel, displayOntologyName) {
         clsAttr = null,
         clsAnchor = null,
         clsIdDiv = null;
-        basePath = window.BP_CONFIG.base_url;
+        basePath = BP_CONFIG.base_url || '';
     ontAcronym = ontologyIdToAcronym(res.links.ontology);
     clsID = res["@id"];
     clsCode = encodeURIComponent(clsID);
@@ -1131,7 +1131,7 @@ function resultLinksSpan(res) {
     clsCode = encodeURIComponent(clsID);
     // construct link for class 'details' in facebox
     detailsAttr = {
-        "href": "<%= Rails.application.config.relative_url_root || '' %>/ajax/class_details?ontology=" + ontAcronym + "&conceptid=" + clsCode + "&styled=false",
+        "href": (BP_CONFIG.base_url || '') + '/ajax/class_details?ontology=' + ontAcronym + '&conceptid=' + clsCode + '&styled=false',
         "rel": "facebox[.class_details_pop]"
     };
     detailsAnchor = jQuery("<a>");
@@ -1213,7 +1213,7 @@ function aggregateLexicalResults(results) {
 function formatFormSearchResults(aggOntologyResults) {
     var ontResults = aggOntologyResults.same_ont,
         allResults = [];
-    var basePath = window.BP_CONFIG.base_url;
+    var basePath = BP_CONFIG.base_url || '';
     
     // Process all results from this ontology (not just the first one)
     jQuery(ontResults).each(function() {

@@ -11,6 +11,9 @@ var tb_pathToImage = "<%= asset_path("thickbox/loadingAnimation.gif") %>";
 
 //on page load call tb_init
 $(document).ready(function(){   
+	var bpConfig = jQuery(document).data().bp && jQuery(document).data().bp.config;
+	var basePath = bpConfig ? (bpConfig.base_url || '') : '';
+	tb_pathToImage = basePath + tb_pathToImage;
 	tb_init('a.thickbox, area.thickbox, input.thickbox');//pass where to apply thickbox
 	imgLoader = new Image();// preload image
 	imgLoader.src = tb_pathToImage;

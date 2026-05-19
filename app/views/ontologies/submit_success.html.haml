@@ -1,20 +1,21 @@
 %div.p-4
+  - success_site_name = 'TeresIA'
   %h2.pb-3= t('ontologies.submit_success.title')
   -if @ontology.summaryOnly
-    %p= t('ontologies.submit_success.thanks_metadata', site: $SITE)
+    %p= t('ontologies.submit_success.thanks_metadata', site: success_site_name)
     %p
       = t('ontologies.submit_success.visible_but_not_browsable_html', link: link_to(t('ontologies.submit_success.your_ontology'), ontology_path(@ontology.acronym))).html_safe
   -else
     -if @ontology.viewOf
-      %p= t('ontologies.submit_success.thanks_view', site: $SITE)
+      %p= t('ontologies.submit_success.thanks_view', site: success_site_name)
     -else
-      %p= t('ontologies.submit_success.thanks', site: $SITE)
+      %p= t('ontologies.submit_success.thanks', site: success_site_name)
     %p
-      = t('ontologies.submit_success.processing_time', site: $SITE)
+      = t('ontologies.submit_success.processing_time', site: success_site_name)
     %p
       = t('ontologies.submit_success.ready_here')
       = link_to ontology_url(@ontology.acronym), ontology_path(@ontology.acronym)
     %p
-      = t('ontologies.submit_success.contact_support_intro', site: $SITE)
+      = t('ontologies.submit_success.contact_support_intro', site: success_site_name)
       = mail_to "#{$SUPPORT_EMAIL}", "#{$SUPPORT_EMAIL}"
 

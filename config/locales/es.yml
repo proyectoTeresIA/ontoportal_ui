@@ -739,6 +739,12 @@ es:
         single_child: Términos con un solo hijo
         more_than_25_children: Términos con más de 25 hijos
         no_definition: Términos sin definición
+        ontolex_entries: Términos
+        ontolex_concepts: Conceptos léxicos
+        ontolex_forms: Formas
+        ontolex_senses: Sentidos léxicos
+        ontolex_translations: Traducciones
+        ontolex_languages: Idiomas
     visits:
       index:
         title: Visitas a Terminologías

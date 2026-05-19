@@ -228,7 +228,7 @@ class AdminController < ApplicationController
     start = Time.now
 
     begin
-      ontologies_data = LinkedData::Client::HTTP.get(ONTOLOGIES_URL, {}, raw: true)
+      ontologies_data = LinkedData::Client::HTTP.get(ONTOLOGIES_URL, { suppress_error: true }, raw: true)
       ontologies_data_parsed = JSON.parse(ontologies_data, symbolize_names: true)
 
       if ontologies_data_parsed[:errors]

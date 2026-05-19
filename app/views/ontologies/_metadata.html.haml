@@ -76,20 +76,28 @@
           %table.table.table-sm
             - if @metrics.respond_to?(:ontolexEntries) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexEntries))
               %tr.border-top
-                %td= 'Lexical entries'
+                %td= t('ontologies.metrics.labels.ontolex_entries')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexEntries)
             - if @metrics.respond_to?(:ontolexConcepts) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexConcepts))
               %tr
-                %td= 'Lexical concepts'
+                %td= t('ontologies.metrics.labels.ontolex_concepts')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexConcepts)
             - if @metrics.respond_to?(:ontolexForms) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexForms))
               %tr
-                %td= 'Forms'
+                %td= t('ontologies.metrics.labels.ontolex_forms')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexForms)
             - if @metrics.respond_to?(:ontolexSenses) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexSenses))
               %tr
-                %td= 'Lexical senses'
+                %td= t('ontologies.metrics.labels.ontolex_senses')
                 %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexSenses)
+            - if @metrics.respond_to?(:ontolexTranslations) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexTranslations))
+              %tr
+                %td= t('ontologies.metrics.labels.ontolex_translations')
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexTranslations)
+            - if @metrics.respond_to?(:ontolexLanguages) || (@metrics.respond_to?(:key?) && @metrics.key?(:ontolexLanguages))
+              %tr
+                %td= t('ontologies.metrics.labels.ontolex_languages')
+                %td{style: "text-align: right"}= number_with_delimiter(@metrics.ontolexLanguages)
 
       -# Visits pane
       %section.ont-metadata-card.ont-analytics-card

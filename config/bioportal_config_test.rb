@@ -55,7 +55,7 @@ ActionMailer::Base.smtp_settings = {
 # NOTE: You must use the REQUEST address for the mailing list. ONLY WORKS WITH MAILMAN LISTS.
 $ANNOUNCE_LIST = ENV['SUPPORT_EMAIL'] || 'bioportal-test-announce@example.org'
 # Email addresses used for sending notifications (errors, feedback, support)
-$SUPPORT_EMAIL = ENV['SUPPORT_EMAIL'] || 'bioportal-test-support@example.org'
+$SUPPORT_EMAIL = ENV['SUPPORT_EMAIL'] || 'teresia@csic.es'
 
 # reCAPTCHA
 # In order to use reCAPTCHA on the account creation and feedback submission pages:

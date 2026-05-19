@@ -730,6 +730,12 @@ en:
         single_child: Classes with a single child
         more_than_25_children: Classes with more than 25 children
         no_definition: Classes with no definition
+        ontolex_entries: Terms
+        ontolex_concepts: Lexical concepts
+        ontolex_forms: Forms
+        ontolex_senses: Lexical senses
+        ontolex_translations: Translations
+        ontolex_languages: Languages
     visits:
       header: Visits
       download_csv: Download as CSV

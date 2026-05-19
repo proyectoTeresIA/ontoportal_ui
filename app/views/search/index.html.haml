@@ -32,7 +32,7 @@
         %div.col-sm-10
           %div.mb-2
             = label(:search, :language, t('search.ontolex.language_filter', default: 'Language'), class: "form-label")
-            = select(:search, :language, options_for_select([['All languages', ''], ['Spanish (spa)', 'spa'], ['English (eng)', 'eng'], ['French (fre)', 'fre'], ['Catalan (cat)', 'cat'], ['Italian (ita)', 'ita'], ['Portuguese (por)', 'por']]), {}, class: "form-select")
+            = select(:search, :language, options_for_select([['All languages', ''], ['Spanish (spa)', 'spa'], ['Galician (glg)', 'glg'], ['Catalan (cat)', 'cat'], ['English (eng)', 'eng'], ['French (fre)', 'fre'], ['Italian (ita)', 'ita'], ['Portuguese (por)', 'por']]), {}, class: "form-select")
       
       %fieldset.row.mb-3
         %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.narrow_search_to')

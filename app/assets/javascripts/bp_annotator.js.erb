@@ -574,6 +574,7 @@ function generateParameters() {
 
 jQuery(document).ready(function () {
   'use strict';
+  bind_annotator_term_links();
   jQuery('#annotator_button').click(get_annotations);
   jQuery('#semantic_types').chosen({
     search_contains: true,
@@ -626,15 +627,135 @@ function get_link(uri, label) {
   return '<a href="' + uri + '">' + label + '</a>';
 }
 
+function html_escape(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function build_annotator_term_link(termText, ontologyAcronym, fallbackUrl) {
+  var safeText = html_escape(termText);
+  var safeAcronym = html_escape(ontologyAcronym || '');
+  var safeFallback = html_escape(fallbackUrl || '#');
+  return (
+    '<a href="' +
+    safeFallback +
+    '" class="annotator-term-link" data-term="' +
+    safeText +
+    '" data-ont="' +
+    safeAcronym +
+    '" data-fallback="' +
+    safeFallback +
+    '">' +
+    safeText +
+    '</a>'
+  );
+}
+
+function resolve_term_entry_id(ontologyAcronym, termText) {
+  var deferred = jQuery.Deferred();
+  var baseApi =
+    BP_CONFIG && BP_CONFIG.external_api_url
+      ? BP_CONFIG.external_api_url
+      : BP_CONFIG && BP_CONFIG.rest_url
+        ? BP_CONFIG.rest_url
+        : '';
+
+  if (!baseApi || !ontologyAcronym || !termText) {
+    deferred.resolve(null);
+    return deferred.promise();
+  }
+
+  var apiUrl =
+    baseApi.replace(/\/$/, '') +
+    '/ontologies/' +
+    encodeURIComponent(ontologyAcronym) +
+    '/terminological_entries?q=' +
+    encodeURIComponent(termText) +
+    '&pagesize=20&apikey=' +
+    encodeURIComponent(BP_CONFIG.apikey);
+
+  jQuery
+    .ajax({
+      url: apiUrl,
+      method: 'GET',
+      dataType: 'json',
+    })
+    .done(function (data) {
+      var collection = (data && data.collection) || [];
+      var normalizedTerm = String(termText).trim().toLowerCase();
+      var exact = null;
+      var fallback = null;
+
+      jQuery.each(collection, function (_, result) {
+        var rep = Array.isArray(result.writtenReps) ? result.writtenReps[0] : result.writtenReps;
+        var entryId = result['@id'] || result.id;
+        if (!entryId) return;
+        var repNorm = String(rep || '').trim().toLowerCase();
+        if (!fallback) fallback = entryId;
+        if (!exact && repNorm === normalizedTerm) exact = entryId;
+      });
+
+      deferred.resolve(exact || fallback || null);
+    })
+    .fail(function () {
+      deferred.resolve(null);
+    });
+
+  return deferred.promise();
+}
+
+function bind_annotator_term_links() {
+  jQuery(document)
+    .off('click.annotatorTermLink', '.annotator-term-link')
+    .on('click.annotatorTermLink', '.annotator-term-link', function (event) {
+      var link = jQuery(this);
+      var termText = link.data('term');
+      var ontologyAcronym = link.data('ont');
+      var fallback = link.data('fallback') || link.attr('href');
+      var basePath = '<%= Rails.application.config.relative_url_root || "" %>';
+
+      if (!ontologyAcronym) return;
+
+      event.preventDefault();
+
+      resolve_term_entry_id(ontologyAcronym, termText).done(function (entryId) {
+        if (entryId) {
+          window.location.href =
+            basePath +
+            '/ontologies/' +
+            encodeURIComponent(ontologyAcronym) +
+            '?p=terminological_entries&id=' +
+            encodeURIComponent(entryId);
+        } else if (fallback) {
+          window.location.href = fallback;
+        }
+      });
+    });
+}
+
 function get_class_details(cls) {
   var basePath = "<%= Rails.application.config.relative_url_root || '' %>";
   var cls_rel_ui = basePath + cls.ui.replace(/^.*\/\/[^\/]+/, ''),
-    ont_rel_ui = cls_rel_ui.replace(/\?p=classes.*$/, '?p=summary');
+    ont_rel_ui = cls_rel_ui.replace(/\?p=classes.*$/, '?p=summary'),
+    ont_acronym = cls.ontology && cls.ontology.acronym ? cls.ontology.acronym : '',
+    term_rel_ui = cls_rel_ui;
+
+  if (cls_rel_ui.indexOf('p=lexical_concepts') !== -1) {
+    term_rel_ui = basePath + '/ontologies/' + ont_acronym + '?p=terminological_entries';
+  }
+
   console.log('class rel ui in get_class_details: ' + cls_rel_ui);
   return (class_details = {
     cls_rel_ui: cls_rel_ui,
+    term_rel_ui: term_rel_ui,
+    ont_acronym: ont_acronym,
     ont_rel_ui: ont_rel_ui,
     cls_link: get_link(cls_rel_ui, cls.prefLabel),
+    term_link: get_link(term_rel_ui, cls.prefLabel),
     ont_link: get_link(ont_rel_ui, cls.ontology.name),
     semantic_types: cls.semantic_types.join('; '), // test with 'abscess' text and sem type = T046,T020
   });
@@ -660,6 +781,9 @@ function get_class_details_from_raw(cls) {
       .replace(/^.*\/\/[^\/]+/, '')
       .replace(/p=classes/, cls_page_param)
       .replace(/conceptid=/, cls_id_param + '='),
+    term_rel_ui = isOntoLex
+      ? basePath + '/ontologies/' + ont_acronym + '?p=terminological_entries'
+      : cls_rel_ui,
     cls_label = cls.prefLabel,
     cls_link = null;
   if (cls_label === undefined) {
@@ -669,8 +793,11 @@ function get_class_details_from_raw(cls) {
   }
   return (class_details = {
     cls_rel_ui: cls_rel_ui,
+    term_rel_ui: term_rel_ui,
+    ont_acronym: ont_acronym,
     ont_rel_ui: ont_rel_ui,
     cls_link: cls_link,
+    term_link: get_link(term_rel_ui, cls_label || cls['@id']),
     ont_link: ont_link,
     //
     // TODO: Get semantic types from raw data, currently provided by controller.
@@ -708,15 +835,17 @@ function get_annotation_rows(annotation, params) {
   var cls = get_class_details(annotation.annotatedClass);
   jQuery.each(annotation.annotations, function (i, a) {
     text_markup = get_text_markup(params.text, a.from, a.to);
+    var term_text = params.text.substring(a.from - 1, a.to);
+    var term_link = build_annotator_term_link(term_text, cls.ont_acronym, cls.term_rel_ui || cls.cls_rel_ui);
     match_type = match_type_translation[a.matchType.toLowerCase()] || 'direct';
-    cells = [cls.cls_link, cls.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
+    cells = [term_link, cls.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
     rows.push(cells);
     // Add rows for any classes in the hierarchy.
     match_type = 'ancestor';
     var h_c = null;
     jQuery.each(annotation.hierarchy, function (i, h) {
       h_c = get_class_details(h.annotatedClass);
-      cells = [h_c.cls_link, h_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
+      cells = [term_link, h_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
       rows.push(cells);
     }); // hierarchy loop
     // Add rows for any classes in the mappings. Note the ont_link will be different.
@@ -724,7 +853,7 @@ function get_annotation_rows(annotation, params) {
     var m_c = null;
     jQuery.each(annotation.mappings, function (i, m) {
       m_c = get_class_details(m.annotatedClass);
-      cells = [m_c.cls_link, m_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
+      cells = [term_link, m_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
       rows.push(cells);
     }); // mappings loop
   }); // annotations loop
@@ -746,20 +875,22 @@ function get_annotation_rows_from_raw(annotation, params) {
   // data dependent var declarations
   var cls = get_class_details_from_raw(annotation.annotatedClass);
   if (annotation.annotations.length == 0) {
-    cells = [cls.cls_link, cls.ont_link, '', cls.semantic_types, '', cls.cls_link, cls.ont_link];
+    cells = [cls.term_link, cls.ont_link, '', cls.semantic_types, '', cls.cls_link, cls.ont_link];
     rows.push(cells);
   } else {
     jQuery.each(annotation.annotations, function (i, a) {
       text_markup = get_text_markup(params.text, a.from, a.to);
+      var term_text = params.text.substring(a.from - 1, a.to);
+      var term_link = build_annotator_term_link(term_text, cls.ont_acronym, cls.term_rel_ui || cls.cls_rel_ui);
       match_type = match_type_translation[a.matchType.toLowerCase()] || 'direct';
-      cells = [cls.cls_link, cls.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
+      cells = [term_link, cls.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
       rows.push(cells);
       // Add rows for any classes in the hierarchy.
       match_type = 'ancestor';
       var h_c = null;
       jQuery.each(annotation.hierarchy, function (i, h) {
         h_c = get_class_details_from_raw(h.annotatedClass);
-        cells = [h_c.cls_link, h_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
+        cells = [term_link, h_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
         rows.push(cells);
       }); // hierarchy loop
       // Add rows for any classes in the mappings. Note the ont_link will be different.
@@ -767,7 +898,7 @@ function get_annotation_rows_from_raw(annotation, params) {
       var m_c = null;
       jQuery.each(annotation.mappings, function (i, m) {
         m_c = get_class_details_from_raw(m.annotatedClass);
-        cells = [m_c.cls_link, m_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
+        cells = [term_link, m_c.ont_link, match_type, cls.semantic_types, text_markup, cls.cls_link, cls.ont_link];
         rows.push(cells);
       }); // mappings loop
     }); // annotations loop

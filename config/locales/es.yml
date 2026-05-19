@@ -279,7 +279,7 @@ es:
       results_filtered_by: "Los resultados están filtrados por:"
       filter: Filtro
       headers:
-        class: Clase
+        class: Término
         ontology: Terminología
         type: Tipo
         umls_sem_type: Tipo semántico UMLS

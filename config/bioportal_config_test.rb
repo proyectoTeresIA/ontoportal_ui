@@ -99,7 +99,7 @@ $UI_THEME = ENV['UI_THEME'] || 'bioportal'
 # REST core service address
 $SPARQL_URL = "#{$UI_URL}/test/"
 
-$ANNOTATOR_URL = $PROXY_URL = "#{$UI_URL}/annotator"
+$ANNOTATOR_URL = $PROXY_URL = "#{$UI_URL}#{Rails.application.config.relative_url_root || ''}/annotator"
 
 # If your BioPortal installation includes Fairness score set this to true
 $FAIRNESS_DISABLED = false

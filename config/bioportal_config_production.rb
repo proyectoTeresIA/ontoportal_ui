@@ -114,7 +114,7 @@ end
 # REST core service address
 $SPARQL_URL = "http://#{$HOSTNAME}:8081/test/"
 
-$ANNOTATOR_URL = $PROXY_URL = "http://#{$HOSTNAME}:8081/annotator"
+$ANNOTATOR_URL = $PROXY_URL = "http://#{$HOSTNAME}:8081#{Rails.application.config.relative_url_root || ''}/annotator"
 
 # If your BioPortal installation includes Fairness score set this to true
 $FAIRNESS_DISABLED = false

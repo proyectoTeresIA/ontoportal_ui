@@ -1,7 +1,332 @@
-.legal-text {
-  font-size: 0.9rem;
+// ============================================================
+// Partner logos scrolling marquee
+// ============================================================
+
+.teresia-partners-marquee {
+  position: relative;
+  overflow: hidden;
+  padding-bottom: 60px;
+  background: #fff;
+  margin: 40px;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+
+  // fade-out gradients on edges
+  &::before,
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 120px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  &::before {
+    left: 0;
+    background: linear-gradient(to right, #fff 0%, transparent 100%);
+  }
+
+  &::after {
+    right: 0;
+    background: linear-gradient(to left, #fff 0%, transparent 100%);
+  }
 }
 
-.footer-logo {
-  height: 15rem;
+.partners-marquee-viewport {
+  overflow: hidden;
+}
+
+.partners-marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  animation: teresia-marquee 30s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes teresia-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.partners-marquee-item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+
+  img {
+    height: 67px;
+    width: auto;
+    max-width: 150px;
+    object-fit: contain;
+    transition: opacity 0.3s;
+  }
+
+  &:hover img {
+    opacity: 0.75;
+  }
+}
+
+// ============================================================
+// "Financiado por" label section
+// ============================================================
+
+.teresia-funded-by-label {
+  padding: 20px 20px;
+  text-align: center;
+
+  .funded-by-title {
+    color: #1c2b5e;
+    font-size: 1.1rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: lowercase;
+    margin: 0;
+  }
+}
+
+// ============================================================
+// Funding logos section
+// ============================================================
+
+.teresia-funded-by-logos {
+  padding: 40px 0;
+  background: #fff;
+
+  .container {
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.funding-logos-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 30px 60px;
+}
+
+.funding-logo {
+  max-height: 74px;
+  width: auto;
+  object-fit: contain;
+}
+
+// ============================================================
+// Main footer
+// ============================================================
+
+.teresia-footer {
+  background-color: #f5f5f5;
+}
+
+// Wave divider
+.footer-wave-wrapper {
+  overflow: hidden;
+  line-height: 0;
+  background-color: #fff;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 98px;
+  }
+
+  .footer-wave-fill {
+    fill: #f5f5f5;
+  }
+}
+
+
+.teresia-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px 15px;
+  align-items: flex-start;
+  padding: 40px 20px;
+}
+
+// Logo column
+.teresia-footer-logo-col {
+  display: flex;
+  align-items: flex-start;
+  padding: 10px 10px 10px 0;
+}
+
+.teresia-footer-logo {
+  max-height: 80px;
+  width: auto;
+}
+
+// Nav columns wrapper
+.teresia-footer-nav-cols {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  gap: 25px 15px;
+}
+
+.teresia-footer-col {
+  // Contact column — extra right padding
+  &:first-child {
+    padding-right: 80px;
+
+    @media (max-width: 1024px) {
+      padding-right: 30px;
+    }
+  }
+
+  @media (min-width: 768px) {
+    &:nth-child(1) { width: 25%; }
+    &:nth-child(2) { width: 30%; }
+    &:nth-child(3) { width: 17.5%; }
+    &:nth-child(4) { width: 17.5%; }
+  }
+}
+
+.teresia-footer-col-heading {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 15px;
+
+  a {
+    color: #000;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+.teresia-footer-contact {
+  font-size: 15px;
+  line-height: 1.5em;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.teresia-footer-email {
+  color: #666;
+  text-decoration: none;
+
+  &:hover {
+    color: #000;
+  }
+}
+
+// Social icons row
+.teresia-footer-social {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.teresia-social-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #f5f5f5;
+  text-decoration: none;
+  border-radius: 4px;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    fill: #000;
+    display: block;
+    transition: opacity 0.3s;
+  }
+
+  &:hover svg {
+    opacity: 0.6;
+  }
+}
+
+// Navigation lists
+.teresia-footer-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding-bottom: 5px;
+    margin-top: 5px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  a {
+    font-size: 15px;
+    font-weight: 500;
+    color: #666;
+    text-decoration: none;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
+
+// ============================================================
+// Bottom bar
+// ============================================================
+
+.teresia-footer-bottom {
+  background-color: #f5f5f5;
+}
+
+.teresia-footer-bottom-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  border-top: 1px solid #d9d9d9;
+  padding: 30px 20px;
+}
+
+.teresia-footer-legal {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 0 50px;
+
+  @media (max-width: 1024px) {
+    gap: 0 20px;
+  }
+
+  a {
+    font-size: 15px;
+    font-weight: 500;
+    color: #4d4d4d;
+    text-decoration: none;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #000;
+    }
+  }
+}
+
+.teresia-footer-copyright {
+  font-size: 15px;
+  color: #4d4d4d;
 }

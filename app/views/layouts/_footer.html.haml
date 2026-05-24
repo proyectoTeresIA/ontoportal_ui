@@ -4,110 +4,111 @@
 </div>
 </main>
 
-%footer.footer.mt-auto.pb-4
+-# Partner logos scrolling marquee
+%section.teresia-partners-marquee
+  %div.partners-marquee-viewport
+    %div.partners-marquee-track
+      - partners = [{href: 'https://pti-esciencia.csic.es/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-04-300x134.jpg', alt: 'CSIC'},
+        {href: 'https://aeter.org/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-02-300x134.jpg', alt: 'aeter'},
+        {href: 'https://www.bsc.es/es', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-03-300x134.jpg', alt: 'BSC'},
+        {href: 'https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/translation_es', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-05-300x134.jpg', alt: 'Comisión Europea'},
+        {href: 'http://ampus.redtransfer.org/gestion/cursos/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/12/logo_IC_7_300x134-1.jpg', alt: 'IC7'},
+        {href: 'https://oeg.fi.upm.es/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-01-300x134.jpg', alt: 'OEG'}]
+      -# Original set
+      - partners.each do |partner|
+        %a.partners-marquee-item{href: partner[:href], target: '_blank', rel: 'noopener noreferrer'}
+          %img{src: partner[:src], alt: partner[:alt], loading: 'lazy'}
+      -# Duplicated set for seamless infinite loop
+      - partners.each do |partner|
+        %a.partners-marquee-item{'aria-hidden' => 'true', tabindex: '-1', href: partner[:href], target: '_blank', rel: 'noopener noreferrer'}
+          %img{src: partner[:src], alt: '', loading: 'lazy'}
+
+-# Financiado por — section label
+%section.teresia-funded-by-label
   %div.container
-    -# Original OntoPortal footer.
-    -# %div.row
-    -#   %div{class: 'col-6 col-md mb-3'}
-    -#     %h6= t('layouts.footer_nav.headers.products')
-    -#     %ul{class: 'nav flex-column list-unstyled'}
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.bioportal'), root_path, class: 'nav-link p-0')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.rest_api'), Rails.configuration.settings.links[:rest_api], class: 'nav-link p-0',
-    -#                   target: '_blank')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.virtual_appliance'), Rails.configuration.settings.links[:virtual_appliance],
-    -#                   class: 'nav-link p-0', target: '_blank')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.widgets'), Rails.configuration.settings.links[:widgets], class: 'nav-link p-0',
-    -#                   target: '_blank')
-    -#   %div{class: 'col-6 col-md mb-3 footer-support'}
-    -#     %h6= t('layouts.footer_nav.headers.support')
-    -#     %ul{class: 'nav flex-column list-unstyled'}
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.contact_us'), feedback_path, class: 'nav-link p-0',
-    -#                   data: {controller: 'popup', action: 'click->popup#open'})
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.documentation'), Rails.configuration.settings.links[:help], class: 'nav-link p-0',
-    -#                   target: '_blank')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.wiki'), Rails.configuration.settings.links[:wiki], class: 'nav-link p-0', target: '_blank')
-    -#   %div{class: 'col-6 col-md mb-3'}
-    -#     %h6= t('layouts.footer_nav.headers.about')
-    -#     %ul{class: 'nav flex-column list-unstyled'}
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.about_us'), Rails.configuration.settings.links[:about], class: 'nav-link p-0', target: '_blank')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.mission_vision'), Rails.configuration.settings.links[:mission], class: 'nav-link p-0',
-    -#                   target: '_blank')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.team'), Rails.configuration.settings.links[:team], class: 'nav-link p-0', target: '_blank')
-    -#       %li.nav-item
-    -#         = link_to(t('layouts.footer_nav.links.projects'), projects_path, class: 'nav-link p-0')
-    -#   %div{class: 'col-12 col-md'}
-    -#     %h6= t('layouts.footer_nav.headers.connect')
-    -#     %ul.list-inline
-    -#       %li.list-inline-item
-    -#         = link_to(Rails.configuration.settings.links[:facebook], target: '_blank') do
-    -#           %i.fab.fa-2x.fa-facebook-f
-    -#       %li.list-inline-item
-    -#         = link_to(Rails.configuration.settings.links[:twitter], target: '_blank') do
-    -#           %i.fab.fa-2x.fa-twitter
-    -#       %li.list-inline-item
-    -#         = link_to(Rails.configuration.settings.links[:github], target: '_blank') do
-    -#           %i.fab.fa-2x.fa-github
-    
-    -# Teresia footer content.
-    %div.row.mb-3
-      %div.col.align-content-end
-        %div.row.mb-1
-          %div.col
-            %p.text-muted.mb-1
-              %small Financiado por:
-        %div.row.my-3
-          %div.col
-            = image_tag('logos/ministerio.jpg', style: 'max-height: 3rem;')
-          %div.col
-            = image_tag('logos/prtr.jpg', style: 'max-height: 3rem;')
-          %div.col
-            = image_tag('logos/financiado-eu.jpg', style: 'max-height: 3rem;')
-        %div.row.legal-text
-          %div.col
-            = t('.grant_html')
-        %div.row.pt-1.legal-text
-          %div.col
-            %div.d-flex.flex-wrap.align-items-center.gap-2
-              %span= t('.copyright_html')
-              %span Creado por I3 y
-              = link_to('http://librairy.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
-                - base_path = request&.script_name.to_s
-                - logo_public_path = "#{base_path}/logos/logo-librairy-positivo.png"
-                = image_tag(logo_public_path, alt: 'librAIry', style: 'max-height: 1rem; width: auto;', skip_pipeline: true)
-        %div.row.pt-2
-          %div.col
-            %ul.list-inline.nav
-              %li.list-inline-item.nav-item
-                = link_to(t('layouts.footer_nav.links.cite_us'), Rails.configuration.settings.links[:cite], class: 'nav-link p-0', target: '_blank')
-              %li.list-inline-item
-                %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
-              %li.list-inline-item
-                = link_to(t('layouts.footer_nav.links.privacy_policy'), Rails.configuration.settings.links[:privacy_policy],class: 'nav-link p-0',
-                          target: '_blank')
-              %li.list-inline-item
-                %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
-              %li.list-inline-item
-                = link_to(t('layouts.footer_nav.links.terms'), Rails.configuration.settings.links[:terms], class: 'nav-link p-0',
-                          target: '_blank')
-              %li.list-inline-item
-                %i.fas.fa-ellipsis-v{"aria-hidden" => "true"}
-              %li.list-inline-item
-                = link_to(t('layouts.footer_nav.links.cookies'), Rails.configuration.settings.links[:cookies], class: 'nav-link p-0',
-                          target: '_blank')
+    %h2.funded-by-title financiado por
 
+-# Funding logos
+%section.teresia-funded-by-logos
+  %div.container
+    %div.funding-logos-grid
+      = image_tag('logos/ministerio.jpg', alt: 'Ministerio', class: 'funding-logo')
+      = image_tag('logos/prtr.jpg', alt: 'Plan de Recuperación, Transformación y Resiliencia', class: 'funding-logo')
+      = image_tag('logos/financiado-eu.jpg', alt: 'Financiado por la Unión Europea', class: 'funding-logo')
 
-      %div.col
-        %div.row
-          %div.col.text-center
-            = link_to(image_tag('logos/teresia_logo_footer.jpg', class: 'footer-logo'), 'https://proyectoteresia.org')
+-# Main footer
+%footer.teresia-footer{role: 'contentinfo', itemscope: true, itemtype: 'http://schema.org/WPFooter'}
+  -# Wave divider (matches background of section above)
+  %div.footer-wave-wrapper{'aria-hidden' => 'true'}
+    :plain
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+        <path class="footer-wave-fill" d="M790.5,93.1c-59.3-5.3-116.8-18-192.6-50c-29.6-12.7-76.9-31-100.5-35.9c-23.6-4.9-52.6-7.8-75.5-5.3c-10.2,1.1-22.6,1.4-50.1,7.4c-27.2,6.3-58.2,16.6-79.4,24.7c-41.3,15.9-94.9,21.9-134,22.6C72,58.2,0,25.8,0,25.8V100h1000V65.3c0,0-51.5,19.4-106.2,25.7C839.5,97,814.1,95.2,790.5,93.1z"/>
+      </svg>
+  %div.teresia-footer-content
+    %div.container
+      -# Logo column
+      %div.teresia-footer-logo-col
+        = link_to(image_tag('logos/teresia_logo_footer.png', alt: 'Proyecto TeresIA', class: 'teresia-footer-logo'), 'https://proyectoteresia.org', target: '_blank', rel: 'noopener noreferrer')
+      %div.teresia-footer-inner
+        -# Navigation columns
+        %div.teresia-footer-nav-cols
+          -# Contacto
+          %div.teresia-footer-col
+            %h2.teresia-footer-col-heading Contacto
+            %p.teresia-footer-contact
+              Tel. +34 916 022 300
+              %br
+              = mail_to 'teresia@csic.es', 'teresia@csic.es', class: 'teresia-footer-email'
+            %div.teresia-footer-social
+              %a.teresia-social-icon{href: 'https://x.com/ProyectoTeresia', target: '_blank', rel: 'noopener noreferrer', 'aria-label' => 'X-Twitter'}
+                :plain
+                  <svg aria-hidden="true" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z"/></svg>
+              %a.teresia-social-icon{href: 'https://www.linkedin.com/company/105125823/proyecto-teresia', target: '_blank', rel: 'noopener noreferrer', 'aria-label' => 'LinkedIn'}
+                :plain
+                  <svg aria-hidden="true" viewBox="0 0 448 512" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"/></svg>
+              %a.teresia-social-icon{href: 'https://www.youtube.com/@ProyectoTeresia', target: '_blank', rel: 'noopener noreferrer', 'aria-label' => 'YouTube'}
+                :plain
+                  <svg aria-hidden="true" viewBox="0 0 576 512" xmlns="http://www.w3.org/2000/svg"><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg>
+              %a.teresia-social-icon{href: 'https://bsky.app/profile/proyectoteresia.bsky.social', target: '_blank', rel: 'noopener noreferrer', 'aria-label' => 'Bluesky'}
+                :plain
+                  <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 38.6 35.7"><path d="M9,4.7c4.1,3.1,8.5,9.3,10.1,12.6,1.6-3.3,6-9.5,10.1-12.6,2.9-2.2,7.7-3.9,7.7,1.5s-.6,9.1-1,10.4c-1.3,4.5-5.9,5.7-10,5,7.2,1.2,9,5.3,5.1,9.3-7.5,7.7-10.8-1.9-11.6-4.4-.2-.5-.2-.7-.2-.5,0-.2,0,0-.2.5-.8,2.5-4.1,12.1-11.6,4.4-4-4.1-2.1-8.1,5.1-9.3-4.1.7-8.7-.5-10-5-.4-1.3-1-9.4-1-10.4,0-5.4,4.8-3.7,7.7-1.5h-.2Z"/></svg>
+          -# Proyecto
+          %div.teresia-footer-col
+            %h2.teresia-footer-col-heading
+              = link_to 'Proyecto', 'https://proyectoteresia.org/proyecto', target: '_blank', rel: 'noopener noreferrer'
+            %ul.teresia-footer-list
+              %li= link_to '¿Qué es TeresIA?', 'https://proyectoteresia.org/proyecto#TeresIA', target: '_blank', rel: 'noopener noreferrer'
+              %li= link_to 'Un proyecto interinstitucional e interdisciplinar', 'https://proyectoteresia.org/proyecto#Un_proyecto', target: '_blank', rel: 'noopener noreferrer'
+              %li= link_to 'Terminología y ciencia abierta', 'https://proyectoteresia.org/proyecto#Terminologia', target: '_blank', rel: 'noopener noreferrer'
+              %li= link_to '¿Por qué es importante TeresIA?', 'https://proyectoteresia.org/proyecto#Importancia', target: '_blank', rel: 'noopener noreferrer'
+          -# Participantes
+          %div.teresia-footer-col
+            %h2.teresia-footer-col-heading
+              = link_to 'Participantes', 'https://proyectoteresia.org/participantes', target: '_blank', rel: 'noopener noreferrer'
+            %ul.teresia-footer-list
+              %li= link_to 'Equipo', 'https://proyectoteresia.org/participantes#equipo', target: '_blank', rel: 'noopener noreferrer'
+              %li= link_to 'Entidades Participantes', 'https://proyectoteresia.org/participantes#entidades', target: '_blank', rel: 'noopener noreferrer'
+          -# Resultados
+          %div.teresia-footer-col
+            %h2.teresia-footer-col-heading
+              = link_to 'Resultados', 'https://proyectoteresia.org/resultados', target: '_blank', rel: 'noopener noreferrer'
+            %ul.teresia-footer-list
+              %li= link_to 'Productos e informes', 'https://proyectoteresia.org/resultados#productos-informes', target: '_blank', rel: 'noopener noreferrer'
+              %li= link_to 'Publicaciones', 'https://proyectoteresia.org/resultados#publicaciones', target: '_blank', rel: 'noopener noreferrer'
+              %li= link_to 'Difusión', 'https://proyectoteresia.org/resultados#difusion', target: '_blank', rel: 'noopener noreferrer'
+  -# Bottom bar
+  %div.teresia-footer-bottom
+    %div.container
+      %div.teresia-footer-bottom-inner
+        %ul.teresia-footer-legal
+          %li= link_to 'Aviso Legal', 'https://www.csic.es/es/aviso-legal', target: '_blank', rel: 'noopener noreferrer'
+          %li= link_to 'Protección de Datos', 'https://www.csic.es/es/el-csic/proteccion-de-datos', target: '_blank', rel: 'noopener noreferrer'
+          %li= link_to 'Cookies', 'https://www.csic.es/es/politica-de-cookies', target: '_blank', rel: 'noopener noreferrer'
+        %span.teresia-footer-copyright
+          %span © 2026 TeresIA. Todos los derechos reservados. Creado por I3 y
+          %span
+          = link_to('http://librairy.es/', target: '_blank', rel: 'noopener', class: 'fw-semibold text-decoration-none') do
+            - base_path = request&.script_name.to_s
+            - logo_public_path = "#{base_path}/logos/logo-librairy-positivo.png"
+            = image_tag(logo_public_path, alt: 'librAIry', style: 'max-height: 1rem; width: auto;', skip_pipeline: true)
 = javascript_include_tag "application"

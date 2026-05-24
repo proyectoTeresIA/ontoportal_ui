@@ -22,11 +22,6 @@
     <h1 style="font-size: 3em;"> <%= t('ontologies.browse.title') %></h1>
     <p>
       <%= t('ontologies.intro').html_safe %>
-      <%= link_to(Rails.configuration.settings.links[:help_ontology_browse],
-                  data: {controller: 'popup', action: 'click->popup#open'},
-                  'aria-label': 'View ontology browse help') do %>
-        <i class='fas fa-question-circle fa-lg ps-1' aria-hidden='true'></i>
-      <% end %>
     </p>
 
     <div ng-controller="OntologyList">

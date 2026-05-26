@@ -67,11 +67,11 @@
         
         if (item.gender) {
           var gender = item.gender.split('#').pop() || item.gender.split('/').pop();
-          html += '<span class="ontolex-badge badge-gender">' + gender + '</span>';
+          html += '<span class="ontolex-badge badge-gender">' + (window.OntolexRenderer ? OntolexRenderer.translateValue(gender) : gender) + '</span>';
         }
         if (item.number) {
           var number = item.number.split('#').pop() || item.number.split('/').pop();
-          html += '<span class="ontolex-badge badge-number ms-1">' + number + '</span>';
+          html += '<span class="ontolex-badge badge-number ms-1">' + (window.OntolexRenderer ? OntolexRenderer.translateValue(number) : number) + '</span>';
         }
         
         

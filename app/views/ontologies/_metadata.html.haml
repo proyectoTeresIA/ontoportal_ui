@@ -13,7 +13,7 @@
         - if @ontology.viewing_restricted?
           %tr
             %td= t('ontologies.metadata.labels.viewing_restriction')
-            %td= @ontology.viewingRestriction.capitalize
+            %td= t("ontologies.metadata.viewing_restriction_values.#{@ontology.viewingRestriction}", default: @ontology.viewingRestriction.capitalize)
         - unless @ontology.viewOf.nil?
           %tr
             %td= t('ontologies.metadata.labels.view_of_ontology')
@@ -30,7 +30,7 @@
             %td= sanitize(@submission_latest.description)
           %tr
             %td= t('ontologies.metadata.labels.status')
-            %td= @submission_latest.status.capitalize unless @submission_latest.status.nil?
+            %td= t("submission_metadata.enforced_values.status.#{@submission_latest.status}", default: @submission_latest.status.capitalize) unless @submission_latest.status.nil?
           %tr
             %td= t('ontologies.metadata.labels.format')
             %td= @submission_latest.hasOntologyLanguage

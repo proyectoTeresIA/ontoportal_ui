@@ -342,13 +342,14 @@ module OntologiesHelper
     base_path = ENV['BASE_PATH'] || ''
     ont_url = "#{base_path}/ontologies/#{ontology.acronym}" # 'ontology' is NOT a submission here
     page_name = 'summary' # default ontology page view for visibility link
-    link_name = 'Public' # default ontology visibility
     if ontology.summaryOnly
-      link_name = 'Summary Only'
+      link_name = t('ontologies.metadata.visibility_values.summary_only')
     elsif ontology.private?
-      link_name = 'Private'
+      link_name = t('ontologies.metadata.visibility_values.private')
     elsif ontology.licensed?
-      link_name = 'Licensed'
+      link_name = t('ontologies.metadata.visibility_values.licensed')
+    else
+      link_name = t('ontologies.metadata.visibility_values.public')
     end
     "<a href='#{ont_url}/?p=#{page_name}'>#{link_name}</a>"
   end
@@ -515,20 +516,19 @@ module OntologiesHelper
     # Get all available property translations from the locale file
     begin
       properties_hash = I18n.t('ontology_details.ontolex.properties', raise: true)
-      
-      # If it's a hash, use the keys directly
-      if properties_hash.is_a?(Hash)
-        translations = properties_hash.transform_keys(&:to_s)
-      else
-        # Fallback to empty hash if something goes wrong
-        translations = {}
-      end
+      properties = properties_hash.is_a?(Hash) ? properties_hash.transform_keys(&:to_s) : {}
     rescue I18n::MissingTranslationData
-      # Fallback: if translation keys are not found, return empty hash
-      translations = {}
+      properties = {}
     end
-    
-    translations.to_json.html_safe
+
+    begin
+      vocab_hash = I18n.t('ontology_details.ontolex.vocabulary_values', raise: true)
+      vocabulary_values = vocab_hash.is_a?(Hash) ? vocab_hash.transform_keys(&:to_s) : {}
+    rescue I18n::MissingTranslationData
+      vocabulary_values = {}
+    end
+
+    { properties: properties, vocabulary_values: vocabulary_values }.to_json.html_safe
   end
 
   # Render all fields of an OntoLex entity automatically

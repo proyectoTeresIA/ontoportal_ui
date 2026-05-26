@@ -549,6 +549,68 @@ en:
         lexical_sense: lexical sense
         lexical_concept: lexical concept
 
+      vocabulary_values:
+        # Gender
+        masculine: Masculine
+        feminine: Feminine
+        neuter: Neuter
+        commonGender: Common Gender
+        # Number
+        singular: Singular
+        plural: Plural
+        dual: Dual
+        # Part of Speech
+        noun: Noun
+        verb: Verb
+        adjective: Adjective
+        adverb: Adverb
+        pronoun: Pronoun
+        preposition: Preposition
+        conjunction: Conjunction
+        interjection: Interjection
+        article: Article
+        properNoun: Proper Noun
+        numeral: Numeral
+        particle: Particle
+        # Tense
+        past: Past
+        present: Present
+        future: Future
+        # Mood
+        indicative: Indicative
+        subjunctive: Subjunctive
+        imperative: Imperative
+        conditional: Conditional
+        # Voice
+        activeVoice: Active Voice
+        passiveVoice: Passive Voice
+        # Person
+        firstPerson: First Person
+        secondPerson: Second Person
+        thirdPerson: Third Person
+        # Case
+        nominative: Nominative
+        accusative: Accusative
+        dative: Dative
+        genitive: Genitive
+        ablative: Ablative
+        # Degree
+        positive: Positive
+        comparative: Comparative
+        superlative: Superlative
+        # Term type
+        abbreviation: Abbreviation
+        acronym: Acronym
+        commonName: Common Name
+        entryTerm: Entry Term
+        fullForm: Full Form
+        shortForm: Short Form
+        translatedTerm: Translated Term
+        variantTerm: Variant Term
+        # Valency
+        Transitive: Transitive
+        Intransitive: Intransitive
+
   concepts:
     error_valid_concept: "Error: You must provide a valid concept id"
     missing_roots: Missing roots
@@ -722,6 +784,14 @@ en:
         format: Format
         categories: Categories
         groups: Groups
+      visibility_values:
+        public: Public
+        private: Private
+        licensed: Licensed
+        summary_only: Summary Only
+      viewing_restriction_values:
+        public: Public
+        private: Private
     views:
       header: "Views of %{acronym}"
       none_available: "No views of %{acronym} available"
@@ -1266,9 +1336,12 @@ en:
       status: Status
       hasOntologyLanguage: Terminology Language
       deprecated: Deprecated
+      createdProperty: Creation Date Property
+      modifiedProperty: Modification Date Property
       preferredPrefix: Preferred Prefix
       created: Created
       creationDate: Creation Date
+      uriLookupEndpoint: URI Lookup Endpoint
       released: Release Date
       modified: Modification Date
       naturalLanguage: Natural Language
@@ -1305,5 +1378,5 @@ en:
         UMLS: UMLS
         ONTOLEX: ONTOLEX
       deprecated:
-        true: Yes
-        false: No
+        "true": "Yes"
+        "false": "No"

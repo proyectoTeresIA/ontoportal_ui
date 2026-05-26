@@ -78,7 +78,7 @@
           </div>
         </div>
 
-        <div id="category_facet" class="facet">
+        <div id="category_facet" class="facet" ng-if="categories.length > 0">
           <h4><%= t('ontologies.browse.facets.category') %></h4>
           <div class="checkbox_list">
             <span ng-repeat="category in categories">
@@ -90,7 +90,7 @@
           </div>
         </div>
 
-        <div id="group_facet" class="facet">
+        <div id="group_facet" class="facet" ng-if="groups.length > 0">
           <h4><%= t('ontologies.browse.facets.group') %></h4>
           <div class="checkbox_list">
             <span ng-repeat="group in groups">

@@ -18,7 +18,12 @@
       var apikey = "#{get_apikey}";
       var isInitialized = false;
       var sidebar = null;
-      
+
+      // Set global translations object for OntolexRenderer.translateValue()
+      if (!window.ONTOLEX_TRANSLATIONS) {
+        window.ONTOLEX_TRANSLATIONS = #{ontolex_translations_json};
+      }
+
       // Translations
       var translations = {
         loading: "#{t('ontology_details.ontolex.loading')}",
@@ -175,11 +180,11 @@
             var badges = [];
             if (form.gender) {
               var gender = form.gender.uri.split('#').pop() || form.gender.uri.split('/').pop();
-              badges.push("<span class=\"ontolex-badge badge-gender\" title=\"" + form.gender.uri + "\">" + gender + "</span>");
+              badges.push("<span class=\"ontolex-badge badge-gender\" title=\"" + form.gender.uri + "\">" + (window.OntolexRenderer ? OntolexRenderer.translateValue(gender) : gender) + "</span>");
             }
             if (form.number) {
               var number = form.number.uri.split('#').pop() || form.number.uri.split('/').pop();
-              badges.push("<span class=\"ontolex-badge badge-number\" title=\"" + form.number.uri + "\">" + number + "</span>");
+              badges.push("<span class=\"ontolex-badge badge-number\" title=\"" + form.number.uri + "\">" + (window.OntolexRenderer ? OntolexRenderer.translateValue(number) : number) + "</span>");
             }
             
             if (badges.length > 0) {
@@ -223,11 +228,11 @@
         }
         if (data.partOfSpeech) {
           var pos = data.partOfSpeech.uri.split('#').pop() || data.partOfSpeech.uri.split('/').pop();
-          html += "<span class=\"ontolex-badge badge-pos\" title=\"" + data.partOfSpeech.uri + "\">" + pos + "</span>";
+          html += "<span class=\"ontolex-badge badge-pos\" title=\"" + data.partOfSpeech.uri + "\">" + (window.OntolexRenderer ? OntolexRenderer.translateValue(pos) : pos) + "</span>";
         }
         if (data.termType) {
           var termType = data.termType.uri.split('#').pop() || data.termType.uri.split('/').pop();
-          html += "<span class=\"ontolex-badge badge-termtype\" title=\"" + data.termType.uri + "\">" + termType + "</span>";
+          html += "<span class=\"ontolex-badge badge-termtype\" title=\"" + data.termType.uri + "\">" + (window.OntolexRenderer ? OntolexRenderer.translateValue(termType) : termType) + "</span>";
         }
         
         html += '</div>';
@@ -235,7 +240,7 @@
           html += '<div class="d-flex gap-2 flex-wrap">';
           data.hasValency.forEach(function(val) {
             var valency = val.uri.split('#').pop() || val.uri.split('/').pop();
-            html += "<span class=\"ontolex-badge badge-count\" title=\"" + val + "\">" + valency + "</span>";
+            html += "<span class=\"ontolex-badge badge-count\" title=\"" + val + "\">" + (window.OntolexRenderer ? OntolexRenderer.translateValue(valency) : valency) + "</span>";
           });
           html += '</div>';
         }

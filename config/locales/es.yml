@@ -449,11 +449,11 @@ es:
       widgets: Widgets
       sparql: Sparql
       concepts: Conceptos
-      lexical_concepts: Conceptos Léxicos
-      lexical_entries: Entradas Léxicas
+      lexical_concepts: Conceptos léxicos
+      lexical_entries: Entradas léxicas
       forms: Formas
-      lexical_senses: Sentidos Léxicos
-      terminological_entries: Entradas Terminológicas
+      lexical_senses: Sentidos léxicos
+      terminological_entries: Entradas terminológicas
       details: Detalles
 
     ontolex:
@@ -488,8 +488,8 @@ es:
         sense: Sentido
         evokes: Evoca
         isEvokedBy: Es Evocado Por
-        lexicalizedSense: Sentido Lexicalizado
-        isLexicalizedSenseOf: Es Sentido Lexicalizado De
+        lexicalizedSense: Sentido lexicalizado
+        isLexicalizedSenseOf: Es sentido lexicalizado de
         isSenseOf: Es Sentido De
         reference: Referencia
         isReferenceOf: Es Referencia De
@@ -498,10 +498,10 @@ es:
         usageExample: Ejemplo de Uso
         usage: Uso
         note: Nota
-        lexicalEntry: Entrada Léxica
+        lexicalEntry: Entrada léxica
         lexicalForm: Forma Léxica
-        lexicalSense: Sentido Léxico
-        lexicalConcept: Concepto Léxico
+        lexicalSense: Sentido léxico
+        lexicalConcept: Concepto léxico
         translation: Traducción
         synonym: Sinónimo
         antonym: Antónimo
@@ -561,12 +561,12 @@ es:
 
       # Section headings for terminological entries
       headings:
-        lexical_entry_properties: Propiedades de la Entrada Léxica
+        lexical_entry_properties: Propiedades de la entrada léxica
         forms: Formas
         signed_forms: Formas Signadas
         evoked_concept: Concepto Evocado
-        lexical_senses: Sentidos Léxicos
-        lexicalized_concept: Concepto Lexicalizado
+        lexical_senses: Sentidos léxicos
+        lexicalized_concept: Concepto lexicalizado
         original_source: Fuente Original
         usage_examples: Ejemplos de Uso
         translations: Traducciones
@@ -582,6 +582,68 @@ es:
         lexical_entry: entrada léxica
         lexical_sense: sentido léxico
         lexical_concept: concepto léxico
+
+      vocabulary_values:
+        # Género
+        masculine: Masculino
+        feminine: Femenino
+        neuter: Neutro
+        commonGender: Género común
+        # Número
+        singular: Singular
+        plural: Plural
+        dual: Dual
+        # Categoría gramatical
+        noun: Sustantivo
+        verb: Verbo
+        adjective: Adjetivo
+        adverb: Adverbio
+        pronoun: Pronombre
+        preposition: Preposición
+        conjunction: Conjunción
+        interjection: Interjección
+        article: Artículo
+        properNoun: Nombre propio
+        numeral: Numeral
+        particle: Partícula
+        # Tiempo verbal
+        past: Pasado
+        present: Presente
+        future: Futuro
+        # Modo verbal
+        indicative: Indicativo
+        subjunctive: Subjuntivo
+        imperative: Imperativo
+        conditional: Condicional
+        # Voz
+        activeVoice: Voz activa
+        passiveVoice: Voz pasiva
+        # Persona
+        firstPerson: Primera persona
+        secondPerson: Segunda persona
+        thirdPerson: Tercera persona
+        # Caso
+        nominative: Nominativo
+        accusative: Acusativo
+        dative: Dativo
+        genitive: Genitivo
+        ablative: Ablativo
+        # Grado
+        positive: Positivo
+        comparative: Comparativo
+        superlative: Superlativo
+        # Tipo de término
+        abbreviation: Abreviatura
+        acronym: Acrónimo
+        commonName: Nombre común
+        entryTerm: Término de entrada
+        fullForm: Forma completa
+        shortForm: Forma corta
+        translatedTerm: Término traducido
+        variantTerm: Término variante
+        # Valencia
+        Transitive: Transitivo
+        Intransitive: Intransitivo
 
   concepts:
     error_valid_concept: "Error: debes proporcionar un identificador de concepto válido"
@@ -730,6 +792,14 @@ es:
         format: Formato
         categories: Categorías
         groups: Grupos
+      visibility_values:
+        public: Pública
+        private: Privada
+        licensed: Con licencia
+        summary_only: Solo resumen
+      viewing_restriction_values:
+        public: Pública
+        private: Privada
     views:
       header: "Vistas de %{acronym}"
       none_available: "No hay vistas de %{acronym} disponibles"
@@ -748,9 +818,9 @@ es:
         more_than_25_children: Clases con más de 25 hijos
         no_definition: Clases sin definición
         terms: Términos
-        ontolex_concepts: Conceptos Léxicos
+        ontolex_concepts: Conceptos léxicos
         ontolex_forms: Formas
-        ontolex_senses: Sentidos Léxicos
+        ontolex_senses: Sentidos léxicos
         ontolex_translations: Traducciones
         ontolex_languages: Idiomas
     visits:
@@ -1312,9 +1382,12 @@ es:
       status: Estado
       hasOntologyLanguage: Lenguaje de la terminología
       deprecated: Obsoleta
+      createdProperty: Propiedad de fecha de creación del objeto
+      modifiedProperty: Propiedad de fecha de modificación del objeto
       preferredPrefix: Prefijo preferido
       created: Creada
       creationDate: Fecha de creación
+      uriLookupEndpoint: URI del endpoint de búsqueda
       released: Fecha de publicación
       modified: Fecha de modificación
       naturalLanguage: Idioma natural
@@ -1351,5 +1424,5 @@ es:
         UMLS: UMLS
         ONTOLEX: ONTOLEX
       deprecated:
-        true: Sí
-        false: No
+        "true": "Sí"
+        "false": "No"

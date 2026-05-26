@@ -59,11 +59,14 @@ var embeddedObjects = [
 var skipFields = ['@type', '@context', 'links', 'submission'];
 
 window.OntolexRenderer = {
-  // Translate a property key - tries to fetch from window.ONTOLEX_TRANSLATIONS first
+  // Translate a property key - tries to fetch from window.ONTOLEX_TRANSLATIONS.properties first
   translateProperty: function (key) {
-    // Try to get translation from global translations object
-    if (window.ONTOLEX_TRANSLATIONS && window.ONTOLEX_TRANSLATIONS[key]) {
-      return window.ONTOLEX_TRANSLATIONS[key];
+    if (
+      window.ONTOLEX_TRANSLATIONS &&
+      window.ONTOLEX_TRANSLATIONS.properties &&
+      window.ONTOLEX_TRANSLATIONS.properties[key]
+    ) {
+      return window.ONTOLEX_TRANSLATIONS.properties[key];
     }
 
     // Fallback: format key as human-readable label
@@ -73,6 +76,18 @@ window.OntolexRenderer = {
     return key.replace(/([a-z])([A-Z])/g, '$1 $2').replace(/^./, function (str) {
       return str.toUpperCase();
     });
+  },
+
+  // Translate a vocabulary value (URI fragment) using window.ONTOLEX_TRANSLATIONS.vocabulary_values
+  translateValue: function (fragment) {
+    if (
+      window.ONTOLEX_TRANSLATIONS &&
+      window.ONTOLEX_TRANSLATIONS.vocabulary_values &&
+      window.ONTOLEX_TRANSLATIONS.vocabulary_values[fragment]
+    ) {
+      return window.ONTOLEX_TRANSLATIONS.vocabulary_values[fragment];
+    }
+    return fragment;
   },
 
   // Generic function to render all fields of an entity as a Bootstrap striped table
@@ -228,11 +243,12 @@ window.OntolexRenderer = {
         );
       } else {
         // Extract vocabulary term or show full URI
+        var fragment = this.extractIdIfVocabularyTerm(value);
         return (
           '<span class="ontolex-badge" title="' +
           value +
           '">' +
-          this.escapeHtml(this.extractIdIfVocabularyTerm(value)) +
+          this.escapeHtml(this.translateValue(fragment)) +
           '</span>'
         );
       }

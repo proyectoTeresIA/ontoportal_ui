@@ -112,6 +112,9 @@ module MetadataHelper
       render LinkFieldComponent.new(value: value)
     elsif input_type?(attr_metadata(metadata), 'contact')
       display_contact([value]).html_safe
+    elsif boolean?(metadata)
+      translated = I18n.t("submission_metadata.enforced_values.#{metadata}.#{value}", default: value.to_s)
+      render TextAreaFieldComponent.new(value: translated)
     else
       render TextAreaFieldComponent.new(value: value.to_s)
     end

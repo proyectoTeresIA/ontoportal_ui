@@ -370,6 +370,7 @@ var app = angular.module('FacetedBrowsing.OntologyList', ['checklist-model', 'ng
 
 .filter('descriptionToText', function() {
   return function(text) {
+    if (!text) { return ''; }
     text = String(text).replace(/<[^>]+>/gm, '');
     return text.split(/\.\W/)[0];
   }

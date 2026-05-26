@@ -129,7 +129,6 @@
         
         // Load first page (or find specific item if id provided)
         if (hasIdParam) {
-          conceptId = decodeURIComponent(conceptId);
           sidebar.findAndSelectItem(conceptId);
         } else {
           sidebar.loadPage(1);

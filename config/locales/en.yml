@@ -377,6 +377,7 @@ en:
         are often left in ontologies (rather than removing them entirely) so that existing systems that depend on them will continue to function.
       pos_placeholder: "e.g., noun, verb, adjective"
       subjects_placeholder: "Comma-separated URIs or keywords"
+      no_matches_found: No matches found
     ontolex:
       forms_label: "Forms (OntoLex)"
       domains: "Domains"

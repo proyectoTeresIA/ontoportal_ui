@@ -542,8 +542,10 @@
         });
 
         // Load first page (or find specific item if id provided)
+        // Note: urlParams.get() already decodes the query value once; no further
+        // decodeURIComponent is applied here to avoid double-decoding IRIs that
+        // contain percent-encoded characters (e.g. %2F for a literal slash).
         if (hasIdParam) {
-          entryId = decodeURIComponent(entryId);
           sidebar.findAndSelectItem(entryId);
         } else {
           sidebar.loadPage(1);

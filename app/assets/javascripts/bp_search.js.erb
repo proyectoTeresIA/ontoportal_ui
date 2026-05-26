@@ -5,7 +5,8 @@ var ONTOLEX_I18N = {
     domains: <%= I18n.t('search.ontolex.domains').to_json %>,
     otherForms: <%= I18n.t('search.ontolex.other_forms').to_json %>,
     viewEntry: <%= I18n.t('search.ontolex.view_entry').to_json %>,
-    viewEntries: <%= I18n.t('search.ontolex.view_entries').to_json %>
+    viewEntries: <%= I18n.t('search.ontolex.view_entries').to_json %>,
+    noMatchesFound: <%= I18n.t('search.index.no_matches_found').to_json %>
 };
 
 if (window.BP_CONFIG === undefined) {
@@ -523,7 +524,7 @@ function displayAggregatedResults(allResults) {
     // Display error message if no results found
     if (allResults.length === 0) {
         result_count.html("");
-        jQuery("#search_results").html("<h2>No matches found</h2>");
+        jQuery("#search_results").html("<h2>" + ONTOLEX_I18N.noMatchesFound + "</h2>");
     } else {
         if (jQuery("#ontology_ontologyId").val() === null) {
             resultsOntCount = jQuery("<span>");

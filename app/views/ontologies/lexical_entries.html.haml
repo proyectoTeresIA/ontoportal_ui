@@ -107,7 +107,6 @@
         
         // Load first page (or find specific item if id provided)
         if (hasIdParam) {
-          entryId = decodeURIComponent(entryId);
           sidebar.findAndSelectItem(entryId);
         } else {
           sidebar.loadPage(1);

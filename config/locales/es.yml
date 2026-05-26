@@ -411,6 +411,7 @@ es:
         a menudo se mantienen en las ontologías (en lugar de eliminarlas por completo) para que los sistemas existentes que dependen de ellas sigan funcionando.
       pos_placeholder: "ej., sustantivo, verbo, adjetivo"
       subjects_placeholder: "URIs o palabras clave separadas por comas"
+      no_matches_found: No se encontraron coincidencias
     ontolex:
       forms_label: "Formas (OntoLex)"
       domains: "Dominios"

@@ -208,7 +208,7 @@ module SubmissionInputsHelper
   end
 
   def has_ontology_language_input(submission = @submission)
-    render(Layout::RevealComponent.new(possible_values: %w[SKOS OBO UMLS OWL ONTOLEX], selected: submission.hasOntologyLanguage)) do |c|
+    render(Layout::RevealComponent.new(possible_values: %w[SKOS OBO UMLS OWL ONTOLEX], selected: submission.hasOntologyLanguage || 'ONTOLEX')) do |c|
       c.button do
         attribute_input("hasOntologyLanguage")
       end
@@ -221,7 +221,6 @@ module SubmissionInputsHelper
 
       c.container { ontology_owl_language_help }
 
-      # Help content for the OntoLex format
       c.container { ontology_ontolex_language_help }
 
     end

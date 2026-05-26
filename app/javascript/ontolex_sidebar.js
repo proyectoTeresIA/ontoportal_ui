@@ -40,6 +40,7 @@ window.OntolexSidebar = {
       preloadData: config.preloadData || null,
       skipAutoSelect: config.skipAutoSelect || false,
       initialItemId: config.initialItemId || null, // ID to find and select on initial load
+      extraParams: config.extraParams || {}, // Additional query parameters to append to API calls
     };
 
     var api = {
@@ -74,6 +75,14 @@ window.OntolexSidebar = {
         if (state.searchQuery && state.searchQuery.trim() !== '') {
           apiUrl += '&q=' + encodeURIComponent(state.searchQuery.trim());
         }
+
+        // Append any extra filter parameters
+        Object.keys(state.extraParams).forEach(function (key) {
+          var val = state.extraParams[key];
+          if (val !== null && val !== undefined && val !== '') {
+            apiUrl += '&' + encodeURIComponent(key) + '=' + encodeURIComponent(val);
+          }
+        });
 
         // If findId is provided, add it to the API call so the server returns the correct page
         if (findId) {
@@ -369,6 +378,14 @@ window.OntolexSidebar = {
 
       getState: function () {
         return state;
+      },
+
+      setExtraParam: function (key, value) {
+        state.extraParams[key] = value;
+      },
+
+      clearExtraParam: function (key) {
+        delete state.extraParams[key];
       },
 
       /**

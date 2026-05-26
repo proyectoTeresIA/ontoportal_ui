@@ -3,7 +3,7 @@ require 'cgi'
 require 'digest/sha1'
 
 module ApplicationHelper
-  include ModalHelper, MultiLanguagesHelper
+  include ModalHelper, MultiLanguagesHelper, LanguageHelper
 
   RESOLVE_NAMESPACE = {:omv => "http://omv.ontoware.org/2005/05/ontology#", :skos => "http://www.w3.org/2004/02/skos/core#", :owl => "http://www.w3.org/2002/07/owl#",
                        :rdf => "http://www.w3.org/1999/02/22-rdf-syntax-ns#", :rdfs => "http://www.w3.org/2000/01/rdf-schema#", :metadata => "http://data.bioontology.org/metadata/",

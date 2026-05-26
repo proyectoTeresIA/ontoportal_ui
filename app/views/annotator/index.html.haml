@@ -40,18 +40,18 @@
   %div.mb-3
     = render partial: 'shared/ontology_picker', locals: { custom_ontologies: @annotator_ontologies }
   
-  - if @sem_type_ont
-    %div.mb-3
-      %label{for: "semantic_types", class: 'form-label'}= t('annotator.index.select_umls_semantic_types')
-      = select_tag("semantic_types", options_for_select(@semantic_types_for_select), multiple: "true",
-                   data: {placeholder: t('annotator.index.placeholders.select_umls_semantic_types')}, class: "form-select",
-                   style: "width: 432px")
+  -# - if @sem_type_ont
+  -#   %div.mb-3
+  -#     %label{for: "semantic_types", class: 'form-label'}= t('annotator.index.select_umls_semantic_types')
+  -#     = select_tag("semantic_types", options_for_select(@semantic_types_for_select), multiple: "true",
+  -#                  data: {placeholder: t('annotator.index.placeholders.select_umls_semantic_types')}, class: "form-select",
+  -#                  style: "width: 432px")
 
-  %div.mb-3
-    %label{for: "class_hierarchy_max_level", class: 'form-label'}= t('annotator.index.include_ancestors_up_to_level')
-    - options = [["none", 0], *(1..10).map {|i| [i, i]}, ["all", 999]]
-    = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select",
-                 style: "width: 432px")
+  -# %div.mb-3
+  -#   %label{for: "class_hierarchy_max_level", class: 'form-label'}= t('annotator.index.include_ancestors_up_to_level')
+  -#   - options = [["none", 0], *(1..10).map {|i| [i, i]}, ["all", 999]]
+  -#   = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select",
+  -#                style: "width: 432px")
 
   - if @recognizers.length > 1
     %div.mb-3

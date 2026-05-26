@@ -2,6 +2,9 @@
   %div.tooltip
   %div#bd_content.bd_content.explore.py-3{data:{controller: 'container-splitter'}}
     %div.sidebar.d-flex.flex-column.p-1.mx-2{data:{'container-splitter-target': 'container'}}
+      %div#terminological-lang-filter.px-2.pt-2.pb-1.border-bottom{style: 'display:none'}
+        %select#terminological-lang-select.form-select.form-select-sm
+          %option{value: ''}= t('search.ontolex.languages.all', default: 'All languages')
       %div#terminological-entries-list.ontolex-list-sidebar
         .text-center.py-3
           %span.spinner-border.spinner-border-sm{role: "status"}
@@ -16,6 +19,7 @@
       var externalRestUrl = "#{external_rest_url}";
       var baseURL = "#{Rails.application.config.relative_url_root}";
       var apikey = "#{get_apikey}";
+      var languageNames = #{language_names_json.html_safe};
       var isInitialized = false;
       var sidebar = null;
 
@@ -28,6 +32,7 @@
       var translations = {
         loading: "#{t('ontology_details.ontolex.loading')}",
         no_entries_found: "#{t('ontology_details.ontolex.no_entries_found')}",
+        all_languages: "#{t('search.ontolex.languages.all', default: 'All languages')}",
         lexical_entry_properties: "#{t('ontology_details.ontolex.headings.lexical_entry_properties')}",
         forms: "#{t('ontology_details.ontolex.headings.forms')}",
         signed_forms: "#{t('ontology_details.ontolex.headings.signed_forms')}",
@@ -513,7 +518,29 @@
           preloadData: null,  // No preload needed with optimized endpoint
           skipAutoSelect: hasIdParam  // Skip auto-select if we have an id in URL
         });
-        
+
+        // Fetch available languages for this ontology and populate filter
+        $.ajax({
+          url: externalRestUrl + '/ontologies/' + ontologyAcronym + '/terminological_entries/languages?apikey=' + apikey,
+          method: 'GET',
+          dataType: 'json',
+          success: function(languages) {
+            if (languages && languages.length > 1) {
+              var $select = $('#terminological-lang-select');
+              $select.empty().append('<option value="">' + translations.all_languages + '</option>');
+              languages.forEach(function(code) {
+                var name = languageNames[code] || code;
+                $select.append('<option value="' + code + '">' + name + ' (' + code + ')</option>');
+              });
+              $('#terminological-lang-filter').show();
+              $select.off('change').on('change', function() {
+                sidebar.setExtraParam('language', $(this).val());
+                sidebar.loadPage(1);
+              });
+            }
+          }
+        });
+
         // Load first page (or find specific item if id provided)
         if (hasIdParam) {
           entryId = decodeURIComponent(entryId);

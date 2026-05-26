@@ -20,31 +20,27 @@
     -# Advanced search options
     %div#search_options{class: 'mb-3', style: 'display: none;'}
       
-      %fieldset.row.mb-3#class_search_options
-        %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.include_in_search')
-        %div.col-sm-10
-          %div.form-check
-            = check_box(:search, :include_properties, class: "form-check-input")
-            = label(:search, :include_properties, t('search.index.property_values'), class: "form-check-label definition",
-                    title: t(".property_definition"), for: 'search_include_properties')
-          %div.form-check
-            = check_box(:search, :include_obsolete, class: "form-check-input")
-            = label(:search, :include_obsolete, t('search.index.obsolete_classes'), class: "form-check-label definition",
-                    title: t(".obsolete_definition").chomp, for: 'search_include_obsolete')
-          %div.form-check
-            = check_box(:search, :include_views, class: "form-check-input")
-            = label(:search, :include_views, t('search.index.ontology_views'), class: "form-check-label", for: 'search_include_views')
+      -# %fieldset.row.mb-3#class_search_options
+      -#   %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.include_in_search')
+      -#   %div.col-sm-10
+      -#     %div.form-check
+      -#       = check_box(:search, :include_properties, class: "form-check-input")
+      -#       = label(:search, :include_properties, t('search.index.property_values'), class: "form-check-label definition",
+      -#               title: t(".property_definition"), for: 'search_include_properties')
+      -#     %div.form-check
+      -#       = check_box(:search, :include_obsolete, class: "form-check-input")
+      -#       = label(:search, :include_obsolete, t('search.index.obsolete_classes'), class: "form-check-label definition",
+      -#               title: t(".obsolete_definition").chomp, for: 'search_include_obsolete')
+      -#     %div.form-check
+      -#       = check_box(:search, :include_views, class: "form-check-input")
+      -#       = label(:search, :include_views, t('search.index.ontology_views'), class: "form-check-label", for: 'search_include_views')
       
       %fieldset.row.mb-3#lexical_search_options
         %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.ontolex.lexical_filters', default: 'Lexical Filters')
         %div.col-sm-10
           %div.mb-2
             = label(:search, :language, t('search.ontolex.language_filter', default: 'Language'), class: "form-label")
-            - language_options = if I18n.locale == :es
-              - [['Todos los idiomas', ''], ['Español (spa)', 'spa'], ['Inglés (eng)', 'eng'], ['Francés (fre)', 'fre'], ['Catalán (cat)', 'cat'], ['Italiano (ita)', 'ita'], ['Portugués (por)', 'por']]
-            - else
-              - [['All languages', ''], ['Spanish (spa)', 'spa'], ['English (eng)', 'eng'], ['French (fre)', 'fre'], ['Catalan (cat)', 'cat'], ['Italian (ita)', 'ita'], ['Portuguese (por)', 'por']]
-            = select(:search, :language, options_for_select(language_options), {}, class: "form-select")
+            = select(:search, :language, options_for_select(ontolex_language_options(t('search.ontolex.languages.all', default: 'All languages'))), {}, class: "form-select")
       
       %fieldset.row.mb-3
         %legend{class: 'col-form-label col-sm-2 pt-0'}= t('search.index.narrow_search_to')
@@ -52,10 +48,10 @@
           %div.form-check
             = check_box(:search, :exact_match, class: "form-check-input")
             = label(:search, :exact_match, t('search.index.exact_matches'), class: "form-check-label", for: 'search_exact_match')
-          %div.form-check#require_definition_option
-            = check_box(:search, :require_definition, class: "form-check-input")
-            = label(:search, :require_definition, t('search.index.classes_with_definitions'), class: "form-check-label",
-                    for: 'search_require_definition')
+          -# %div.form-check#require_definition_option
+          -#   = check_box(:search, :require_definition, class: "form-check-input")
+          -#   = label(:search, :require_definition, t('search.index.classes_with_definitions'), class: "form-check-label",
+          -#           for: 'search_require_definition')
 
     = button_tag(t('search.index.search_button'), id: "search_button", class: "btn btn-primary")
     = content_tag(:span, id: "search_spinner") do

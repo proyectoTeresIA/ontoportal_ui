@@ -314,6 +314,14 @@ function autoSearch() {
             jQuery("#search_categories").trigger("chosen:updated");
         }
 
+        if (params.hasOwnProperty("language") && params.language) {
+            jQuery("#search_language").val(params.language);
+        }
+
+        if (params.hasOwnProperty("part_of_speech") && params.part_of_speech) {
+            jQuery("#search_part_of_speech").val(params.part_of_speech);
+        }
+
       performSearch();
     }
 }

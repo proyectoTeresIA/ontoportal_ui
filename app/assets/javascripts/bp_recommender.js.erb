@@ -1,6 +1,29 @@
 // Namespace for global variables and functions
 var rec = {};
 rec.maxInputWords = 500;
+// i18n strings for results table
+var REC_I18N = {
+  recommended_ontologies:     <%= I18n.t('recommender.index.results.recommended_ontologies').to_json %>,
+  pos:                        <%= I18n.t('recommender.index.results.headers.position').to_json %>,
+  pos_tooltip:                <%= I18n.t('recommender.index.results.headers.position_tooltip').to_json %>,
+  ontology:                   <%= I18n.t('recommender.index.results.headers.ontology').to_json %>,
+  ontologies:                 <%= I18n.t('recommender.index.results.headers.ontologies').to_json %>,
+  ontology_tooltip:           <%= I18n.t('recommender.index.results.headers.ontology_tooltip').to_json %>,
+  final_score:                <%= I18n.t('recommender.index.results.headers.final_score').to_json %>,
+  final_score_tooltip:        <%= I18n.t('recommender.index.results.headers.final_score_tooltip').to_json %>,
+  coverage_score:             <%= I18n.t('recommender.index.results.headers.coverage_score').to_json %>,
+  coverage_score_tooltip:     <%= I18n.t('recommender.index.results.headers.coverage_score_tooltip').to_json %>,
+  acceptance_score:           <%= I18n.t('recommender.index.results.headers.acceptance_score').to_json %>,
+  acceptance_score_tooltip:   <%= I18n.t('recommender.index.results.headers.acceptance_score_tooltip').to_json %>,
+  detail_score:               <%= I18n.t('recommender.index.results.headers.detail_score').to_json %>,
+  detail_score_tooltip:       <%= I18n.t('recommender.index.results.headers.detail_score_tooltip').to_json %>,
+  specialization_score:       <%= I18n.t('recommender.index.results.headers.specialization_score').to_json %>,
+  specialization_score_tooltip: <%= I18n.t('recommender.index.results.headers.specialization_score_tooltip').to_json %>,
+  annotations:                <%= I18n.t('recommender.index.results.headers.annotations').to_json %>,
+  annotations_tooltip:        <%= I18n.t('recommender.index.results.headers.annotations_tooltip').to_json %>,
+  highlight:                  <%= I18n.t('recommender.index.results.headers.highlight').to_json %>,
+  highlight_tooltip:          <%= I18n.t('recommender.index.results.headers.highlight_tooltip').to_json %>,
+};
 
 rec.showOrHideAdvancedOptions = function () {
   $('#advancedOptions').toggle();
@@ -197,26 +220,26 @@ rec.getRecommendations = function () {
         if (data) {
           if (data.length > 0) {
             $('#recommender-results').empty();
-            $('#resultsHeader').text('Recommended ontologies');
+            $('#resultsHeader').text(REC_I18N.recommended_ontologies);
 
             if (params.output_type == 1) {
-              var ontologyHeader = 'Ontology';
+              var ontologyHeader = REC_I18N.ontology;
             } else {
-              ontologyHeader = 'Ontologies';
+              ontologyHeader = REC_I18N.ontologies;
             }
             var table = $('<table id="recommendations" class="zebra" width="100%"></table>');
             var header = $(
-              '<thead><tr><th title="Position of the ontology in the ranking">POS.</th>' +
-                '<th title="Ontology acronym">' +
+              '<thead><tr><th title="' + REC_I18N.pos_tooltip + '">' + REC_I18N.pos + '</th>' +
+                '<th title="' + REC_I18N.ontology_tooltip + '">' +
                 ontologyHeader +
                 '</th>' +
-                '<th title="Final recommendation score for the ontology. It represents the appropriateness of the ontology to describe the input data">Final score</th>' +
-                '<th title="The coverage score represents the extent to what the ontology covers the input data">Coverage score</th>' +
-                '<th title="The acceptance score represents how well known and trusted is the ontology by the biomedical community">Acceptance score</th>' +
-                '<th title="The detail score represents the richness of the ontology representation for the input data">Detail score</th>' +
-                '<th title="The specialization score represents the level of specialization of the ontology to the domain of the input data">Specialization score</th>' +
-                '<th title="Number of annotations performed with the ontology for the input data">Annotations</th>' +
-                '<th title="This columns makes it possible to highlight the annotations performed with each ontology" style="text-align: center">Highlight annotations</th>' +
+                '<th title="' + REC_I18N.final_score_tooltip + '">' + REC_I18N.final_score + '</th>' +
+                '<th title="' + REC_I18N.coverage_score_tooltip + '">' + REC_I18N.coverage_score + '</th>' +
+                '<th title="' + REC_I18N.acceptance_score_tooltip + '">' + REC_I18N.acceptance_score + '</th>' +
+                '<th title="' + REC_I18N.detail_score_tooltip + '">' + REC_I18N.detail_score + '</th>' +
+                '<th title="' + REC_I18N.specialization_score_tooltip + '">' + REC_I18N.specialization_score + '</th>' +
+                '<th title="' + REC_I18N.annotations_tooltip + '">' + REC_I18N.annotations + '</th>' +
+                '<th title="' + REC_I18N.highlight_tooltip + '" style="text-align: center">' + REC_I18N.highlight + '</th>' +
                 '</tr></thead>',
             );
             table.append(header);

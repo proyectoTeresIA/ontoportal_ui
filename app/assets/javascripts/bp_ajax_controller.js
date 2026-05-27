@@ -9,7 +9,7 @@ function bp_ont_link(ont_acronym) {
   return BP_CONFIG.base_url + '/ontologies/' + ont_acronym;
 }
 function bp_cls_link(cls_id, ont_acronym, isOntoLex) {
-  var page_param = isOntoLex ? 'p=lexical_concepts' : 'p=classes';
+  var page_param = isOntoLex ? 'p=terminological_entries' : 'p=classes';
   var id_param = isOntoLex ? 'id' : 'conceptid';
   return bp_ont_link(ont_acronym) + '?' + page_param + '&' + id_param + '=' + encodeURIComponent(cls_id);
 }
@@ -43,10 +43,12 @@ var ajax_process_cls_interval = null,
 var ajax_process_init = function () {
   ajax_process_cls_init();
   ajax_process_ont_init();
+  ajax_process_lang_init();
 };
 var ajax_process_halt = function () {
   ajax_process_cls_halt();
   ajax_process_ont_halt();
+  ajax_process_lang_halt();
 };
 
 // **************************************************************************************
@@ -112,7 +114,7 @@ var ajax_process_ont = function () {
       }
     },
     error: function (data) {
-      linkA.addClass('ajax-error'); // processed this one.
+      linkA.addClass('ajax-error'); // processed this one (ont).
     },
   });
 };
@@ -204,6 +206,77 @@ var ajax_process_cls = function () {
     },
     error: function (data) {
       linkA.addClass('ajax-error'); // processed this one.
+    },
+  });
+};
+
+// **************************************************************************************
+// ENTRY LANGUAGE (for OntoLex terminological entries)
+
+// Cache: entry_id → language code (avoids duplicate requests for the same entry)
+var entry_language_cache = {};
+
+var ajax_lang_array = [];
+var ajax_process_lang_interval = null;
+
+var ajax_process_lang_init = function () {
+  ajax_lang_array = jQuery('span.lang4ajax').toArray();
+  ajax_process_lang_interval = window.setInterval(ajax_process_lang, ajax_process_timing);
+};
+
+var ajax_process_lang_halt = function () {
+  ajax_lang_array = [];
+  window.clearInterval(ajax_process_lang_interval);
+};
+
+var ajax_process_lang = function () {
+  if (ajax_lang_array.length === 0) {
+    ajax_process_lang_halt();
+    return true;
+  }
+  var spanEl = ajax_lang_array.shift();
+  if (spanEl === undefined) return true;
+  spanEl = jQuery(spanEl);
+  if (spanEl.hasClass('ajax-modified-lang')) return true;
+  spanEl.removeClass('lang4ajax');
+
+  var entry_id = spanEl.attr('data-cls');
+  var ont_acronym = spanEl.attr('data-ont');
+
+  var apply_lang = function (lang_code) {
+    spanEl.text(lang_code);
+    spanEl.addClass('ajax-modified-lang');
+    // Update any other pending spans for the same entry and remove from queue
+    jQuery('span.lang4ajax[data-cls]').filter(function () {
+      return jQuery(this).attr('data-cls') === entry_id;
+    }).each(function () {
+      jQuery(this).text(lang_code).removeClass('lang4ajax').addClass('ajax-modified-lang');
+    });
+    ajax_lang_array = ajax_lang_array.filter(function (el) {
+      return jQuery(el).attr('data-cls') !== entry_id;
+    });
+  };
+
+  // Return from cache if available
+  if (entry_language_cache.hasOwnProperty(entry_id)) {
+    apply_lang(entry_language_cache[entry_id]);
+    return true;
+  }
+
+  var basePath = (typeof BP_CONFIG !== 'undefined' && BP_CONFIG.ui_url) ? (BP_CONFIG.ui_url.replace(/https?:\/\/[^\/]+/, '')) : '';
+  var ajax_uri = basePath + '/ajax/classes/language?ontology=' + encodeURIComponent(ont_acronym) + '&concept=' + encodeURIComponent(entry_id);
+
+  jQuery.ajax({
+    url: ajax_uri,
+    timeout: ajax_process_timeout * 1000,
+    success: function (data) {
+      var lang_code = (data || '').trim();
+      entry_language_cache[entry_id] = lang_code;
+      apply_lang(lang_code);
+    },
+    error: function () {
+      entry_language_cache[entry_id] = '';
+      spanEl.addClass('ajax-error-lang');
     },
   });
 };

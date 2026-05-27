@@ -40,18 +40,18 @@
   %div.mb-3
     = render partial: 'shared/ontology_picker', locals: { custom_ontologies: @annotator_ontologies }
   
-  -# - if @sem_type_ont
-  -#   %div.mb-3
-  -#     %label{for: "semantic_types", class: 'form-label'}= t('annotator.index.select_umls_semantic_types')
-  -#     = select_tag("semantic_types", options_for_select(@semantic_types_for_select), multiple: "true",
-  -#                  data: {placeholder: t('annotator.index.placeholders.select_umls_semantic_types')}, class: "form-select",
-  -#                  style: "width: 432px")
+  - if @sem_type_ont
+    %div.mb-3.d-none
+      %label{for: "semantic_types", class: 'form-label'}= t('annotator.index.select_umls_semantic_types')
+      = select_tag("semantic_types", options_for_select(@semantic_types_for_select), multiple: "true",
+                   data: {placeholder: t('annotator.index.placeholders.select_umls_semantic_types')}, class: "form-select",
+                   style: "width: 432px")
 
-  -# %div.mb-3
-  -#   %label{for: "class_hierarchy_max_level", class: 'form-label'}= t('annotator.index.include_ancestors_up_to_level')
-  -#   - options = [["none", 0], *(1..10).map {|i| [i, i]}, ["all", 999]]
-  -#   = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select",
-  -#                style: "width: 432px")
+  %div.mb-3.d-none
+    %label{for: "class_hierarchy_max_level", class: 'form-label'}= t('annotator.index.include_ancestors_up_to_level')
+    - options = [["none", 0], *(1..10).map {|i| [i, i]}, ["all", 999]]
+    = select_tag("class_hierarchy_max_level", options_for_select(options, 0), class: "form-select",
+                 style: "width: 432px")
 
   - if @recognizers.length > 1
     %div.mb-3
@@ -86,6 +86,7 @@
                 %span.bp_popup_link_container
                   %a#filter_classes.bp_popup_link{:href => "javascript:void(0);"}= t('annotator.index.filter')
                 %div#classes_filter_list.bp_popup_list
+            %th= t('annotator.index.headers.language')
             %th
               = t('annotator.index.headers.ontology')
               %span.popup_container

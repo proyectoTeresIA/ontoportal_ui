@@ -257,6 +257,21 @@ en:
     index:
       title: Annotator
       intro: Identifies terms in the provided text.
+      filter: Filter
+      headers:
+        class: Term
+        ontology: Terminology
+        type: Type
+        umls_sem_type: UMLS Sem Type
+        context: Context
+        matched_class: Matched Term
+        matched_ontology: Matched Terminology
+        language: Language
+      results:
+        total: "total results"
+        direct: "direct"
+        ancestor: "ancestor"
+        mapping: "mapping"
   annotatorplus:
     index:
       title: Annotator Plus
@@ -296,12 +311,12 @@ en:
       results_filtered_by: "Results are filtered by:"
       filter: Filter
       headers:
-        class: Class
+        class: Term
         ontology: Terminology
         type: Type
         umls_sem_type: UMLS Sem Type
         context: Context
-        matched_class: Matched Class
+        matched_class: Matched Term
         matched_ontology: Matched Terminology
         score: Score
         negation: Negation
@@ -336,6 +351,28 @@ en:
       pick_ontologies_label: Select terminologies
       get_recommendations: Get Recommendations
       edit_input: Edit Input
+      results:
+        recommended_ontologies: "Recommended ontologies"
+        headers:
+          position: "POS."
+          position_tooltip: "Position of the terminology in the ranking"
+          ontology: "Terminology"
+          ontologies: "Terminologies"
+          ontology_tooltip: "Terminology acronym"
+          final_score: "Final score"
+          final_score_tooltip: "Final recommendation score for the terminology. It represents the appropriateness of the terminology to describe the input data"
+          coverage_score: "Coverage score"
+          coverage_score_tooltip: "The coverage score represents the extent to what the terminology covers the input data"
+          acceptance_score: "Acceptance score"
+          acceptance_score_tooltip: "The acceptance score represents how well known and trusted is the terminology by the community"
+          detail_score: "Detail score"
+          detail_score_tooltip: "The detail score represents the richness of the terminology representation for the input data"
+          specialization_score: "Specialization score"
+          specialization_score_tooltip: "The specialization score represents the level of specialization of the terminology to the domain of the input data"
+          annotations: "Annotations"
+          annotations_tooltip: "Number of annotations performed with the terminology for the input data"
+          highlight: "Highlight annotations"
+          highlight_tooltip: "This column makes it possible to highlight the annotations performed with each terminology"
       errors:
         not_text: Please paste a paragraph of text or some keywords to use in calculating terminology recommendations.
         sum_weights: The sum of the weights must be greater than zero.
@@ -373,8 +410,8 @@ en:
       categories_placeholder: Start typing to select categories or leave blank to use all
       property_definition: Named association between two entities. Examples are "definition" (a relation between a class and some text) and "part-of" (a relation between two classes).
       obsolete_definition: >
-        A class that the authors of the ontology have flagged as being obsolete and which they recommend that people not use. These classes 
-        are often left in ontologies (rather than removing them entirely) so that existing systems that depend on them will continue to function.
+        A class that the authors of the terminology have flagged as being obsolete and which they recommend that people not use. These classes 
+        are often left in terminologies (rather than removing them entirely) so that existing systems that depend on them will continue to function.
       pos_placeholder: "e.g., noun, verb, adjective"
       subjects_placeholder: "Comma-separated URIs or keywords"
       no_matches_found: No matches found
@@ -1050,7 +1087,7 @@ en:
       identify_obsolete_classes: Identify obsolete classes
       obsolete_property: Obsolete property
       obsolete_property_help_html: >
-        Optionally enter a property ID that indicates obsolete status for ontology classes (the property value must be set to "true"). Note that by default, %{site} checks for existence of the owl:deprecated property.
+        Optionally enter a property ID that indicates obsolete status for terminology classes (the property value must be set to "true"). Note that by default, %{site} checks for existence of the owl:deprecated property.
       obsolete_branch_root: Obsolete branch root
       obsolete_branch_root_help: >
         Optionally enter a class ID for the root of an obsolete branch. All classes in the branch will be marked as obsolete, with the exception of the root class.

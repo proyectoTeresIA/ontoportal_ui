@@ -55,6 +55,24 @@ class ConceptsController < ApplicationController
     render inline: helpers.main_language_label(concept_label(ont_id, cls_id))
   end
 
+  def show_language
+    cls_id = params[:concept] || params[:id]
+    ont_id = params[:ontology]
+    return render(inline: '') if cls_id.blank? || ont_id.blank?
+
+    entry = LinkedData::Client::HTTP.get(
+      "/ontologies/#{CGI.escape(ont_id)}/terminological_entries/#{CGI.escape(cls_id)}",
+      {}, raw: false
+    ) rescue nil
+
+    lang_uri = entry&.language.respond_to?(:uri) ? entry.language.uri.to_s :
+               entry&.language.to_s rescue ''
+    lang_uri ||= ''
+
+    lang = lang_uri.split('/').last.to_s.downcase
+    render inline: helpers.language_name(lang)
+  end
+
   def show_definition
     @ontology = LinkedData::Client::Models::Ontology.find(params[:ontology])
     cls = @ontology.explore.single_class(params[:concept])

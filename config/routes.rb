@@ -107,6 +107,7 @@ Rails.application.routes.draw do
   get '/ajax/loading_spinner' => 'ajax_proxy#loading_spinner'
   get '/ajax/notes/delete' => 'notes#destroy'
   get '/ajax/classes/label' => 'concepts#show_label'
+  get '/ajax/classes/language' => 'concepts#show_language'
   get '/ajax/classes/definition' => 'concepts#show_definition'
   get '/ajax/classes/treeview' => 'concepts#show_tree'
   get '/ajax/properties/tree' => 'concepts#property_tree'

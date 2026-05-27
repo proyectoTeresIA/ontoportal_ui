@@ -149,10 +149,10 @@ es:
     help:
       welcome: Bienvenido/a al %{site} de %{organization}. %{site} es una aplicación web para acceder y compartir terminologías.
       getting_started: >
-        %{site} permite a los usuarios navegar, subir, descargar, buscar, comentar y crear mapeos para ontologías.
+        %{site} permite a los usuarios navegar, subir, descargar, buscar, comentar y crear mapeos para terminologías.
       browse: >
-        Los usuarios pueden explorar ontologías individuales navegando por una estructura en árbol o una vista gráfica animada. También pueden ver mapeos y 
-        metadatos de las ontologías, y descargar ontologías. Además, los usuarios registrados pueden enviar una nueva ontología a la biblioteca.
+        Los usuarios pueden explorar terminologías individuales navegando por una estructura en árbol o una vista gráfica animada. También pueden ver mapeos y 
+        metadatos de las terminologías, y descargar terminologías. Además, los usuarios registrados pueden enviar una nueva terminología a la biblioteca.
       rest_examples_html: Ver documentación y ejemplos de la <a href="%{api_url}" target="_blank">API REST de %{site}</a>.
       announce_list_html: >
 
@@ -220,11 +220,11 @@ es:
       y una aserción de concepto superior. %{link}
     ontology_obo_language_link: el parser OBOinOWL.
     ontology_obo_language_help: >
-      Las ontologías OBO enviadas a %{portal_name} serán analizadas por OWL-API, que integra %{link} 
+      Las terminologías OBO enviadas a %{portal_name} serán analizadas por OWL-API, que integra %{link} 
       Los triples RDF resultantes se cargarán en el triple-store de %{portal_name}.
     ontology_owl_language_link: el software Protégé
     ontology_owl_language_help: >
-      Las ontologías OWL enviadas a %{portal_name} serán analizadas por OWL-API. Una manera sencilla de verificar si tu ontología se podrá analizar es abrirla con
+      Las terminologías OWL enviadas a %{portal_name} serán analizadas por OWL-API. Una manera sencilla de verificar si tu terminología se podrá analizar es abrirla con
       %{link}
       software que usa el mismo componente.
 
@@ -279,13 +279,19 @@ es:
       results_filtered_by: "Los resultados están filtrados por:"
       filter: Filtro
       headers:
-        class: Clase
+        class: Término
         ontology: Terminología
         type: Tipo
         umls_sem_type: Tipo semántico UMLS
         context: Contexto
-        matched_class: Clase coincidente
+        matched_class: Término coincidente
         matched_ontology: Terminología coincidente
+        language: Idioma
+      results:
+        total: "resultados totales"
+        direct: "directo"
+        ancestor: "ancestro"
+        mapping: "mapeo"
       format_results_as: "Formatear resultados como:"
       to_reproduce: "Para reproducir estos resultados:"
       additional_parameters_at: Parámetros adicionales documentados en
@@ -329,12 +335,12 @@ es:
       results_filtered_by: "Los resultados están filtrados por:"
       filter: Filtro
       headers:
-        class: Clase
+        class: Término
         ontology: Terminología
         type: Tipo
         umls_sem_type: Tipo semántico UMLS
         context: Contexto
-        matched_class: Clase coincidente
+        matched_class: Término coincidente
         matched_ontology: Terminología coincidente
         score: Puntuación
         negation: Negación
@@ -369,6 +375,28 @@ es:
       pick_ontologies_label: Seleccionar terminologías
       get_recommendations: Obtener recomendaciones
       edit_input: Editar entrada
+      results:
+        recommended_ontologies: "Terminologías recomendadas"
+        headers:
+          position: "POS."
+          position_tooltip: "Posición de la terminología en el ranking"
+          ontology: "Terminología"
+          ontologies: "Terminologías"
+          ontology_tooltip: "Acrónimo de terminología"
+          final_score: "Puntuación final"
+          final_score_tooltip: "Puntuación final de recomendación para la terminología. Representa la idoneidad de la terminología para describir los datos de entrada"
+          coverage_score: "Puntuación de cobertura"
+          coverage_score_tooltip: "La puntuación de cobertura representa en qué medida la terminología cubre los datos de entrada"
+          acceptance_score: "Puntuación de aceptación"
+          acceptance_score_tooltip: "La puntuación de aceptación representa cuán conocida y confiable es la terminología en la comunidad"
+          detail_score: "Puntuación de detalle"
+          detail_score_tooltip: "La puntuación de detalle representa la riqueza de la representación de la terminología para los datos de entrada"
+          specialization_score: "Puntuación de especialización"
+          specialization_score_tooltip: "La puntuación de especialización representa el nivel de especialización de la terminología en el dominio de los datos de entrada"
+          annotations: "Anotaciones"
+          annotations_tooltip: "Número de anotaciones realizadas con la terminología para los datos de entrada"
+          highlight: "Resaltar anotaciones"
+          highlight_tooltip: "Esta columna permite resaltar las anotaciones realizadas con cada terminología"
       errors:
         not_text: Por favor, pega un párrafo de texto o algunas palabras clave para calcular recomendaciones de terminologías.
         sum_weights: La suma de los pesos debe ser mayor que cero.
@@ -407,8 +435,8 @@ es:
       property_definition: >
         Asociación nombrada entre dos entidades. Ejemplos: 'definición' (relación entre una clase y un texto) y 'parte-de' (relación entre dos clases).
       obsolete_definition: >
-        Una clase que los autores de la ontología han marcado como obsoleta y que recomiendan no usar. Estas clases 
-        a menudo se mantienen en las ontologías (en lugar de eliminarlas por completo) para que los sistemas existentes que dependen de ellas sigan funcionando.
+        Una clase que los autores de la terminología han marcado como obsoleta y que recomiendan no usar. Estas clases 
+        a menudo se mantienen en las terminologías (en lugar de eliminarlas por completo) para que los sistemas existentes que dependen de ellas sigan funcionando.
       pos_placeholder: "ej., sustantivo, verbo, adjetivo"
       subjects_placeholder: "URIs o palabras clave separadas por comas"
       no_matches_found: No se encontraron coincidencias
@@ -1103,7 +1131,7 @@ es:
       identify_obsolete_classes: Identificar clases obsoletas
       obsolete_property: Propiedad de obsolescencia
       obsolete_property_help_html: >
-        Opcionalmente, introduce un ID de propiedad que indique estado obsoleto para clases de ontología (el valor de la propiedad debe ser "true"). De forma predeterminada, %{site} comprueba la existencia de la propiedad owl:deprecated.
+        Opcionalmente, introduce un ID de propiedad que indique estado obsoleto para clases de terminología (el valor de la propiedad debe ser "true"). De forma predeterminada, %{site} comprueba la existencia de la propiedad owl:deprecated.
       obsolete_branch_root: Raíz de rama obsoleta
       obsolete_branch_root_help: >
         Opcionalmente, introduce un ID de clase para la raíz de una rama obsoleta. Todas las clases de la rama se marcarán como obsoletas, excepto la clase raíz.

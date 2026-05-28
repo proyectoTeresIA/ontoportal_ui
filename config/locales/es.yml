@@ -605,6 +605,11 @@ es:
         agent: "Agente:"
         view_complete: "Ver %{type} completo"
         view_video: Ver Vídeo
+        cross_ontology_terms: Enlaces a otras terminologías
+      skos_relations:
+        closeMatch: Coincidencia cercana
+        exactMatch: Coincidencia exacta
+        related: Relacionado
 
       types:
         form: forma
@@ -1027,6 +1032,14 @@ es:
   mappings:
     intro: Explora mapeos entre clases en diferentes terminologías
     create_new_mapping: Crear nuevo mapeo
+    ontolex:
+      none_for_ontology: No se encontraron mapeos entre ontologías para este recurso.
+      for_ontology: "Mapeos para %{name}"
+      showing: "Mostrando %{count} mapeo(s)"
+      source_term: Término origen
+      target_term: Término destino
+      relation_type: Relación
+      unknown_ontology: Desconocida
     index:
       help_aria: Ver ayuda de mapeos
       title: Mapeos

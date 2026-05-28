@@ -10,29 +10,23 @@
         %table.table.table-sm#concept_mappings_table
           %thead
             %tr
-              %th= t('mappings.table.headers.mapping_to')
-              %th= t('mappings.table.headers.ontology')
+              %th= t('mappings.ontolex.target_term', default: 'Term')
               %th= t('mappings.ontolex.relation_type')
           %tbody
             - @mappings.each do |map|
               - target = map.classes&.last
-              - target_id = target&.id.to_s
-              - target_label = target&.prefLabel || target_id.split(/[#\/]/).last
+              - target_id = (target&.send(:"@id") || target&.links&.dig('self')&.then { |u| CGI.unescape(u.split('/').last) }).to_s
               - target_ont_link = target&.links&.dig('ontology') || ''
               - target_acr = target_ont_link.split('/').last
+              - rel_label = map.source.to_s.gsub(/^SKOS:/, '').gsub('_', ' ').split.map(&:capitalize).join(' ')
               %tr
                 %td
-                  - if target_id.start_with?('http')
-                    = link_to target_label, ontology_path(target_acr, p: 'lexical_concepts', id: target_id), data: { turbo: false }
+                  - if target_id.start_with?('http') && target_acr.present?
+                    = get_link_for_entry_ajax(target_id, target_acr)
                   - else
-                    = target_label
+                    = target_id.split(%r{[#/]}).last
                 %td
-                  - if target_acr.present?
-                    = link_to target_acr, ontology_path(target_acr)
-                  - else
-                    = t('mappings.ontolex.unknown_ontology')
-                %td
-                  %span.badge.bg-secondary= map.source
+                  %span.badge.bg-secondary= rel_label
     - else
       - if session[:user].nil?
         = link_to t('mappings.create_new_mapping'), "/login?redirect=/ontologies/#{@ontology.acronym}/?p=classes&t=mappings&conceptid=#{escape(@concept.id)}", :method => :get, :class => "btn btn-default mb-3"

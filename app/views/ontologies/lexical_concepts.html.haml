@@ -64,14 +64,29 @@
         $('#lexical-concept-details-container').html('<div class="text-center py-5"><span class="spinner-border spinner-border-sm"></span></div>');
         
         var apiUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts/" + encodeURIComponent(conceptId) + "?apikey=" + apikey;
-        
+        var mappingsUrl = externalRestUrl + "/ontologies/" + ontologyAcronym + "/lexical_concepts/" + encodeURIComponent(conceptId) + "/mappings?apikey=" + apikey + "&pagesize=500";
+
         $.ajax({
           url: apiUrl,
           method: 'GET',
           dataType: 'json',
           success: function(data) {
-            var html = renderLexicalConceptDetails(data);
-            $('#lexical-concept-details-container').html(html);
+            // Fetch SKOS cross-ontology mappings to resolve target ontologies for links
+            $.ajax({
+              url: mappingsUrl,
+              method: 'GET',
+              dataType: 'json',
+              success: function(mappingsData) {
+                var crossOntologyMap = buildCrossOntologyMap(mappingsData);
+                var html = renderLexicalConceptDetails(data, crossOntologyMap);
+                $('#lexical-concept-details-container').html(html);
+              },
+              error: function() {
+                // Render without cross-ontology resolution on mappings failure
+                var html = renderLexicalConceptDetails(data, {});
+                $('#lexical-concept-details-container').html(html);
+              }
+            });
           },
           error: function(xhr, status, error) {
             $('#lexical-concept-details-container').html('<div class="alert alert-danger m-3">Error loading details: ' + error + '</div>');
@@ -79,7 +94,44 @@
         });
       }
 
-      function renderLexicalConceptDetails(data) {
+      // Build a map from concept URI to target ontology acronym from a mappings API response
+      function buildCrossOntologyMap(mappingsData) {
+        var map = {};
+        if (!mappingsData || !mappingsData.collection) return map;
+        mappingsData.collection.forEach(function(mapping) {
+          var classes = mapping.classes;
+          if (!classes || classes.length < 2) return;
+          var targetClass = classes[1];
+          if (!targetClass) return;
+          // Normalize @id: may be a plain string or an object with .uri
+          var idVal = targetClass['@id'] || targetClass.id;
+          var targetUri = (typeof idVal === 'string') ? idVal : (idVal && (idVal.uri || idVal['@id']));
+          if (!targetUri || typeof targetUri !== 'string') return;
+          // Extract ontology acronym from links.ontology, then fall back to links.self
+          var targetAcronym = null;
+          var ontLink = targetClass.links && (targetClass.links.ontology || targetClass.links['ontology']);
+          if (ontLink && typeof ontLink === 'string') {
+            targetAcronym = ontLink.split('/').pop();
+          }
+          if (!targetAcronym) {
+            var selfLink = targetClass.links && (targetClass.links.self || targetClass.links['self']);
+            if (selfLink && typeof selfLink === 'string') {
+              // Format: "ontologies/ACRONYM/lexical_concepts/..." or full URL
+              var parts = selfLink.split('/');
+              var ontIdx = parts.lastIndexOf('ontologies');
+              if (ontIdx >= 0 && parts[ontIdx + 1]) {
+                targetAcronym = parts[ontIdx + 1];
+              }
+            }
+          }
+          if (targetAcronym && targetAcronym !== ontologyAcronym) {
+            map[targetUri] = targetAcronym;
+          }
+        });
+        return map;
+      }
+
+      function renderLexicalConceptDetails(data, crossOntologyMap) {
         var html = '<div class="ontolex-details p-3">';
         var conceptId = uriToString(data['@id'] || data.id);
         html += '<h6 class="border-bottom pb-2 mb-3">' + 
@@ -88,7 +140,7 @@
         
         // Auto-render all fields using shared renderer
         if (window.OntolexRenderer) {
-          html += OntolexRenderer.renderAllFields(data, ontologyAcronym, baseURL);
+          html += OntolexRenderer.renderAllFields(data, ontologyAcronym, baseURL, { crossOntologyMap: crossOntologyMap || {} });
         }
         
         html += '</div>';

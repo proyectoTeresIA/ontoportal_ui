@@ -580,6 +580,11 @@ en:
         agent: "Agent:"
         view_complete: "View complete %{type}"
         view_video: View Video
+        cross_ontology_terms: Links to other terminologies
+      skos_relations:
+        closeMatch: Close match
+        exactMatch: Exact match
+        related: Related
 
       types:
         form: form
@@ -1024,6 +1029,14 @@ en:
   mappings:
     intro: Browse mappings between classes in different terminologies
     create_new_mapping: Create New Mapping
+    ontolex:
+      none_for_ontology: No cross-ontology mappings found for this resource.
+      for_ontology: "Mappings for %{name}"
+      showing: "Showing %{count} mapping(s)"
+      source_term: Source Term
+      target_term: Target Term
+      relation_type: Relation
+      unknown_ontology: Unknown
     index:
       help_aria: View mappings help
       title: Mappings

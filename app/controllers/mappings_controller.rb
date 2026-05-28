@@ -45,11 +45,11 @@ class MappingsController < ApplicationController
     @ontology = LinkedData::Client::Models::Ontology.find_by_acronym(params[:id]).first
 
     if is_ontolex_format?(@ontology)
-      submission = @ontology.explore.latest_submission rescue nil
-      page, size = page_params
+      page = params[:page] || 1
+      size = params[:pagesize] || 50
       response = LinkedData::Client::HTTP.get(
         "/ontologies/#{@ontology.acronym}/mappings",
-        { page: page || 1, pagesize: size || 50 }
+        { page: page, pagesize: size }
       )
       @ontolex_mappings = response&.collection || []
       @ontolex_total    = response&.totalCount || 0
@@ -70,6 +70,21 @@ class MappingsController < ApplicationController
     not_found if @target_ontology.nil?
 
     page = params[:page] || 1
+
+    if is_ontolex_format?(@ontology) || is_ontolex_format?(@target_ontology)
+      size = params[:pagesize] || 50
+      response = LinkedData::Client::HTTP.get(
+        "/ontologies/#{@ontology.acronym}/mappings",
+        { page: page, pagesize: size }
+      )
+      @ontolex_mappings = response&.collection || []
+      @ontolex_total    = response&.totalCount || 0
+      @ontolex_page     = response&.page || 1
+      @ontolex_pages    = response&.pageCount || 1
+      render partial: 'ontolex_mappings', layout: false
+      return
+    end
+
     ontologies = [@ontology.acronym, @target_ontology.acronym]
     @mapping_pages = LinkedData::Client::HTTP.get(MAPPINGS_URL,
                                                   { page: page, ontologies: ontologies.join(',') })
@@ -100,7 +115,8 @@ class MappingsController < ApplicationController
 
     if is_ontolex_format?(@ontology)
       concept_id = CGI.unescape(params[:conceptid].to_s)
-      page, size = page_params
+      page = params[:page] || 1
+      size = params[:pagesize] || 50
       response = LinkedData::Client::HTTP.get(
         "/ontologies/#{@ontology.acronym}/lexical_concepts/#{CGI.escape(concept_id)}/mappings",
         { page: page || 1, pagesize: size || 50 }

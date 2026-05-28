@@ -90,8 +90,13 @@ window.OntolexRenderer = {
     return fragment;
   },
 
-  // Generic function to render all fields of an entity as a Bootstrap striped table
-  renderAllFields: function (data, ontAcronym, basePath = '') {
+  // Generic function to render all fields of an entity as a Bootstrap striped table.
+  // options.crossOntologyMap: { conceptUri -> targetOntologyAcronym } for cross-ontology link resolution
+  renderAllFields: function (data, ontAcronym, basePath, options) {
+    options = options || {};
+    var crossOntologyMap = options.crossOntologyMap || {};
+    var crossOntologyPredicates = { closeMatch: true, exactMatch: true, related: true };
+
     var html = '<table class="table table-striped ontolex-properties-table">';
     html += '<tbody>';
 
@@ -111,6 +116,11 @@ window.OntolexRenderer = {
       // Format field label using translation
       var label = this.translateProperty(key);
 
+      // For the three SKOS cross-ontology predicates, pass the crossOntologyMap
+      var fieldCrossMap = Object.prototype.hasOwnProperty.call(crossOntologyPredicates, key)
+        ? crossOntologyMap
+        : null;
+
       html += '<tr>';
       html += '<th scope="row" class="property-label" style="width: 30%;">' + label + '</th>';
       html +=
@@ -122,6 +132,7 @@ window.OntolexRenderer = {
           ontAcronym,
           isEmbedded,
           basePath,
+          fieldCrossMap,
         ) +
         '</td>';
       html += '</tr>';
@@ -132,7 +143,9 @@ window.OntolexRenderer = {
     return html;
   },
 
-  renderFieldValue: function (value, fieldName, entityType, ontAcronym, isEmbedded, basePath) {
+  renderFieldValue: function (value, fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap) {
+    crossOntologyMap = crossOntologyMap || null;
+
     if (Array.isArray(value)) {
       if (value.length === 0) return '<span class="text-muted">-</span>';
 
@@ -163,7 +176,7 @@ window.OntolexRenderer = {
           html += '</button>';
           html += '<div class="collapse" id="' + collapseId + '">';
           html += '<div class="card card-body mt-1">';
-          html += this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded, basePath);
+          html += this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap);
           html += '</div>';
           html += '</div>';
           html += '</div>';
@@ -176,14 +189,14 @@ window.OntolexRenderer = {
         for (var j = 0; j < value.length; j++) {
           listHtml +=
             '<li class="mb-1">' +
-            this.renderSingleValue(value[j], fieldName, entityType, ontAcronym, isEmbedded, basePath) +
+            this.renderSingleValue(value[j], fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap) +
             '</li>';
         }
         listHtml += '</ul>';
         return listHtml;
       }
     } else {
-      return this.renderSingleValue(value, fieldName, entityType, ontAcronym, isEmbedded, basePath);
+      return this.renderSingleValue(value, fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap);
     }
   },
 
@@ -203,7 +216,10 @@ window.OntolexRenderer = {
     return 'Item ' + (index + 1);
   },
 
-  renderSingleValue: function (value, fieldName, entityType, ontAcronym, isEmbedded, basePath) {
+  // crossOntologyMap: optional { conceptUri -> targetOntologyAcronym }
+  renderSingleValue: function (value, fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap) {
+    crossOntologyMap = crossOntologyMap || null;
+
     // Si es un objeto embebido, expandirlo mostrando todos sus campos
     if (isEmbedded && typeof value === 'object' && value !== null) {
       return this.renderEmbeddedObject(value, ontAcronym, basePath);
@@ -211,15 +227,25 @@ window.OntolexRenderer = {
 
     if (typeof value === 'object' && value !== null && value['@id']) {
       // It's a reference to another entity
+      // Normalize @id: may be a plain string or an object with .uri
+      var rawId = value['@id'];
+      var conceptUri = (typeof rawId === 'string') ? rawId : (rawId && (rawId.uri || rawId['@id'] || null));
       var objLabel =
-        value.label || value.prefLabel || value.writtenRep || value.value || this.extractIdFragment(value['@id']);
+        value.label || value.prefLabel || value.writtenRep || value.value ||
+        (conceptUri ? this.extractIdFragment(conceptUri) : 'item');
       if (entityType) {
+        // Use target ontology from cross-ontology map if available
+        var objOntAcronym = (crossOntologyMap && conceptUri && crossOntologyMap[conceptUri]) ? crossOntologyMap[conceptUri] : ontAcronym;
         var objLinkUrl =
-          basePath + '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value['@id']);
+          basePath + '/ontologies/' + objOntAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(conceptUri || '');
+        var crossBadge = (objOntAcronym !== ontAcronym)
+          ? '<span class="ontolex-badge badge-language me-1" title="' + objOntAcronym + '">' + objOntAcronym + '</span>'
+          : '';
         return (
           '<a href="' +
           objLinkUrl +
           '" class="entity-link text-decoration-none" data-turbo-frame="_top" data-entity-link="true">' +
+          crossBadge +
           '<i class="fas fa-link me-1"></i>' +
           this.escapeHtml(objLabel) +
           '</a>'
@@ -230,13 +256,19 @@ window.OntolexRenderer = {
     } else if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
       // It's a URI
       if (entityType) {
+        // Use target ontology from cross-ontology map if available
+        var strOntAcronym = (crossOntologyMap && crossOntologyMap[value]) ? crossOntologyMap[value] : ontAcronym;
         var uriLabel = this.extractIdFragment(value);
         var uriLinkUrl =
-          basePath + '/ontologies/' + ontAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
+          basePath + '/ontologies/' + strOntAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
+        var strCrossBadge = (strOntAcronym !== ontAcronym)
+          ? '<span class="ontolex-badge badge-language me-1" title="' + strOntAcronym + '">' + strOntAcronym + '</span>'
+          : '';
         return (
           '<a href="' +
           uriLinkUrl +
           '" class="entity-link text-decoration-none" data-turbo-frame="_top" data-entity-link="true">' +
+          strCrossBadge +
           '<i class="fas fa-link me-1"></i>' +
           this.escapeHtml(uriLabel) +
           '</a>'

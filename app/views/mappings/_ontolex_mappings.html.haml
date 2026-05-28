@@ -1,45 +1,44 @@
-%div#ontolex_mappings_section
+%div#ontolex_mappings_section{style: "width: 820px; max-height: 600px; overflow: auto; padding: 1rem;"}
 
   - if @ontolex_mappings.blank?
     %p.text-muted.p-2= t('mappings.ontolex.none_for_ontology', default: 'No cross-ontology mappings found for this resource.')
 
   - else
+    - _first_tgt = @ontolex_mappings.first&.classes&.last
+    - _fallback_acr = (_first_tgt&.links&.dig('ontology') || '').split('/').last
+    - _target_name = (@target_ontology&.name.presence || @target_ontology&.acronym || _fallback_acr).to_s
+    %h6.mb-2= t('mappings.ontolex.for_ontology', default: "Mappings for %{name}", name: _target_name)
     %p.text-muted.small.mb-2
       = t('mappings.ontolex.showing', default: "Showing %{count} mapping(s)", count: @ontolex_mappings.size)
 
     %table.table.table-sm.table-hover
       %thead.table-light
         %tr
-          %th= t('mappings.ontolex.source_concept', default: 'Source concept')
-          %th= t('mappings.ontolex.target_concept', default: 'Target concept')
-          %th= t('mappings.ontolex.target_ontology', default: 'Target ontology')
+          %th= t('mappings.ontolex.source_term', default: 'Source Term')
+          %th= t('mappings.ontolex.target_term', default: 'Target Term')
           %th= t('mappings.ontolex.relation_type', default: 'Relation')
       %tbody
         - @ontolex_mappings.each do |map|
           - source = map.classes&.first
           - target = map.classes&.last
-          - source_id = source&.id.to_s
-          - target_id = target&.id.to_s
-          - source_label = source&.prefLabel || source_id.split(%r{[#/]}).last
-          - target_label = target&.prefLabel || target_id.split(%r{[#/]}).last
+          - source_id = source&.send(:"@id").to_s
+          - target_id = target&.send(:"@id").to_s
           - target_ont_link = target&.links&.dig('ontology') || ''
           - target_acr = target_ont_link.split('/').last
+          - rel_label = map.source.to_s.gsub(/^SKOS:/, '').gsub('_', ' ').split.map(&:capitalize).join(' ')
           %tr
             %td
               - if source_id.start_with?('http')
-                = link_to source_label, ontology_path(@ontology.acronym, p: 'lexical_concepts', id: source_id), data: { turbo: false }
+                = get_link_for_entry_ajax(source_id, @ontology.acronym)
               - else
-                = source_label
+                = source_id.split(%r{[#/]}).last
             %td
-              - if target_id.start_with?('http')
-                = link_to target_label, ontology_path(target_acr, p: 'lexical_concepts', id: target_id), data: { turbo: false }
+              - if target_id.start_with?('http') && target_acr.present?
+                = get_link_for_entry_ajax(target_id, target_acr)
               - else
-                = target_label
+                = target_id.split(%r{[#/]}).last
             %td
-              - if target_acr.present?
-                = link_to target_acr, ontology_path(target_acr)
-            %td
-              %span.badge.bg-secondary= map.source
+              %span.badge.bg-secondary= rel_label
 
     - if @ontolex_pages.to_i > 1
       %nav.mt-2
@@ -52,3 +51,4 @@
           - (@ontolex_page.to_i < @ontolex_pages.to_i ? [@ontolex_page.to_i + 1, @ontolex_pages.to_i] : []).each do |p|
             %li.page-item
               %a.page-link{href: mapping_count_path(id: @ontology.acronym, page: p)}= p == @ontolex_pages.to_i ? '»' : '›'
+

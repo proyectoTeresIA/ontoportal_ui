@@ -2,6 +2,7 @@ class OntologiesController < ApplicationController
   include MappingsHelper
   include MappingStatistics
   include OntologyUpdater
+  include ConceptsHelper
 
   require "multi_json"
   require 'cgi'
@@ -217,7 +218,30 @@ class OntologiesController < ApplicationController
   end
 
   def mappings
-    @mapping_counts = mapping_counts(@ontology.acronym)
+    if is_ontolex_format?(@ontology)
+      # For OntoLex, compute per-target term-level counts from the real mappings API
+      response = LinkedData::Client::HTTP.get(
+        "/ontologies/#{@ontology.acronym}/mappings",
+        { page: 1, pagesize: 200 }
+      )
+      mappings = response&.collection || []
+      target_counts = Hash.new(0)
+      target_ontologies = {}
+      mappings.each do |m|
+        target = m.classes&.last
+        ont_link = target&.links&.[]('ontology') || ''
+        acr = ont_link.split('/').last
+        next if acr.blank?
+        target_counts[acr] += 1
+        target_ontologies[acr] ||= LinkedData::Client::Models::Ontology.find_by_acronym(acr).first
+      end
+      @mapping_counts = target_counts.filter_map do |acr, count|
+        ont = target_ontologies[acr]
+        { target_ontology: ont, count: count } if ont
+      end
+    else
+      @mapping_counts = mapping_counts(@ontology.acronym)
+    end
 
     if request.xhr?
       render partial: 'mappings', layout: false

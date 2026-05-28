@@ -57,7 +57,11 @@
         resource_creator: "#{t('ontology_details.ontolex.properties.resourceCreator')}",
         url: "#{t('ontology_details.ontolex.properties.url')}",
         language: "#{t('ontology_details.ontolex.properties.language')}",
-        domain: "#{t('ontology_details.ontolex.properties.domain')}"
+        domain: "#{t('ontology_details.ontolex.properties.domain')}",
+        cross_ontology_terms: "#{t('ontology_details.ontolex.headings.cross_ontology_terms')}",
+        skos_close_match: "#{t('ontology_details.ontolex.skos_relations.closeMatch')}",
+        skos_exact_match: "#{t('ontology_details.ontolex.skos_relations.exactMatch')}",
+        skos_related: "#{t('ontology_details.ontolex.skos_relations.related')}"
       };
       
       // Custom item renderer for terminological entries
@@ -372,6 +376,51 @@
           });
           html += '</div></div>';
         }
+
+        // Cross-ontology SKOS relations
+        if (data.crossOntologyTerms && typeof data.crossOntologyTerms === 'object') {
+          var crossTerms = data.crossOntologyTerms;
+          var relOrder = [
+            { key: 'closeMatch', label: translations.skos_close_match, symbol: '≈' },
+            { key: 'exactMatch', label: translations.skos_exact_match, symbol: '=' },
+            { key: 'related',    label: translations.skos_related, symbol: '~' }
+          ];
+          var hasCrossTerms = relOrder.some(function(r) { return crossTerms[r.key] && crossTerms[r.key].length > 0; });
+          if (hasCrossTerms) {
+            html += '<div class="mb-4">';
+            html += '<h6 class="border-bottom pb-2 mb-3">' + translations.cross_ontology_terms + '</h6>';
+            html += '<div class="card border-start border-2"><div class="card-body p-3">';
+            relOrder.forEach(function(rel) {
+              var entries = crossTerms[rel.key];
+              if (!entries || entries.length === 0) return;
+              html += '<div class="mb-2"><strong>' + rel.label + '</strong></div>';
+              // Group entries by ontology_acronym
+              var byOnt = {};
+              entries.forEach(function(e) {
+                var ont = e.ontology_acronym || '';
+                if (!byOnt[ont]) byOnt[ont] = [];
+                byOnt[ont].push(e);
+              });
+              Object.keys(byOnt).forEach(function(ontAcr) {
+                var ontEntries = byOnt[ontAcr];
+                var termParts = ontEntries.map(function(e) {
+                  var entryId = e.entry_id || '';
+                  var reps = e.written_reps && e.written_reps.length > 0 ? e.written_reps : [entryId.split('/').pop()];
+                  var langCode = e.language ? e.language.split('/').pop() : null;
+                  var langBadge = langCode ? '<span class="ontolex-badge badge-language me-1 badge-small">' + langCode + '</span>' : '';
+                  return '<a href="' + baseURL + '/ontologies/' + ontAcr + '?p=terminological_entries&id=' + encodeURIComponent(entryId) + '" class="text-decoration-none" data-turbo-frame="_top">' + langBadge + reps.join(', ') + '</a>';
+                });
+                var symbol = '<strong class="me-2 h3">' + rel.symbol + '</strong>';
+                var termText = termParts.join(' &bull; ');
+                var ontBadge = ontAcr
+                  ? '<span class="ontolex-badge badge-ontology ms-3" title="' + ontAcr + '">' + ontAcr + '</span>'
+                  : '';
+                html += '<div class="mb-1 ms-2">' + symbol + termText + ontBadge + '</div>';
+              });
+            });
+            html += '</div></div></div>';
+          }
+        }
         
         // wasInfluencedBy
         if (data.wasInfluencedBy && Array.isArray(data.wasInfluencedBy) && data.wasInfluencedBy.length > 0) {
@@ -405,6 +454,7 @@
           html += '</div>';
         }
         
+
         
         html += '</div>';
         return html;

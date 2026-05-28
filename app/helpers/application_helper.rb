@@ -412,7 +412,7 @@ module ApplicationHelper
   def get_link_for_entry_ajax(entry_id, ont_acronym, target = nil)
     if entry_id.start_with?('http://') || entry_id.start_with?('https://')
       # For OntoLex, link to terminological_entries page with id= parameter
-      cls_url = ontology_path(ont_acronym, p: 'terminological_entries', id: entry_id)
+      cls_url = ontology_path(ont_acronym, p: 'terminological_entries') + '&id=' + CGI.escape(entry_id)
       ajax_url = ajax_classes_label_path(language: request_lang)
       
       data = label_ajax_data_h(entry_id, ont_acronym, ajax_url, cls_url)

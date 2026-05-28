@@ -1040,6 +1040,13 @@ es:
       target_term: Término destino
       relation_type: Relación
       unknown_ontology: Desconocida
+      relations:
+        related: Relacionado
+        close_match: Coincidencia cercana
+        exact_match: Coincidencia exacta
+        broad_match: Coincidencia general
+        narrow_match: Coincidencia específica
+        related_match: Coincidencia relacionada
     index:
       help_aria: Ver ayuda de mapeos
       title: Mapeos

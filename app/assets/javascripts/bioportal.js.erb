@@ -549,9 +549,17 @@ jQuery(".pagination a, .chip-pagination a").live("click", function(e){
   }
 });
 
-// Facebox settings
-jQuery.facebox.settings.closeImage = "<%= asset_path("facebox/closelabel.png") %>";
-jQuery.facebox.settings.loadingImage = "<%= asset_path("facebox/loading.gif") %>";
+// Facebox settings – asset_path is baked in at compile time (no BASE_PATH), so
+// prepend the runtime base URL from BP config when it isn't already present.
+(function() {
+  var _bpBase = ((jQuery(document).data('bp') || {}).config || {}).base_url || '';
+  var _close   = "<%= asset_path('facebox/closelabel.png') %>";
+  var _loading = "<%= asset_path('facebox/loading.gif') %>";
+  if (_bpBase && !_close.startsWith(_bpBase))   { _close   = _bpBase + _close; }
+  if (_bpBase && !_loading.startsWith(_bpBase)) { _loading = _bpBase + _loading; }
+  jQuery.facebox.settings.closeImage   = _close;
+  jQuery.facebox.settings.loadingImage = _loading;
+})();
 
 // Cookie handling
 var BP_setCookie = function(key, value, options) {

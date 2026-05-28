@@ -18,8 +18,11 @@ function jumpToValueOntology() {
     if (sValue == null || sValue == "") {
       sValue = data;
     }
-    document.location="/ontologies/"+sValue;
-    jQuery.blockUI({ message: '<h1><img src="<%= asset_path("jquery.simple.tree/spinner.gif") %>" /> Loading Ontology...</h1>' });
+    var _homeBase = (typeof BP_CONFIG !== 'undefined' && BP_CONFIG.base_url) ? BP_CONFIG.base_url : (((jQuery(document).data('bp') || {}).config) || {}).base_url || '';
+    var _spinner = "<%= asset_path('jquery.simple.tree/spinner.gif') %>";
+    if (_homeBase && !_spinner.startsWith(_homeBase)) { _spinner = _homeBase + _spinner; }
+    document.location = _homeBase + "/ontologies/" + sValue;
+    jQuery.blockUI({ message: '<h1><img src="' + _spinner + '" /> Loading Ontology...</h1>' });
     return;
   }
 }

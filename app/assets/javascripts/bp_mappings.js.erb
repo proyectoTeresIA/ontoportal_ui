@@ -29,10 +29,11 @@ function updateMappingDeletePermissions() {
 }
 
 function loadMappings(value) {
+    var _mapBase = (typeof BP_CONFIG !== 'undefined' && BP_CONFIG.base_url) ? BP_CONFIG.base_url : (((jQuery(document).data('bp') || {}).config) || {}).base_url || '';
     jQuery('#mappingCount').html("");
     jQuery('#mapping_load').show();
 
-    jQuery('#mappingCount').load('/mappings/' + value + '/count', function () {
+    jQuery('#mappingCount').load(_mapBase + '/mappings/' + value + '/count', function () {
         jQuery('#mapping_load').hide();
         let mappings_table_elem = jQuery("#mapping_count_table");
         mappings_table_elem.effect("highlight", {color: "#F5F5F5"}, 500);

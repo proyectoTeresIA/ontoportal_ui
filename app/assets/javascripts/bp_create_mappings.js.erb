@@ -56,8 +56,15 @@ jQuery(document).ready(function() {
   // TODO: Do we still need facebox stuff?
 
   // Details/visualize link to show details pane and visualize flexviz
-  jQuery.facebox.settings.closeImage = "<%= asset_path("facebox/closelabel.png") %>";
-  jQuery.facebox.settings.loadingImage = "<%= asset_path("facebox/loading.gif") %>";
+  (function() {
+    var _bpBase = (typeof BP_CONFIG !== 'undefined' && BP_CONFIG.base_url) ? BP_CONFIG.base_url : (((jQuery(document).data('bp') || {}).config) || {}).base_url || '';
+    var _close   = "<%= asset_path('facebox/closelabel.png') %>";
+    var _loading = "<%= asset_path('facebox/loading.gif') %>";
+    if (_bpBase && !_close.startsWith(_bpBase))   { _close   = _bpBase + _close; }
+    if (_bpBase && !_loading.startsWith(_bpBase)) { _loading = _bpBase + _loading; }
+    jQuery.facebox.settings.closeImage   = _close;
+    jQuery.facebox.settings.loadingImage = _loading;
+  })();
 
   jQuery('#mappings_content a[rel*=facebox]').facebox();
 

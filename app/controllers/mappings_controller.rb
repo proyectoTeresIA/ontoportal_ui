@@ -72,15 +72,20 @@ class MappingsController < ApplicationController
     page = params[:page] || 1
 
     if is_ontolex_format?(@ontology) || is_ontolex_format?(@target_ontology)
-      size = params[:pagesize] || 50
+      # Fetch all mappings (pagesize: 0 returns the full set) then filter by target
       response = LinkedData::Client::HTTP.get(
         "/ontologies/#{@ontology.acronym}/mappings",
-        { page: page, pagesize: size }
+        { page: 1, pagesize: 0 }
       )
-      @ontolex_mappings = response&.collection || []
-      @ontolex_total    = response&.totalCount || 0
-      @ontolex_page     = response&.page || 1
-      @ontolex_pages    = response&.pageCount || 1
+      all_mappings = response&.collection || []
+      target_acr = @target_ontology.acronym.presence || params[:target].to_s.split('/').last
+      @ontolex_mappings = all_mappings.select do |m|
+        tgt = m.classes&.last
+        (tgt&.links&.[]('ontology') || '').split('/').last == target_acr
+      end
+      @ontolex_total  = @ontolex_mappings.size
+      @ontolex_page   = 1
+      @ontolex_pages  = 1
       render partial: 'ontolex_mappings', layout: false
       return
     end

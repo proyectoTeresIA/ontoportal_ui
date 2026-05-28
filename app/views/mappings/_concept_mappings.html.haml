@@ -18,7 +18,8 @@
               - target_id = (target&.send(:"@id") || target&.links&.dig('self')&.then { |u| CGI.unescape(u.split('/').last) }).to_s
               - target_ont_link = target&.links&.dig('ontology') || ''
               - target_acr = target_ont_link.split('/').last
-              - rel_label = map.source.to_s.gsub(/^SKOS:/, '').gsub('_', ' ').split.map(&:capitalize).join(' ')
+              - rel_key = map.source.to_s.gsub(/^SKOS:/, '').downcase
+              - rel_label = t("mappings.ontolex.relations.#{rel_key}", default: rel_key.gsub('_', ' ').split.map(&:capitalize).join(' '))
               %tr
                 %td
                   - if target_id.start_with?('http') && target_acr.present?

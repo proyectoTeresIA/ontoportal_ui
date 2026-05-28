@@ -1037,6 +1037,13 @@ en:
       target_term: Target Term
       relation_type: Relation
       unknown_ontology: Unknown
+      relations:
+        related: Related
+        close_match: Close match
+        exact_match: Exact match
+        broad_match: Broad match
+        narrow_match: Narrow match
+        related_match: Related match
     index:
       help_aria: View mappings help
       title: Mappings

@@ -9,12 +9,13 @@
   %section.teresia-partners-marquee
     %div.partners-marquee-viewport
       %div.partners-marquee-track
+        - base_path = request&.script_name.to_s
         - partners = [{href: 'https://pti-esciencia.csic.es/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-04-300x134.jpg', alt: 'CSIC'},
           {href: 'https://aeter.org/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-02-300x134.jpg', alt: 'aeter'},
           {href: 'https://www.bsc.es/es', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-03-300x134.jpg', alt: 'BSC'},
           {href: 'https://commission.europa.eu/about-european-commission/departments-and-executive-agencies/translation_es', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-05-300x134.jpg', alt: 'Comisión Europea'},
           {href: 'http://ampus.redtransfer.org/gestion/cursos/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/12/logo_IC_7_300x134-1.jpg', alt: 'IC7'},
-          {href: 'https://oeg.fi.upm.es/', src: 'https://proyectoteresia.org/wp-content/uploads/2024/09/logos-web-01-300x134.jpg', alt: 'OEG'}]
+          {href: 'https://oeg.fi.upm.es/', src: "#{base_path}/logos/oeg-upm-logo.png", alt: 'OEG'}]
         -# Original set
         - partners.each do |partner|
           %a.partners-marquee-item{href: partner[:href], target: '_blank', rel: 'noopener noreferrer'}

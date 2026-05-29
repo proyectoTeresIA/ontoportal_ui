@@ -74,7 +74,7 @@ es:
       search: Buscador
       annotator: Anotador
       recommender: Recomendador
-      mappings: Mapeos
+      mappings: Enlaces a otras terminologías
       admin: Admin
       login: Iniciar sesión
       account_settings: Configuración de la cuenta
@@ -145,14 +145,14 @@ es:
       ontologies: Terminologías
       classes: Clases
       properties: Propiedades
-      mappings: Mapeos
+      mappings: Enlaces a otras terminologías
     help:
       welcome: Bienvenido/a al %{site} de %{organization}. %{site} es una aplicación web para acceder y compartir terminologías.
       getting_started: >
-        %{site} permite a los usuarios navegar, subir, descargar, buscar, comentar y crear mapeos para terminologías.
+        %{site} permite a los usuarios navegar, subir, descargar, buscar, comentar y crear enlaces a otras terminologías.
       browse: >
-        Los usuarios pueden explorar terminologías individuales navegando por una estructura en árbol o una vista gráfica animada. También pueden ver mapeos y 
-        metadatos de las terminologías, y descargar terminologías. Además, los usuarios registrados pueden enviar una nueva terminología a la biblioteca.
+        Los usuarios pueden explorar terminologías individuales navegando por una estructura en árbol o una vista gráfica animada. También pueden ver metadatos y enlaces 
+        a otras terminologías, y descargar terminologías. Además, los usuarios registrados pueden enviar una nueva terminología a la biblioteca.
       rest_examples_html: Ver documentación y ejemplos de la <a href="%{api_url}" target="_blank">API REST de %{site}</a>.
       announce_list_html: >
 
@@ -268,7 +268,7 @@ es:
       insert_sample_text: insertar texto de ejemplo
       longest_only: Coincidir solo la más larga
       partial_words: Coincidir palabras parciales
-      include_mappings: Incluir mapeos
+      include_mappings: Incluir enlaces entre terminologías
       exclude_numbers: Excluir números
       exclude_synonyms: Excluir sinónimos
       select_umls_semantic_types: Seleccionar tipos semánticos UMLS
@@ -311,7 +311,7 @@ es:
       insert_sample_text: insertar texto de ejemplo
       longest_only: Coincidir solo la más larga
       partial_words: Coincidir palabras parciales
-      include_mappings: Incluir mapeos
+      include_mappings: Incluir enlaces entre terminologías
       exclude_numbers: Excluir números
       exclude_synonyms: Excluir sinónimos
       select_umls_semantic_types: Seleccionar tipos semánticos UMLS
@@ -430,7 +430,7 @@ es:
       classes_with_definitions: Clases con definiciones
       categories: Categorías
       search_button: Buscar
-      search_keywords_placeholder: Introduce una clase
+      search_keywords_placeholder: Introduce un término
       categories_placeholder: Comienza a escribir para seleccionar categorías o déjalo en blanco para usar todas
       property_definition: >
         Asociación nombrada entre dos entidades. Ejemplos: 'definición' (relación entre una clase y un texto) y 'parte-de' (relación entre dos clases).
@@ -465,7 +465,7 @@ es:
     ontolex_entity_details: Detalles de entidad OntoLex
     loading: Cargando...
     close: Cerrar
-    create_mapping: Crear mapeo
+    create_mapping: Crear enlace entre terminologías
 
   ontology_details:
     sections:
@@ -474,7 +474,7 @@ es:
       properties: Propiedades
       instances: Instancias
       notes: Notas
-      mappings: Mapeos
+      mappings: Enlaces a otras terminologías
       widgets: Widgets
       sparql: Sparql
       concepts: Conceptos
@@ -492,11 +492,11 @@ es:
       # Property labels
       properties:
         language: Idioma
-        partOfSpeech: Categoría Gramatical
-        termType: Tipo de Término
+        partOfSpeech: Categoría gramatical
+        termType: Tipo de término
         hasValency: Valencia
-        writtenRep: Representación Escrita
-        phoneticRep: Representación Fonética
+        writtenRep: Representación escrita
+        phoneticRep: Representación fonética
         gender: Género
         number: Número
         person: Persona
@@ -509,22 +509,22 @@ es:
         aspect: Aspecto
         definiteness: Definitud
         polarity: Polaridad
-        verbFormMood: Forma Verbal/Modo
-        signedRep: Representación Signada
+        verbFormMood: Forma verbal/modo
+        signedRep: Representación signada
         form: Forma
-        canonicalForm: Forma Canónica
-        otherForm: Otra Forma
+        canonicalForm: Forma canónica
+        otherForm: Otra forma
         sense: Sentido
         evokes: Evoca
-        isEvokedBy: Es Evocado Por
+        isEvokedBy: Es evocado por
         lexicalizedSense: Sentido lexicalizado
         isLexicalizedSenseOf: Es sentido lexicalizado de
-        isSenseOf: Es Sentido De
+        isSenseOf: Es sentido de
         reference: Referencia
-        isReferenceOf: Es Referencia De
+        isReferenceOf: Es referencia de
         definition: Definición
         example: Ejemplo
-        usageExample: Ejemplo de Uso
+        usageExample: Ejemplo de uso
         usage: Uso
         note: Nota
         lexicalEntry: Entrada léxica
@@ -534,77 +534,77 @@ es:
         translation: Traducción
         synonym: Sinónimo
         antonym: Antónimo
-        broader: Más Amplio
-        narrower: Más Específico
+        broader: Más amplio
+        narrower: Más específico
         related: Relacionado
-        relatedMatch: Coincidencia Relacionada
-        broadMatch: Coincidencia Amplia
-        narrowMatch: Coincidencia Específica
-        exactMatch: Coincidencia Exacta
-        closeMatch: Coincidencia Cercana
-        mappingRelation: Relación de Mapeo
-        isPartOf: Es Parte De
-        hasPart: Tiene Parte
-        differentFrom: Diferente De
-        wasDerivedFrom: Se Derivó De
-        wasInfluencedBy: Fue Influenciado Por
-        hasDerivation: Tiene Derivación
+        relatedMatch: Coincidencia relacionada
+        broadMatch: Coincidencia amplia
+        narrowMatch: Coincidencia específica
+        exactMatch: Coincidencia exacta
+        closeMatch: Coincidencia cercana
+        mappingRelation: Relación de mapeo
+        isPartOf: Es parte de
+        hasPart: Tiene parte
+        differentFrom: Diferente de
+        wasDerivedFrom: Se derivó de
+        wasInfluencedBy: Fue influenciado por
+        hasDerivation: Tiene derivación
         influenced: Influenciado
         activity: Actividad
         agent: Agente
-        endedAtTime: Terminó En
-        startedAtTime: Comenzó En
+        endedAtTime: Terminó en
+        startedAtTime: Comenzó en
         label: Etiqueta
         name: Nombre
-        mbox: Correo Electrónico
-        prefLabel: Etiqueta Preferida
-        altLabel: Etiqueta Alternativa
-        hiddenLabel: Etiqueta Oculta
+        mbox: Correo electrónico
+        prefLabel: Etiqueta preferida
+        altLabel: Etiqueta alternativa
+        hiddenLabel: Etiqueta oculta
         value: Valor
         capital: Capital
         currency: Moneda
-        causedBy: Causado Por
-        precedesInTime: Precede En El Tiempo
-        followsInTime: Sigue En El Tiempo
-        hasLocation: Tiene Ubicación
-        inScheme: En Esquema
-        topConceptOf: Concepto Superior De
-        hasTopConcept: Tiene Concepto Superior
+        causedBy: Causado por
+        precedesInTime: Precede en el tiempo
+        followsInTime: Sigue en el tiempo
+        hasLocation: Tiene ubicación
+        inScheme: En esquema
+        topConceptOf: Concepto superior de
+        hasTopConcept: Tiene concepto superior
         notation: Notación
-        changeNote: Nota de Cambio
-        editorialNote: Nota Editorial
-        historyNote: Nota Histórica
-        scopeNote: Nota de Alcance
+        changeNote: Nota de cambio
+        editorialNote: Nota editorial
+        historyNote: Nota histórica
+        scopeNote: Nota de alcance
         member: Miembro
-        memberList: Lista de Miembros
+        memberList: Lista de miembros
         source: Fuente
-        resourceName: Nombre del Recurso
-        resourceCreator: Creador del Recurso
+        resourceName: Nombre del recurso
+        resourceCreator: Creador del recurso
         url: URL
         domain: Dominio
-        normativeAuthorization: Autorización Normativa
-        reliabilityCode: Código de Fiabilidad
+        normativeAuthorization: Autorización normativa
+        reliabilityCode: Código de fiabilidad
         code: Código
-        signedForm: Forma Signada
+        signedForm: Forma signada
         casNumber: Número CAS
 
       # Section headings for terminological entries
       headings:
         lexical_entry_properties: Propiedades de la entrada léxica
         forms: Formas
-        signed_forms: Formas Signadas
-        evoked_concept: Concepto Evocado
+        signed_forms: Formas signadas
+        evoked_concept: Concepto evocado
         lexical_senses: Sentidos léxicos
         lexicalized_concept: Concepto lexicalizado
-        original_source: Fuente Original
-        usage_examples: Ejemplos de Uso
+        original_source: Fuente original
+        usage_examples: Ejemplos de uso
         translations: Traducciones
         synonyms: Sinónimos
         sources_references: Fuentes / Referencias
-        change_history: Historial de Cambios
+        change_history: Historial de cambios
         agent: "Agente:"
         view_complete: "Ver %{type} completo"
-        view_video: Ver Vídeo
+        view_video: Ver vídeo
         cross_ontology_terms: Enlaces a otras terminologías
       skos_relations:
         closeMatch: Coincidencia cercana
@@ -741,7 +741,7 @@ es:
     copy_original_uri: Copiar URI original
     copy_portal_uri: Copiar URI de %{portal_name}
     close_button: Cerrar
-    create_mapping: Crear mapeo
+    create_mapping: Crear enlace entre terminologías
     link_to_page: Enlace a esta página
     ontolex_details: Detalles de entidad OntoLex
 
@@ -1027,15 +1027,13 @@ es:
       id: ID
       parent: Padre
 
-  # removed duplicate notes and submission_inputs blocks added later to avoid duplication
-
   mappings:
-    intro: Explora mapeos entre clases en diferentes terminologías
-    create_new_mapping: Crear nuevo mapeo
+    intro: Explora enlaces a otras terminologías entre términos
+    create_new_mapping: Crear nuevo enlace
     ontolex:
-      none_for_ontology: No se encontraron mapeos entre ontologías para este recurso.
-      for_ontology: "Mapeos para %{name}"
-      showing: "Mostrando %{count} mapeo(s)"
+      none_for_ontology: No se encontraron enlaces a otras terminologías para este recurso.
+      for_ontology: "Enlaces a otras terminologías para %{name}"
+      showing: "Mostrando %{count} enlace(s) entre terminologías"
       source_term: Término origen
       target_term: Término destino
       relation_type: Relación
@@ -1048,11 +1046,11 @@ es:
         narrow_match: Coincidencia específica
         related_match: Coincidencia relacionada
     index:
-      help_aria: Ver ayuda de mapeos
-      title: Mapeos
-      no_mappings_available: No hay mapeos disponibles
+      help_aria: Ver ayuda de enlaces a otras terminologías
+      title: Enlaces a otras terminologías
+      no_mappings_available: No hay enlaces a otras terminologías disponibles
       select_an_ontology: Selecciona una terminología
-      loading_mappings: Cargando mapeos...
+      loading_mappings: Cargando enlaces a otras terminologías...
     table:
       headers:
         delete: Eliminar
@@ -1063,10 +1061,10 @@ es:
     count:
       headers:
         ontology: Terminología
-        mappings: Mapeos
-      none_for_ontology: No hay mapeos hacia o desde esta terminología
+        mappings: Enlaces a otras terminologías
+      none_for_ontology: No hay enlaces hacia o desde esta terminología
     show:
-      none_found: No se encontraron mapeos
+      none_found: No se encontraron enlaces
       source: Fuente
     upload:
       form:
@@ -1414,11 +1412,17 @@ es:
     categories:
       general: General
       description: Descripción
+      dates: Fechas
       licensing: Licenciamiento
-      technical: Técnico
-      contacts: Contactos
-      provenance: Procedencia
-      lifecycle: Ciclo de vida
+      links: Vínculos
+      media: Medios
+      community: Comunidad
+      usage: Uso
+      relations: Relaciones
+      content: Contenido
+      methodology: Metodología
+      "object description properties": Propiedades de descripción de objetos
+      "persons and organizations": Personas y organizaciones
     labels:
       uri: IRI de la terminología
       versionIRI: IRI de la versión
@@ -1435,7 +1439,7 @@ es:
       modifiedProperty: Propiedad de fecha de modificación del objeto
       preferredPrefix: Prefijo preferido
       created: Creada
-      creationDate: Fecha de creación
+      creationDate: Fecha de envío
       uriLookupEndpoint: URI del endpoint de búsqueda
       released: Fecha de publicación
       modified: Fecha de modificación
@@ -1446,6 +1450,92 @@ es:
       contactName: Nombre de contacto
       contactEmail: Correo de contacto
       contactHomepage: Página de contacto
+      hasFormalityLevel: Nivel de formalidad
+      hasOntologySyntax: Sintaxis
+      isOfType: Tipo genérico
+      identifier: Otro identificador
+      hasLicense: Licencia
+      useGuidelines: Guías de uso
+      morePermissions: Más permisos
+      copyrightHolder: Titular de los derechos
+      notes: Notas
+      keywords: Palabras clave
+      hiddenLabel: Etiqueta oculta
+      alternative: Nombre alternativo
+      abstract: Resumen
+      publication: Referencia bibliográfica
+      modificationDate: Fecha de modificación
+      valid: Fecha de validez
+      curatedOn: Fecha de curación
+      hasCreator: Creador
+      hasContributor: Contribuidor
+      curatedBy: Curador
+      translator: Traductor
+      publisher: Editor
+      fundedBy: Financiado o patrocinado por
+      endorsedBy: Avalado por
+      audience: Audiencia objetivo
+      repository: Repositorio
+      bugDatabase: Base de datos de errores
+      mailingList: Lista de correo
+      toDoList: Lista de tareas pendientes
+      award: Premio
+      knownUsage: Uso conocido
+      designedForOntologyTask: Diseñada para la tarea
+      hasDomain: Dominio
+      coverage: Cobertura
+      example: Ejemplo de uso
+      conformsToKnowledgeRepresentationParadigm: Paradigma de representación del conocimiento
+      usedOntologyEngineeringMethodology: Metodología de ingeniería ontológica
+      usedOntologyEngineeringTool: Creado con
+      accrualMethod: Método de acumulación
+      accrualPeriodicity: Periodicidad de acumulación
+      accrualPolicy: Política de acumulación
+      competencyQuestion: Pregunta de competencia
+      wasGeneratedBy: Fue generado por
+      wasInvalidatedBy: Fue invalidado por
+      prefLabelProperty: Propiedad de etiqueta preferida
+      synonymProperty: Propiedad de sinónimo
+      definitionProperty: Propiedad de definición
+      authorProperty: Propiedad de autor
+      obsoleteProperty: Propiedad de obsolescencia
+      hierarchyProperty: Propiedad de jerarquía
+      pullLocation: URL de acceso
+      isFormatOf: Es formato de
+      hasFormat: Tiene formato
+      dataDump: URL de descarga
+      csvDump: Volcado CSV
+      openSearchDescription: Endpoint de búsqueda de texto libre
+      ui: Interfaz de navegación
+      source: Fuente
+      endpoint: Endpoint SPARQL
+      includedInDataCatalog: Incluido en catálogo
+      useImports: Importaciones
+      hasPriorVersion: Versión anterior
+      hasPart: Tiene parte
+      explanationEvolution: Especializa
+      generalizes: Generaliza
+      usedBy: Usado por
+      ontologyRelatedTo: Relacionado con
+      similarTo: Similar a
+      comesFromTheSameDomain: Del mismo dominio
+      isAlignedTo: Tiene equivalencias con
+      isBackwardCompatibleWith: Compatible con versión anterior
+      isIncompatibleWith: Incompatible con
+      hasDisparateModelling: Modelado disparado con
+      hasDisjunctionsWith: Tiene disyunciones con
+      workTranslation: Traducción
+      translationOfWork: Traducción de
+      uriRegexPattern: Patrón de identificadores
+      preferredNamespaceUri: URI del espacio de nombres preferido
+      preferredNamespacePrefix: Prefijo del espacio de nombres preferido
+      obsoleteParent: Raíz de la rama obsoleta
+      exampleIdentifier: Ejemplo de identificador
+      keyClasses: Clases principales
+      metadataVoc: Vocabulario de metadatos
+      associatedMedia: Medios asociados
+      depiction: Imagen representativa
+      logo: Logotipo
     help:
       uri: El IRI principal de la terminología (owl:Ontology/@rdf:about). Normalmente el espacio de nombres superior.
       versionIRI: IRI de esta versión publicada (owl:versionIRI).
@@ -1460,6 +1550,93 @@ es:
       deprecated: Indica si la terminología está obsoleta (ya no se mantiene).
       preferredPrefix: Prefijo corto recomendado para identificadores generados a partir de esta terminología.
       naturalLanguage: Idioma(s) natural(es) usados para etiquetas y definiciones.
+      hasFormalityLevel: Nivel de formalidad de la terminología.
+      hasOntologySyntax: La sintaxis de presentación para el lenguaje de la terminología.
+      isOfType: La naturaleza del contenido de la terminología.
+      identifier: Una referencia inequívoca al recurso dentro de un contexto dado. Se recomienda identificar el recurso mediante una cadena conforme a un sistema de identificación.
+      hasLicense: Un documento legal que otorga permiso oficial para hacer algo con el recurso. Se recomienda identificar el documento de licencia con un URI.
+      useGuidelines: Un recurso relacionado que define cómo debe usarse la terminología.
+      morePermissions: Un recurso relacionado que describe permisos adicionales o licencias alternativas.
+      copyrightHolder: La parte que posee los derechos de autor legales sobre la terminología.
+      notes: Información adicional sobre la terminología que no se incluye en otro lugar.
+      keywords: Lista de palabras clave relacionadas con la terminología.
+      hiddenLabel: Una etiqueta léxica para un recurso que debe ocultarse en las vistas visuales pero que debe ser accesible para las operaciones de búsqueda de texto libre.
+      alternative: Un nombre alternativo para el recurso.
+      abstract: Un resumen del alcance y contenido de la terminología.
+      publication: Lista de referencias bibliográficas que describen la terminología y sus aplicaciones.
+      modificationDate: Fecha de la última modificación realizada a la terminología.
+      valid: Fecha (a menudo un rango) de validez del recurso.
+      curatedOn: Especifica la fecha en que fue curado este recurso.
+      creationDate: Fecha de envío/publicación en el portal.
+      hasCreator: Principal responsable de la creación de la terminología.
+      hasContributor: Contribuidores a la creación de la terminología.
+      curatedBy: Especifica un agente especialista responsable de curar/evaluar la terminología.
+      translator: Organización o persona que adapta una obra creativa a diferentes idiomas.
+      publisher: Entidad responsable de hacer disponible la terminología.
+      fundedBy: Una organización que financia un proyecto o persona.
+      endorsedBy: Las partes que han expresado apoyo o aprobación a esta terminología.
+      audience: Un conjunto de usuarios/agentes para quienes la terminología está destinada o es útil.
+      repository: Repositorio de código fuente de la terminología.
+      bugDatabase: Sistema de seguimiento de errores para el proyecto.
+      mailingList: Lista de correo o dirección de correo electrónico de soporte de la terminología.
+      toDoList: Describe las tareas futuras planificadas por el curador de un recurso.
+      award: Un premio ganado por o para este elemento.
+      knownUsage: Las aplicaciones donde se está usando la terminología.
+      designedForOntologyTask: El propósito o las tareas para las que fue diseñada originalmente la terminología.
+      hasDomain: Los temas de la terminología.
+      coverage: El tema espacial o temporal de la terminología, o la jurisdicción bajo la cual es relevante.
+      example: Una referencia a un recurso que proporciona un ejemplo de cómo usar esta terminología.
+      conformsToKnowledgeRepresentationParadigm: Información sobre el modelo de paradigma utilizado para crear la terminología.
+      usedOntologyEngineeringMethodology: Información sobre el modelo de método utilizado para crear la terminología.
+      usedOntologyEngineeringTool: Información sobre la herramienta utilizada para crear la terminología.
+      accrualMethod: El método por el cual se añaden elementos a la terminología.
+      accrualPeriodicity: La frecuencia con la que se añaden elementos a la terminología.
+      accrualPolicy: La política que rige la adición de elementos a la terminología.
+      competencyQuestion: Un conjunto de preguntas formuladas para construir una terminología en tiempo de diseño.
+      wasGeneratedBy: La finalización de la producción de una nueva terminología por una actividad.
+      wasInvalidatedBy: El inicio de la destrucción, cese o expiración de una terminología existente por una actividad.
+      prefLabelProperty: Propiedad utilizada para especificar la etiqueta preferida de los objetos.
+      synonymProperty: Propiedad utilizada para especificar los sinónimos de los objetos.
+      definitionProperty: Propiedad utilizada para especificar la definición de los objetos.
+      authorProperty: Propiedad utilizada para especificar el autor del objeto.
+      obsoleteProperty: Propiedad utilizada para especificar los objetos obsoletos.
+      hierarchyProperty: Una propiedad utilizada para especificar la jerarquía.
+      pullLocation: Una URL de un recurso que da acceso a una distribución de la terminología.
+      isFormatOf: Un recurso relacionado que es sustancialmente el mismo que el recurso descrito, pero en otro formato.
+      hasFormat: Un recurso relacionado que es sustancialmente el mismo que el recurso pre-existente descrito, pero en otro formato.
+      dataDump: Un volcado RDF, parcial o completo, de una terminología.
+      csvDump: Un volcado CSV, parcial o completo, de una terminología.
+      openSearchDescription: Un documento de descripción de búsqueda abierta para un servicio de búsqueda de texto libre sobre una terminología.
+      ui: La interfaz de usuario (URL) donde se puede navegar o buscar la terminología.
+      source: Un recurso relacionado del que se deriva el recurso descrito.
+      endpoint: Un endpoint SPARQL que implementa el servicio de Protocolo SPARQL para esta terminología.
+      includedInDataCatalog: Una biblioteca o repositorio de terminologías que contiene esta terminología.
+      useImports: Hace referencia a otra terminología que contiene definiciones consideradas parte del significado de esta terminología.
+      hasPriorVersion: Contiene una referencia a una versión anterior de esta terminología.
+      hasPart: Un recurso relacionado que se incluye física o lógicamente en el recurso descrito.
+      explanationEvolution: Evolución que implica solo al nivel sintáctico.
+      generalizes: Indica que el vocabulario sujeto generaliza el vocabulario objeto mediante algunas superclases o superpropiedades.
+      usedBy: Indica que el vocabulario sujeto es utilizado por el vocabulario objeto.
+      ontologyRelatedTo: Una terminología está relacionada con otra o depende/usa otra.
+      similarTo: Indica que la terminología cubre partes de la misma área de interés que otra terminología.
+      comesFromTheSameDomain: Indica que las dos terminologías provienen del mismo dominio.
+      isAlignedTo: Vincula dos terminologías cuando existe una alineación que cubre una parte sustancial de su vocabulario.
+      isBackwardCompatibleWith: Identifica una versión anterior compatible con esta terminología.
+      isIncompatibleWith: Indica que esta terminología no es compatible con la versión anterior especificada.
+      hasDisparateModelling: Desacuerdos relacionados con la conceptualización de las terminologías.
+      hasDisjunctionsWith: Indica que el vocabulario sujeto declara algunas clases disjuntas con el vocabulario objeto.
+      workTranslation: Una obra que es una traducción del contenido de esta obra.
+      translationOfWork: La obra de la que es traducción esta obra.
+      uriRegexPattern: Una expresión regular que coincide con las URIs de las entidades de esta terminología.
+      preferredNamespaceUri: El URI del espacio de nombres preferido para usar los términos de esta terminología.
+      preferredNamespacePrefix: El prefijo del espacio de nombres preferido para usar los términos de esta terminología.
+      obsoleteParent: Propiedad utilizada para especificar la raíz de una rama obsoleta en la terminología.
+      exampleIdentifier: Un ejemplo de identificador utilizado por un elemento de la terminología.
+      keyClasses: Clases representativas en la terminología.
+      metadataVoc: Indica que la terminología sujeto utiliza el vocabulario objeto en sus metadatos.
+      associatedMedia: Un objeto multimedia que codifica esta terminología.
+      depiction: Una imagen o representación de la terminología o su temática.
+      logo: Una imagen de logotipo para la terminología.
     enforced_values:
       status:
         alpha: Alfa

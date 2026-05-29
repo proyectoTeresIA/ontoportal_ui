@@ -8,8 +8,9 @@
   .tabs-left-column
     %div.nav.nav-pills.flex-column
       - @titles.each_with_index  do |key|
+        - tab_label = I18n.t("submission_metadata.categories.#{key}", default: key.humanize)
         %a.vertical-tab-item.d-block{href: "##{key.parameterize}-tab", "data-bs-toggle" => "pill", class:  @selected.eql?(key.parameterize) ? 'active show' : '', data: {'tab-id': key.parameterize,  'tab-title': key.titleize, 'url-parameter': @url_parameter, action: 'click->tabs-container#selectTab'}}
-          = key.humanize
+          = tab_label
 
   .tabs-right-column.w-100{id: @id}
     %div.tab-content

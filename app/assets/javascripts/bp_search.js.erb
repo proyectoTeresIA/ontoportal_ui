@@ -1345,7 +1345,6 @@ function formatFormSearchResults(aggOntologyResults) {
         // Links to associated lexical entries
         var searchResultLinks = jQuery("<div>");
         searchResultLinks.addClass("search_result_links");
-        searchResultLinks.append(formLinksSpan(res, ontAcronym));
         searchResultDiv.append(searchResultLinks);
         
         allResults.push(searchResultDiv.prop("outerHTML"));
@@ -1354,23 +1353,3 @@ function formatFormSearchResults(aggOntologyResults) {
     return allResults.join("");
 }
 
-// Create links for forms (showing details button)
-function formLinksSpan(form, ontAcronym) {
-    var formID = form["@id"];
-    var resLinks = jQuery("<span>");
-    resLinks.addClass("additional");
-    
-    // Show "details" button that opens the OntoLex modal with form data
-    var detailsAnchor = jQuery("<a>");
-    detailsAnchor.attr({
-        "href": "#",
-        "data-form-id": formID,
-        "data-ont-acronym": ontAcronym
-    });
-    detailsAnchor.addClass("lexical_form_link");
-    detailsAnchor.addClass("search_result_link");
-    detailsAnchor.text("details");
-    resLinks.append(detailsAnchor);
-    
-    return resLinks;
-}

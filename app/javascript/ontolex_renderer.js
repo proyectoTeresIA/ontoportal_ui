@@ -117,9 +117,7 @@ window.OntolexRenderer = {
       var label = this.translateProperty(key);
 
       // For the three SKOS cross-ontology predicates, pass the crossOntologyMap
-      var fieldCrossMap = Object.prototype.hasOwnProperty.call(crossOntologyPredicates, key)
-        ? crossOntologyMap
-        : null;
+      var fieldCrossMap = Object.prototype.hasOwnProperty.call(crossOntologyPredicates, key) ? crossOntologyMap : null;
 
       html += '<tr>';
       html += '<th scope="row" class="property-label" style="width: 30%;">' + label + '</th>';
@@ -176,7 +174,15 @@ window.OntolexRenderer = {
           html += '</button>';
           html += '<div class="collapse" id="' + collapseId + '">';
           html += '<div class="card card-body mt-1">';
-          html += this.renderSingleValue(value[i], fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap);
+          html += this.renderSingleValue(
+            value[i],
+            fieldName,
+            entityType,
+            ontAcronym,
+            isEmbedded,
+            basePath,
+            crossOntologyMap,
+          );
           html += '</div>';
           html += '</div>';
           html += '</div>';
@@ -189,7 +195,15 @@ window.OntolexRenderer = {
         for (var j = 0; j < value.length; j++) {
           listHtml +=
             '<li class="mb-1">' +
-            this.renderSingleValue(value[j], fieldName, entityType, ontAcronym, isEmbedded, basePath, crossOntologyMap) +
+            this.renderSingleValue(
+              value[j],
+              fieldName,
+              entityType,
+              ontAcronym,
+              isEmbedded,
+              basePath,
+              crossOntologyMap,
+            ) +
             '</li>';
         }
         listHtml += '</ul>';
@@ -229,18 +243,33 @@ window.OntolexRenderer = {
       // It's a reference to another entity
       // Normalize @id: may be a plain string or an object with .uri
       var rawId = value['@id'];
-      var conceptUri = (typeof rawId === 'string') ? rawId : (rawId && (rawId.uri || rawId['@id'] || null));
+      var conceptUri = typeof rawId === 'string' ? rawId : rawId && (rawId.uri || rawId['@id'] || null);
       var objLabel =
-        value.label || value.prefLabel || value.writtenRep || value.value ||
+        value.label ||
+        value.prefLabel ||
+        value.writtenRep ||
+        value.value ||
         (conceptUri ? this.extractIdFragment(conceptUri) : 'item');
       if (entityType) {
         // Use target ontology from cross-ontology map if available
-        var objOntAcronym = (crossOntologyMap && conceptUri && crossOntologyMap[conceptUri]) ? crossOntologyMap[conceptUri] : ontAcronym;
+        var objOntAcronym =
+          crossOntologyMap && conceptUri && crossOntologyMap[conceptUri] ? crossOntologyMap[conceptUri] : ontAcronym;
         var objLinkUrl =
-          basePath + '/ontologies/' + objOntAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(conceptUri || '');
-        var crossBadge = (objOntAcronym !== ontAcronym)
-          ? '<span class="ontolex-badge badge-language me-1" title="' + objOntAcronym + '">' + objOntAcronym + '</span>'
-          : '';
+          basePath +
+          '/ontologies/' +
+          objOntAcronym +
+          '?p=' +
+          entityType +
+          '&id=' +
+          encodeURIComponent(conceptUri || '');
+        var crossBadge =
+          objOntAcronym !== ontAcronym
+            ? '<span class="ontolex-badge badge-ontology me-1" title="' +
+              objOntAcronym +
+              '">' +
+              objOntAcronym +
+              '</span>'
+            : '';
         return (
           '<a href="' +
           objLinkUrl +
@@ -257,13 +286,18 @@ window.OntolexRenderer = {
       // It's a URI
       if (entityType) {
         // Use target ontology from cross-ontology map if available
-        var strOntAcronym = (crossOntologyMap && crossOntologyMap[value]) ? crossOntologyMap[value] : ontAcronym;
+        var strOntAcronym = crossOntologyMap && crossOntologyMap[value] ? crossOntologyMap[value] : ontAcronym;
         var uriLabel = this.extractIdFragment(value);
         var uriLinkUrl =
           basePath + '/ontologies/' + strOntAcronym + '?p=' + entityType + '&id=' + encodeURIComponent(value);
-        var strCrossBadge = (strOntAcronym !== ontAcronym)
-          ? '<span class="ontolex-badge badge-language me-1" title="' + strOntAcronym + '">' + strOntAcronym + '</span>'
-          : '';
+        var strCrossBadge =
+          strOntAcronym !== ontAcronym
+            ? '<span class="ontolex-badge badge-language me-1" title="' +
+              strOntAcronym +
+              '">' +
+              strOntAcronym +
+              '</span>'
+            : '';
         return (
           '<a href="' +
           uriLinkUrl +

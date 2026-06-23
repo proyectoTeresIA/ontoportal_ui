@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BioportalWebUi</title>
+  <title><% if @title.nil? %>metabuscador<% else %><%="#{@title} | metabuscador"%><% end %></title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application", "data-turbo-track": "reload"%>
   <%= csrf_meta_tags %>

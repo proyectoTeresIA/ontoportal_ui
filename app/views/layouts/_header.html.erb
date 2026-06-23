@@ -14,7 +14,7 @@
 
 	<%= csrf_meta_tag %>
 
-	<title><%if @title.nil?%><%=$ORG_SITE%><%else%><%="#{@title} | #{$ORG_SITE}"%><%end%></title>
+  <title><% if @title.nil? %>metabuscador<% else %><%="#{@title} | metabuscador"%><% end %></title>
   <link rel="icon" href="<%= root_path %>favicon.png" type="image/png" />
 
 	<!-- Fonts -->

@@ -2,7 +2,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
 <meta name="google-site-verification" content="IBxfKu6VbYH9atd5OLu2zXVD2ZRWi9SgMKTi8nvw3ks" />
 <%= csrf_meta_tag %>
-<title><%if @title.nil?%><%=$ORG_SITE%><%else%><%="#{@title} | #{$ORG_SITE}"%><%end%></title>
+<title><% if @title.nil? %>metabuscador<% else %><%="#{@title} | metabuscador"%><% end %></title>
 <link href='//fonts.googleapis.com/css?family=Droid+Sans:400' rel='stylesheet' type='text/css'>
 <%= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css", crossorigin: "anonymous" %>
 <%= stylesheet_link_tag "application" %>
